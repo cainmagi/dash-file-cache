@@ -32,19 +32,19 @@ function mcd {
 }
 
 function nvm_has {
-    type "$1" > /dev/null 2>&1
+  type "$1" > /dev/null 2>&1
 }
 
 APT_OPTIONS="-o Acquire::Retries=5 -o Acquire::http::timeout=20 -o Acquire::https::timeout=20"
 
 # Required packages
 apt-get -y update || fail && apt-get $APT_OPTIONS -y install \
-    apt-utils apt-transport-https git-core wget jq \
-    gnupg2 lsb-release xz-utils || fail
+  apt-utils apt-transport-https git-core wget jq \
+  gnupg2 lsb-release xz-utils || fail
 
 if ! nvm_has "lsb_release"; then
-    msg_err "lsb_release does not exist. This should not happen. Please contact the author for technical supports."
-    exit 1
+  msg_err "lsb_release does not exist. This should not happen. Please contact the author for technical supports."
+  exit 1
 fi
 
 # Check the OS version
@@ -67,14 +67,14 @@ if ! nvm_has "python3"; then
 fi
 
 if nvm_has "python"; then
-    PYTHON=python
+  PYTHON=python
 else
-    if nvm_has "python3"; then
-        PYTHON=python3
-    else
-        msgerr "Fail to find Python3 in the base image, stop the build."
-        exit 1
-    fi
+  if nvm_has "python3"; then
+    PYTHON=python3
+  else
+    msgerr "Fail to find Python3 in the base image, stop the build."
+    exit 1
+  fi
 fi
 
 # Creat the venv if it needs to be used

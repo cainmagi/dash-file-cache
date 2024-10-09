@@ -9,6 +9,7 @@
 #### :floppy_disk: Change
 
 1. Adjust the project information.
+2. Adjust indents of docker scripts.
 
 ### 0.1.0 @ 10/09/2024
 
