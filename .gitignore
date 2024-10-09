@@ -48,6 +48,9 @@
 /outputs
 /cache
 
+# Ignore docs (maintained by another branch)
+/docs
+
 # CMake
 cmake-build-*/
 

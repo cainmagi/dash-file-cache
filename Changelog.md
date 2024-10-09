@@ -11,6 +11,7 @@
 1. Adjust the project information.
 2. Adjust indents of docker scripts.
 3. Reduce the code complexity of `services.data.ServiceData.stream(...)`.
+4. Add the `/docs` folder in the ignore list.
 
 ### 0.1.0 @ 10/09/2024
 
