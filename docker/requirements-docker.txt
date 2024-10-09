@@ -1,0 +1,26 @@
+# To run Dash
+dash[dev,testing,diskcache]>=2.18.0
+flask
+werkzeug
+multiprocess
+typing-extensions
+
+# Required by testing
+chromedriver-binary-auto  # Needs to be installed after installing the browser.
+pytest
+pytest-base-url
+pytest-flask
+pytest-html
+pytest-metadata
+py
+pytest-selenium
+pytest-variables
+pytest-xdist
+
+# Dev's
+black
+build
+flake8
+flake8-black
+importlib-metadata; python_version<"3.8"
+packaging

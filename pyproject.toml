@@ -1,0 +1,125 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dash-file-cache"
+authors = [{ name = "Yuchen Jin", email = "cainmagi@gmail.com" }]
+maintainers = [{ name = "Yuchen Jin", email = "cainmagi@gmail.com" }]
+dynamic = [
+  "version",
+  "readme",
+  "description",
+  "classifiers",
+  "dependencies",
+  "optional-dependencies",
+]
+keywords = [
+  "python",
+  "python3",
+  "python-library",
+  "dash",
+  "plotly-dash",
+  "python-dash",
+  "annotation",
+  "annotation-tool",
+  "image-annotation",
+  "labeling",
+  "image-labeling",
+  "object-detection",
+  "deep-learning",
+  "data-visualization",
+]
+license = { text = "MIT License" }
+requires-python = ">=3.8"
+
+[project.urls]
+Homepage = "https://github.com/cainmagi/dash-file-cache"
+Repository = "https://github.com/cainmagi/dash-file-cache.git"
+Issues = "https://github.com/cainmagi/dash-file-cache/issues"
+Changelog = "https://github.com/cainmagi/dash-file-cache/blob/main/Changelog.md"
+
+[tool.setuptools]
+zip-safe = false
+include-package-data = true
+
+[tool.setuptools.dynamic]
+version = { attr = "version.__version__" }
+description = { file = "py-description.txt" }
+readme = { file = ["README.md"], content-type = "text/markdown" }
+classifiers = { file = "classifiers.txt" }
+dependencies = { file = ["requirements.txt"] }
+
+[tool.setuptools.dynamic.optional-dependencies]
+dev = { file = ["requirements-dev.txt"] }
+test = { file = ["tests/requirements.txt"] }
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["dash_file_cache*"]
+exclude = ["src", "version", "docker", "tests*", "examples*", "docs*"]
+namespaces = false
+
+[tool.black]
+line-length = 88
+include = '\.pyi?$'
+# 'extend-exclude' excludes files or directories in addition to the defaults
+extend-exclude = '''
+# A regex preceded with ^/ will apply only to files and directories
+# in the root of the project.
+(
+  ^/dash_file_cache/_imports_.py
+  |^/_validate_init.py
+)
+'''
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = "tests/"
+addopts = "-rsxX -vv"
+log_level = "INFO"
+log_format = "%(name)s | %(filename)s - %(funcName)s @ %(asctime)s: %(levelname)s %(message)s"
+log_date_format = "%Y-%m-%d %H:%M:%S"
+log_cli = true
+log_cli_level = "INFO"
+selenium_exclude_debug = "html:logs:screenshot"
+filterwarnings = ["ignore::DeprecationWarning:selenium"]
+
+[tool.pyright]
+include = ["dash_file_cache", "tests", "examples"]
+exclude = [
+  "**/node_modules",
+  "**/__pycache__",
+  "src",
+  "alpha-*",
+  "data-*",
+  "logs",
+  "outputs",
+  ".VSCodeCounter",
+  ".github",
+  ".git",
+  ".yarn",
+  "deps",
+  "inst/deps",
+  "man",
+  "R",
+  "src",
+  "env",
+  "ENV",
+  "venv",
+  "VENV",
+  ".env",
+  ".venv",
+  "database",
+  "**/.yarn",
+  "**/node_modules",
+  "**/__pycache__",
+  "typestubs",
+  "setup.py",
+  "version",
+  "_validate_init.py",
+]
+ignore = ["version", "setup.py", "_validate_init.py"]
+defineConstant = { DEBUG = true }
+reportMissingImports = "error"
+reportMissingTypeStubs = false

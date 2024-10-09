@@ -1,0 +1,67 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "git.autofetch": true,
+    "[python]": {
+      "editor.defaultFormatter": "ms-python.black-formatter",
+      "editor.tabSize": 4
+    },
+    "[json]": {
+      "editor.defaultFormatter": "vscode.json-language-features",
+      "editor.tabSize": 2
+    },
+    "[jsonc]": {
+      "editor.defaultFormatter": "vscode.json-language-features",
+      "editor.tabSize": 2
+    },
+    "[html]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.tabSize": 2
+    },
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.tabSize": 2
+    },
+    "[css]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.tabSize": 2
+    },
+    "python.languageServer": "Pylance",
+    "python.analysis.typeCheckingMode": "standard",
+    "prettier.tabWidth": 2,
+    "editor.tabSize": 4
+  },
+  "extensions": {
+    "recommendations": [
+      "bierner.github-markdown-preview",
+      "bierner.markdown-checkbox",
+      "bierner.markdown-emoji",
+      "bierner.markdown-footnotes",
+      "bierner.markdown-mermaid",
+      "bierner.markdown-preview-github-styles",
+      "bierner.markdown-yaml-preamble",
+      "codezombiech.gitignore",
+      "dutchigor.json-viewer",
+      "ecmel.vscode-html-css",
+      "magicstack.magicpython",
+      "mhutchie.git-graph",
+      "ms-python.black-formatter",
+      "ms-python.debugpy",
+      "ms-python.flake8",
+      "ms-python.isort",
+      "ms-python.python",
+      "ms-python.vscode-pylance",
+      "tamasfe.even-better-toml",
+      "yzhang.markdown-all-in-one",
+      "zainchen.json",
+      "mohsen1.prettify-json",
+      "syler.sass-indented",
+      "sibiraj-s.vscode-scss-formatter",
+      "redhat.vscode-yaml"
+    ]
+  }
+}

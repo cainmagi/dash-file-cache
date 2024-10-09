@@ -1,0 +1,19 @@
+# Packages needed to run the tests.
+# Switch into a virtual environment
+# pip install -r requirements.txt
+
+dash[diskcache,testing]>=2.7.0
+multiprocess
+werkzeug
+
+# Required by testing
+chromedriver-binary-auto  # Needs to be installed after installing the browser.
+pytest
+pytest-base-url
+pytest-flask
+pytest-html
+pytest-metadata
+py
+pytest-selenium
+pytest-variables
+pytest-xdist

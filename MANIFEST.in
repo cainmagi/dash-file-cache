@@ -1,0 +1,9 @@
+include README.md
+include Changelog.md
+include CONTRIBUTING.md
+include CODE_OF_CONDUCT.md
+include SECURITY.md
+include LICENSE
+include version/__init__.py
+include examples/*.py
+include examples/*.svg

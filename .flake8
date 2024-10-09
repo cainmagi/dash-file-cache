@@ -1,0 +1,18 @@
+[flake8]
+# Recommend matching the black line length (default 88),
+# rather than using the flake8 default of 79:
+max-line-length = 88
+extend-ignore =
+    # See https://github.com/PyCQA/pycodestyle/issues/373
+    E203, E501, W503, E701, E704
+exclude =
+    ./deps
+    ./inst
+    ./man
+    ./R
+    ./src
+    ./.yarn
+    ./node_modules
+    ./dash_file_cache/_imports_.py
+    ./_validate_init.py
+    ./alpha-*.py
