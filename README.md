@@ -78,7 +78,7 @@ app.layout = html.Div(
 @app.callback(
     Output("addr", "children"),
     Input("btn", "n_clicks"),
-    prevent_initial_call=False,
+    prevent_initial_call=True,
 )
 def click_get_image(
     n_clicks: Optional[int],
@@ -123,7 +123,7 @@ Check http://127.0.0.1:8080 to see the following results:
 
 Check the documentation to find more details about the examples and APIs.
 
-To be prepared ...
+https://cainmagi.github.io/dash-file-cache/
 
 ## 4. Contributing
 

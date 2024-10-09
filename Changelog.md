@@ -4,6 +4,12 @@
 
 ## CHANGELOG
 
+### 0.1.1 @ 10/09/2024
+
+#### :floppy_disk: Change
+
+1. Adjust the project information.
+
 ### 0.1.0 @ 10/09/2024
 
 #### :mega: New
