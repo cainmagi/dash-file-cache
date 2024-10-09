@@ -201,6 +201,42 @@ class ServiceData:
             self.__addr, uid, "&download=true" if download else ""
         )
 
+    @staticmethod
+    def _stream_data_to_loader(data: Callable[[], CachedData]) -> Callable[[], IO[Any]]:
+        """Private method of `stream()`
+
+        A post-processor for ensuring that the loaded data is interpreted as a
+        file-like object."""
+
+        def loader() -> IO[Any]:
+            _data = data()
+            if _data["type"] == "path":
+                fobj = open(_data["path"], "rb")
+            else:
+                fobj = _data["data"]
+            fobj.seek(0, io.SEEK_SET)
+            return fobj
+
+        return loader
+
+    @staticmethod
+    def _stream_get_at_closed(
+        cache: CacheAbstract[CachedFileInfo, CachedData], uid: str
+    ) -> Callable[[IO[Any]], None]:
+        """Private method of `stream()`
+
+        Get the `at_closed()` method used by `stream()`."""
+
+        def at_closed(_ctx_fobj: IO[Any]) -> None:
+            """Remove the cache data when the file is not used any more."""
+            if isinstance(_ctx_fobj, (io.StringIO, io.BytesIO)):
+                _ctx_fobj.truncate(0)
+            if isinstance(_ctx_fobj, (io.BufferedIOBase, io.TextIOBase, io.RawIOBase)):
+                _ctx_fobj.close()
+            cache.remove(uid)
+
+        return at_closed
+
     def stream(self, uid: str, download: bool = False) -> flask.Response:
         """Wrap a cached data item with streaming data provider.
 
@@ -237,30 +273,8 @@ class ServiceData:
                 "service: Cannot recognize the type of fobj: " "{0}".format(file_type)
             )
 
-        def data_to_loader(data: Callable[[], CachedData]) -> Callable[[], IO[Any]]:
-            """A post-processor for ensuring that the loaded data is interpreted as a
-            file-like object."""
-
-            def loader() -> IO[Any]:
-                _data = data()
-                if _data["type"] == "path":
-                    fobj = open(_data["path"], "rb")
-                else:
-                    fobj = _data["data"]
-                fobj.seek(0, io.SEEK_SET)
-                return fobj
-
-            return loader
-
-        def at_closed(_ctx_fobj: IO[Any]) -> None:
-            """Remove  the cache data when the file is not used any more."""
-            if isinstance(_ctx_fobj, (io.StringIO, io.BytesIO)):
-                _ctx_fobj.truncate(0)
-            if isinstance(_ctx_fobj, (io.BufferedIOBase, io.TextIOBase, io.RawIOBase)):
-                _ctx_fobj.close()
-            self.cache.remove(uid)
-
         one_time_service = info["one_time_service"]
+        at_closed = self._stream_get_at_closed(cache=self.cache, uid=uid)
 
         def provider(_deferred: Callable[[], IO[AnyStr]]) -> Iterator[AnyStr]:
             """Streaming data provider."""
@@ -274,7 +288,7 @@ class ServiceData:
                     data = _fobj.read(self.__chunk_size)
 
         resp = flask.Response(
-            flask.stream_with_context(provider(data_to_loader(deferred))),
+            flask.stream_with_context(provider(self._stream_data_to_loader(deferred))),
             content_type=(
                 "application/octet-stream" if download else info["content_type"]
             ),
