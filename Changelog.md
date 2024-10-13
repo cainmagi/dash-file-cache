@@ -12,6 +12,7 @@
 2. Fix: Fix typos in the docstrings.
 3. Fix: Make `caches.typehints.Deferred` used by other modules.
 4. Fix: Add `caches.typehints.Deferred` to the `__all__` list of the module.
+5. Fix: Correct the keywords in `pyproject.toml`.
 
 #### :floppy_disk: Change
 

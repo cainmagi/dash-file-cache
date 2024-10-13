@@ -21,14 +21,12 @@ keywords = [
   "dash",
   "plotly-dash",
   "python-dash",
-  "annotation",
-  "annotation-tool",
-  "image-annotation",
-  "labeling",
-  "image-labeling",
-  "object-detection",
-  "deep-learning",
-  "data-visualization",
+  "flask",
+  "service",
+  "cache",
+  "cache-service",
+  "downloader",
+  "file-downloads",
 ]
 license = { text = "MIT License" }
 requires-python = ">=3.8"
