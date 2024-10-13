@@ -10,3 +10,8 @@
 
 1. Create this project.
 2. Upload the first version of the document, containing the tutorial and API docs.
+
+#### :wrench: Fix
+
+1. Fix: The workflow `setup/node` is not compatible with `Yarn@4`, adjust the workflow
+   load `yarn` correctly.
