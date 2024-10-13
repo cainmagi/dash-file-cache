@@ -19,7 +19,6 @@ Shared utilities used for handling the files and requests.
 
 import os
 import sys
-import functools
 import weakref
 import shutil
 import tempfile
@@ -37,12 +36,9 @@ except ImportError:
     from collections.abc import Callable
     from builtins import type as Type
 
-import flask
-
 
 __all__ = (
     "is_in_main_process",
-    "no_cache",
     "remove_temp_dir",
     "TempDir",
     "StreamFinalizer",
@@ -62,15 +58,6 @@ else:
     def is_in_main_process() -> bool:
         """Check whether the current process is the main process."""
         return mproc.current_process().name.casefold() == "mainprocess"
-
-
-def no_cache(func: Callable):
-    def new_func(*args, **kwargs) -> flask.Response:
-        resp = flask.make_response(func(*args, **kwargs))
-        resp.cache_control.no_cache = True
-        return resp
-
-    return functools.update_wrapper(new_func, func)
 
 
 def remove_temp_dir(path: Union[str, os.PathLike]) -> None:

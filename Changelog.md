@@ -4,6 +4,12 @@
 
 ## CHANGELOG
 
+### 0.1.2 @ 10/13/2024
+
+#### :floppy_disk: Change
+
+1. Remove unused `utilities.no_cache`.
+
 ### 0.1.1 @ 10/09/2024
 
 #### :floppy_disk: Change
