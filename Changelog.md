@@ -10,6 +10,10 @@
 
 1. Synchronize the document contents to the newest version.
 
+#### :wrench: Fix
+
+1. Fix: Remove a duplicated part in `/docs/apis/caches/memory/CacheQueue`.
+
 ### 0.1.0 @ 10/13/2024
 
 #### :mega: New
