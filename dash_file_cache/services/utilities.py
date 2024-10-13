@@ -19,22 +19,38 @@ Utilities related to the Flask services.
 
 import functools
 
-from typing import Union
+from typing import Union, Any
 
 try:
     from typing import Callable
 except ImportError:
     from collections.abc import Callable
 
+from typing_extensions import ParamSpec
+
 import dash
 import flask
+
+P = ParamSpec("P")
 
 
 __all__ = ("no_cache", "get_server")
 
 
-def no_cache(func: Callable):
-    def new_func(*args, **kwargs) -> flask.Response:
+def no_cache(func: Callable[P, Any]) -> Callable[P, flask.Response]:
+    """A deocrator adding no_cache property to the flask services.
+
+    This decorator will mark the response of a service by `no_cache`. It is useful
+    when the same value needs to be triggered for multiple times. For example, in some
+    cases, users may need to click a button to download a file. If `no_cache` is not
+    configured, clicking the button for the second time will not trigger any events
+    unless the file to be served is changed.
+
+    In other words, this decorator is used for disabling the cache for some specific
+    services.
+    """
+
+    def new_func(*args: P.args, **kwargs: P.kwargs) -> flask.Response:
         resp = flask.make_response(func(*args, **kwargs))
         resp.cache_control.no_cache = True
         return resp
@@ -43,7 +59,7 @@ def no_cache(func: Callable):
 
 
 def get_server(app: Union[dash.Dash, flask.Flask]) -> flask.Flask:
-    """Get the Flask server instance from the app.
+    """Get the Flask server instance from the application.
 
     Arguments
     ---------
@@ -54,7 +70,7 @@ def get_server(app: Union[dash.Dash, flask.Flask]) -> flask.Flask:
     Returns
     -------
     #1: `Flask`
-        The flask server.
+        The Flask server instance of the given `app`.
     """
     server = app.server if isinstance(app, dash.Dash) else app
     if not isinstance(server, flask.Flask):

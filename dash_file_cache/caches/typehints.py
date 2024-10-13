@@ -46,9 +46,7 @@ __all__ = (
 
 
 class CachedFileInfo(TypedDict):
-    """The string path or the path-like object specifying a file existing on the disk
-    (only information preloaded).
-    """
+    """The metadata of the cached file."""
 
     type: Literal["path", "str", "bytes"]
     """The type os this cached data."""
@@ -92,7 +90,7 @@ class CachedPath(TypedDict):
 
 
 class CachedStringIO(TypedDict):
-    """The data of one cached BytesIO data."""
+    """The data of one cached `StringIO` data."""
 
     type: Literal["str"]
     """The type os this cached data."""
@@ -103,7 +101,7 @@ class CachedStringIO(TypedDict):
 
 
 class CachedBytesIO(TypedDict):
-    """The data of one cached BytesIO data."""
+    """The data of one cached `BytesIO` data."""
 
     type: Literal["bytes"]
     """The type os this cached data."""
@@ -114,3 +112,4 @@ class CachedBytesIO(TypedDict):
 
 
 CachedData = Union[CachedPath, CachedStringIO, CachedBytesIO]
+"""The typehint of the cached data."""

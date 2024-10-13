@@ -105,7 +105,9 @@ class LRUDictView(_Mapping[K, T]):
 
 
 class LRUDict(MutableMapping[K, T]):
-    """'Limit size, evicting the least recently looked-up key when full.
+    """The dictionary powered by the least recently used cache.
+
+    Limit size, evicting the least recently looked-up key when full.
 
     This LRUDict is also ensured to be thread-safe.
 

@@ -34,10 +34,10 @@ import json
 from typing import Union, Any, TypeVar
 
 try:
-    from typing import Mapping, Callable
+    from typing import Mapping
     from typing import Tuple
 except ImportError:
-    from collections.abc import Mapping, Callable
+    from collections.abc import Mapping
     from builtins import tuple as Tuple
 
 from .. import utilities as utils
@@ -198,7 +198,7 @@ class CacheFile(CacheAbstract[th.CachedFileInfo, th.CachedData]):
                 "cache: The value to be dumped is not recognized: {0}".format(data)
             )
 
-    def load(self, key: str) -> Tuple[th.CachedFileInfo, Callable[[], th.CachedData]]:
+    def load(self, key: str) -> Tuple[th.CachedFileInfo, th.Deferred[th.CachedData]]:
         """Load the data by a specific keyword.
 
         Arguments

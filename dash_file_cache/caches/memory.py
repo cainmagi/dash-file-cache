@@ -37,10 +37,10 @@ import weakref
 from typing import Union, Optional, Any, TypeVar
 
 try:
-    from typing import Mapping, Callable
+    from typing import Mapping
     from typing import Tuple, Dict
 except ImportError:
-    from collections.abc import Mapping, Callable
+    from collections.abc import Mapping
     from builtins import tuple as Tuple, dict as Dict
 
 from typing_extensions import ClassVar, Literal, Never
@@ -48,6 +48,7 @@ from typing_extensions import ClassVar, Literal, Never
 import threading
 import queue
 
+from . import typehints as th
 from .lrudict import LRUDict
 from .. import utilities as utils
 from .abstract import CacheAbstract
@@ -137,7 +138,7 @@ class CachePlain(CacheAbstract[Info, Data]):
         """
         self.__cache[key] = (info, data)
 
-    def load(self, key: str) -> Tuple[Info, Callable[[], Data]]:
+    def load(self, key: str) -> Tuple[Info, th.Deferred[Data]]:
         """Load the data by a specific keyword.
 
         Arguments
@@ -260,7 +261,7 @@ class CacheQueue(CacheAbstract[Info, Data]):
     def __init__(
         self,
         cache_size: int,
-        qobj: Union[queue.Queue, Callable[[], queue.Queue], None] = None,
+        qobj: Union[queue.Queue, th.Deferred[queue.Queue], None] = None,
     ) -> None:
         """Initialization.
 
@@ -290,7 +291,7 @@ class CacheQueue(CacheAbstract[Info, Data]):
         if cache_size < 1:
             raise ValueError('cache: The argument "cache_size" needs to be >=1.')
         self.__cache: LRUDict[str, Tuple[Info, Data]] = LRUDict(maxsize=cache_size)
-        self.__qobj_func: Optional[Callable[[], queue.Queue]] = (
+        self.__qobj_func: Optional[th.Deferred[queue.Queue]] = (
             qobj if callable(qobj) else None
         )
         self.__qobj: Optional[queue.Queue] = None if callable(qobj) else qobj
@@ -453,7 +454,7 @@ class CacheQueue(CacheAbstract[Info, Data]):
         """
         self.qobj.put((key, info, data))
 
-    def load(self, key: str) -> Tuple[Info, Callable[[], Data]]:
+    def load(self, key: str) -> Tuple[Info, th.Deferred[Data]]:
         """Load the data by a specific keyword.
 
         Please only use this method in the main process. It will not work in any

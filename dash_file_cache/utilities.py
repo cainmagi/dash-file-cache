@@ -120,7 +120,8 @@ class TempDir:
 class StreamFinalizer(contextlib.ContextDecorator, Generic[_IO]):
     """Finalizer for a stream IO when the stream has been delivered.
 
-    This class will be used by `DownloadProvider`.
+    This class will be used by `ServiceData` for safely maintain the file object while
+    serving the file stream.
     """
 
     def __init__(

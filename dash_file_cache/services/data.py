@@ -110,7 +110,7 @@ class ServiceData:
         one_time_service: bool = False,
         download: bool = False,
     ) -> str:
-        """Register the a new HTML page to the cache.
+        """Register the a new file (a path or a file-like object) to the cache.
 
         Arguments
         ---------
@@ -146,7 +146,7 @@ class ServiceData:
         Returns
         -------
         #1: `str`
-            The HTML URL that would be used for accessing this temporary page.
+            The URL that would be used for accessing this temporarily cached file.
         """
 
         def get_file_info(
@@ -253,7 +253,7 @@ class ServiceData:
         Returns
         -------
         #1: `Response`
-            The flask Response used for forwarding the data to the front-end.
+            The flask Response used for forwarding the data to the frontend.
         """
         if uid not in self.__cache:
             raise FileNotFoundError(

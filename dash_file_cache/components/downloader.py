@@ -80,7 +80,7 @@ class Downloader:
         """
     )
 
-    def __init__(self, id: str, to_addr: Optional[Callable[[str], str]]) -> None:
+    def __init__(self, id: str, to_addr: Optional[Callable[[str], str]] = None) -> None:
         """Initialization.
 
         Initialize the basic property of this component.

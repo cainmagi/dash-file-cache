@@ -24,13 +24,15 @@ import abc
 from typing import Any, Generic, TypeVar
 
 try:
-    from typing import Mapping, Callable
+    from typing import Mapping
     from typing import Tuple
 except ImportError:
-    from collections.abc import Mapping, Callable
+    from collections.abc import Mapping
     from builtins import tuple as Tuple
 
 from typing_extensions import final
+
+from . import typehints as th
 
 
 Info = TypeVar("Info", bound=Mapping[str, Any])
@@ -106,7 +108,7 @@ class CacheAbstract(abc.ABC, Generic[Info, Data]):
 
     @final
     def load_data(self, key: str) -> Data:
-        """Abstract method for loading the data by a specific keyword.
+        """Load the data by a specific keyword.
 
         This method is implemented by fetching and calling `load(key)[1]()`.
 
@@ -125,7 +127,7 @@ class CacheAbstract(abc.ABC, Generic[Info, Data]):
         return self.load(key)[1]()
 
     @abc.abstractmethod
-    def load(self, key: str) -> Tuple[Info, Callable[[], Data]]:
+    def load(self, key: str) -> Tuple[Info, th.Deferred[Data]]:
         """Abstract method for loading the data by a specific keyword.
 
         Arguments
