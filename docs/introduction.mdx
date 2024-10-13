@@ -1,0 +1,174 @@
+---
+id: introduction
+title: Introduction
+description: The introduction of Dash File Cache.
+slug: /
+---
+
+import InlineIcon from "@site/src/components/InlineIcon";
+import octClock16 from "@iconify-icons/octicon/clock-16";
+import octLaw16 from "@iconify-icons/octicon/law-16";
+import octRepoForked16 from "@iconify-icons/octicon/repo-forked-16";
+import octShareAndroid16 from "@iconify-icons/octicon/share-android-16";
+import octiconShield16 from "@iconify-icons/octicon/shield-16";
+
+import DarkButton from "@site/src/components/DarkButton";
+
+# Introduction
+
+Dash File Cache is a Dash extension library.
+
+Utilities for providing convenient methods to serve cached data in Plotly-Dash or Flask.
+
+The data cache enables the following features:
+
+1. Load a server-side file dynamically and send the file to users (the frontend).
+2. Support in-memory files (like io.BytesIO()) or on-disk files (specified by a path).
+3. Support different kinds of cache (single-thread, multi-processing, or file-based).
+4. A customized component helping the dashboard trigger a download event from the server side.
+
+## The minimal example
+
+The following codes show a minimal example of this package
+
+```python
+from typing import Optional
+
+import io
+
+import dash
+from dash import html
+from dash import Input, Output
+
+from dash_file_cache import ServiceData, CachePlain
+
+app = dash.Dash("demo")
+service = ServiceData(CachePlain(1))
+service.serve(app)
+
+app.layout = html.Div(
+    (
+        html.Div(
+            html.P(
+                (
+                    html.Span("Get Image:", style={"paddingRight": "0.5rem"}),
+                    html.Button(id="btn", children="Image"),
+                )
+            )
+        ),
+        html.Div((html.P("Cache address:"), html.P(id="addr"))),
+        html.Div((html.P("Cached Image:"), html.Img(id="cache"))),
+    ),
+)
+
+
+@app.callback(
+    Output("addr", "children"),
+    Input("btn", "n_clicks"),
+    prevent_initial_call=True,
+)
+def click_get_image(
+    n_clicks: Optional[int],
+):
+    if not n_clicks:
+        return dash.no_update
+
+    addr = service.register(
+        io.StringIO(
+            R'<svg height="100" width="100" xmlns="http://www.w3.org/2000/svg">'
+            R'<circle r="45" cx="50" cy="50" fill="red" /></svg>'
+        ),
+        content_type="image/svg+xml",
+        mime_type="image/svg+xml",
+        one_time_service=True,
+    )
+    return addr
+
+
+@app.callback(
+    Output("cache", "src"),
+    Input("addr", "children"),
+    prevent_initial_call=True,
+)
+def update_cache(addr):
+    if not addr:
+        return dash.no_update
+    return addr
+
+
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port="8080", debug=True)
+```
+
+Check http://127.0.0.1:8080 to see the following results:
+
+|                                                                The minimal demo                                                                 |
+| :---------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img alt="demo-minimal" className="ondark-inv" src="https://raw.githubusercontent.com/cainmagi/dash-file-cache/main/display/demo-minimal.png"/> |
+
+## Related materials
+
+Changelog:
+
+<p>
+  {
+    <DarkButton
+      to="https://github.com/cainmagi/dash-file-cache/blob/main/Changelog.md"
+      icon={octClock16}
+    >
+      Changelog
+    </DarkButton>
+  }
+</p>
+
+License of this project:
+
+<p>
+  {
+    <DarkButton
+      to="https://github.com/cainmagi/dash-file-cache/blob/main/LICENSE"
+      icon={octLaw16}
+    >
+      GPL v3 License
+    </DarkButton>
+  }
+</p>
+
+Guidelines for the contributions:
+
+<p>
+  {
+    <DarkButton
+      to="https://github.com/cainmagi/dash-file-cache/blob/main/CONTRIBUTING.md"
+      icon={octRepoForked16}
+    >
+      Contributing
+    </DarkButton>
+  }
+</p>
+
+Contributor covenant code of conduct:
+
+<p>
+  {
+    <DarkButton
+      to="https://github.com/cainmagi/dash-file-cache/blob/main/CODE_OF_CONDUCT.md"
+      icon={octShareAndroid16}
+    >
+      Code of conduct
+    </DarkButton>
+  }
+</p>
+
+Security policy:
+
+<p>
+  {
+    <DarkButton
+      to="https://github.com/cainmagi/dash-file-cache/blob/main/SECURITY.md"
+      icon={octiconShield16}
+    >
+      Security
+    </DarkButton>
+  }
+</p>

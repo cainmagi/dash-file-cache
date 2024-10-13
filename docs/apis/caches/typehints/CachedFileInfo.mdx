@@ -1,0 +1,37 @@
+---
+id: CachedFileInfo
+title: CachedFileInfo
+sidebar_label: CachedFileInfo
+slug: /apis/caches/typehints/CachedFileInfo
+description: The metadata of the cached file.
+---
+
+import APITopBar, { IconObjType } from "@site/src/components/APITopBar";
+
+<APITopBar type="type" source="caches/typehints.py#L48" />
+
+```python
+CachedFileInfo(
+    type: "path" | "str" | "bytes",
+    data_size: int,
+    file_name: str,
+    content_type: str,
+    mime_type: str,
+    one_time_service: bool
+)
+```
+
+`CachedFileInfo` is a `TypedDict`.
+
+`CachedFileInfo` contains the metadata of the cached file.
+
+## Keywords
+
+|      Keywork       |             Type             | <center>Description</center>                                                                                                                                                                       |
+| :----------------: | :--------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|       `type`       | `"path" \| "str" \| "bytes"` | The type os this cached data.                                                                                                                                                                      |
+|    `data_size`     |            `int`             | The length of the cached data, representing the number of bytes or characters. This value is acquired by preloading the file.                                                                      |
+|    `file_name`     |            `str`             | The file name. This value needs to be used when the data is prepared for streaming.                                                                                                                |
+|   `content_type`   |            `str`             | The content-type in the response. An optional encoding can be provided here. For an HTML page, this value should be `"text/html; charset=utf-8"`.                                                  |
+|    `mime_type`     |            `str`             | The mime-type of the response. Typically, it is only determined by the type of the file. For an HTML page, this value should be `"text/html"`.                                                     |
+| `one_time_service` |            `bool`            | A flag. When it is enabled, will use the on-exit mechanism to remove this cached data once it is served for once. This option is recommended if this cached item is used for one-time downloading. |

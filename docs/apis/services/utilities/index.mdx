@@ -1,0 +1,20 @@
+---
+id: index
+title: utilities
+sidebar_label: utilities
+slug: /apis/services/utilities
+description: Utilities related to the Flask services.
+---
+
+import APITopBar, { IconObjType } from "@site/src/components/APITopBar";
+
+<APITopBar type="module" isPrivate={true} source="services/utilities.py" />
+
+Utilities related to the Flask services.
+
+## Functions
+
+|                                     Member                                      | <center>Description</center>                                    |
+| :-----------------------------------------------------------------------------: | :-------------------------------------------------------------- |
+|   [<IconObjType type="func" hasText={true} text="no_cache"/>](./no_cache.mdx)   | A deocrator adding `no_cache` property to the `flask` services. |
+| [<IconObjType type="func" hasText={true} text="get_server"/>](./get_server.mdx) | Get the Flask server instance from the app.                     |

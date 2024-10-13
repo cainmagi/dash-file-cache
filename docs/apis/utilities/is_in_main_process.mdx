@@ -1,0 +1,94 @@
+---
+id: is_in_main_process
+title: is_in_main_process
+sidebar_label: is_in_main_process
+slug: /apis/utilities/is_in_main_process
+description: A function used for checking whether the str ends with a line break.
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import IconLink from "@site/src/components/IconLink";
+import APITopBar, { IconObjType } from "@site/src/components/APITopBar";
+
+<APITopBar type="func" isPrivate={true} source="utilities.py#L56" />
+
+```python
+flag: bool = is_in_main_process()
+```
+
+A function used for checking whether the `str` ends with a line break.
+
+The checking is implemented by
+
+<IconLink href="https://docs.python.org/3/library/multiprocessing.html#multiprocessing.parent_process" />
+
+We use this function to fix the missing final line break problem of `str.splitlines`.
+
+## Arguments
+
+### Returns
+
+| Argument |  Type  | <center>Description</center>                                                                                                                          |
+| :------: | :----: | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
+|  `flag`  | `bool` | If `True`, the current process is the main process. Note that this method is not capable of detecting the process created by the `subprocess` module. |
+
+## Examples
+
+### <IconObjType type="term"/> Test the performance of `multiprocessing`
+
+<Tabs
+  defaultValue="codes"
+  values={[
+    { label: 'Codes', value: 'codes', },
+    { label: 'Results', value: 'results', },
+  ]
+}>
+
+<TabItem value="codes">
+
+```python
+import multiprocessing as mproc
+import subprocess
+from dash_file_cache.utilities import is_in_main_process
+
+
+def test_proc():
+    print("multiprocessing:", is_in_main_process())
+
+
+print("main:", is_in_main_process())
+proc = mproc.Process(target=test_proc)
+proc.start()
+proc.join()
+proc.kill()
+print(
+    "subprocess:",
+    subprocess.check_output(
+        [
+            "python",
+            "-c",
+            (
+                "from dash_file_cache.utilities import is_in_main_process;"
+                "print(is_in_main_process())"
+            ),
+        ],
+        text=True,
+    ),
+)
+```
+
+</TabItem>
+
+<TabItem value="results">
+
+```shell
+main: True
+multiprocessing: False
+subprocess: True
+```
+
+</TabItem>
+
+</Tabs>

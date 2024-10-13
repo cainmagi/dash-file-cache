@@ -1,0 +1,51 @@
+/**
+ * Utilities used for pre-calculating SCSS styles.
+ */
+
+@use "sass:color";
+@use "sass:math";
+@use "sass:map";
+
+/**
+ * Calculate the luminance.
+ * Acquried from
+ * https://stackoverflow.com/a/71982480/8266012
+ * Author: Jakob E
+ * License: CC BY-SA 4.0
+ */
+@function luminance($color) {
+  $rgb: (
+    "r": color.red($color),
+    "g": color.green($color),
+    "b": color.blue($color)
+  );
+
+  @each $channel, $value in $rgb {
+    $value: math.div($value, 255);
+
+    @if $value < 0.03928 {
+      $value: math.div($value, 12.92);
+    } @else {
+      $value: math.div($value + 0.055, 1.055);
+      $value: math.pow($value, 2.4);
+    }
+
+    $rgb: map.merge(
+      $rgb,
+      (
+        $channel: $value
+      )
+    );
+  }
+
+  @return (map.get($rgb, "r") * 0.2126) + (map.get($rgb, "g") * 0.7152) + (map.get($rgb, "b") * 0.0722);
+}
+
+@function contrast-color($color) {
+  $value: luminance($color);
+  @if $value < 0.5 {
+    @return #fff;
+  } @else {
+    @return #000;
+  }
+}

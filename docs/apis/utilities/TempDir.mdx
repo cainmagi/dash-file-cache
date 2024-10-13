@@ -1,0 +1,162 @@
+---
+id: TempDir
+title: TempDir
+sidebar_label: TempDir
+slug: /apis/utilities/TempDir
+description: A handle of a temporary directory.
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import IconLink from "@site/src/components/IconLink";
+import APITopBar, { IconObjType } from "@site/src/components/APITopBar";
+
+<APITopBar type="class" source="utilities.py#L89" />
+
+```python
+tempdir = TempDir(path: str | os.PathLike | None = None)
+```
+
+Temporary directory.
+
+Will remove the entire directory when this instance is destructed.
+
+Acquired from
+
+<IconLink href="https://docs.python.org/3/library/weakref.html#comparing-finalizers-with-del-methods" />
+
+## Arguments
+
+| Argument |             Type             | Required | <center>Description</center>                                                                                                                                            |
+| :------: | :--------------------------: | :------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|  `path`  | `str \| os.PathLike \| None` |          | The path to the temporary directory. If this path is absent, will use [`tempfile.mkdtemp()`<IconExternalLink/>][link-mkdtemp] to create a file in the temporary folder. |
+
+## Methods
+
+### <IconObjType type="method"/> `remove`
+
+```python
+tempdir.remove()
+```
+
+Remove this folder explicitly. If a file has been removed, this method will not take effects.
+
+Note that this method only works if it is called by the main process.
+
+## Properties
+
+### <IconObjType type="param"/> `path`
+
+```python
+path: str = tempdir.path
+```
+
+The path of this temporary folder.
+
+---
+
+### <IconObjType type="param"/> `is_removed`
+
+```python
+is_removed: bool = tempdir.is_removed
+```
+
+Check whether this temporary folder has been removed.
+
+## Examples
+
+### <IconObjType type="term"/> Create a temporary directory in the system's temporary folder
+
+<Tabs
+  defaultValue="codes"
+  values={[
+    { label: 'Codes', value: 'codes', },
+    { label: 'Results', value: 'results', },
+  ]
+}>
+
+<TabItem value="codes">
+
+```python
+import os
+from dash_file_cache.utilities import TempDir
+
+tmp_dir = TempDir()
+file_path = os.path.join(tmp_dir.path, "test.txt")
+with open(file_path, "w") as fobj:
+    fobj.write("test")
+
+print(file_path)
+```
+
+</TabItem>
+
+<TabItem value="results">
+
+Suppose that the script returns
+
+```
+/tmp/tmp6xikuxe7/test.txt
+```
+
+Since the temporary folder will be removed. After running this program, calling
+
+```shell
+ls /tmp/tmp6xikuxe7/test.txt
+```
+
+will report a file missing message.
+
+</TabItem>
+
+</Tabs>
+
+### <IconObjType type="term"/> Create a temporary directory with a specific path
+
+<Tabs
+  defaultValue="codes"
+  values={[
+    { label: 'Codes', value: 'codes', },
+    { label: 'Results', value: 'results', },
+  ]
+}>
+
+<TabItem value="codes">
+
+```python
+import os
+from dash_file_cache.utilities import TempDir
+
+tmp_dir = TempDir("./temp")
+file_path = os.path.join(tmp_dir.path, "test.txt")
+with open(file_path, "w") as fobj:
+    fobj.write("test")
+
+print(file_path)
+```
+
+</TabItem>
+
+<TabItem value="results">
+
+Suppose that the script returns
+
+```
+./temp/test.txt
+```
+
+Since the temporary folder will be removed. After running this program, calling
+
+```shell
+ls ./temp/test.txt
+```
+
+will report a file missing message.
+
+</TabItem>
+
+</Tabs>
+
+[link-mkdtemp]: https://docs.python.org/3/library/tempfile.html#tempfile.mkdtemp

@@ -1,0 +1,42 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+@import "utils";
+@import "base";
+@import "icons";
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #3a36ba;
+  --ifm-color-primary-dark: #3431a7;
+  --ifm-color-primary-darker: #312e9e;
+  --ifm-color-primary-darkest: #292682;
+  --ifm-color-primary-light: #4440c8;
+  --ifm-color-primary-lighter: #4e4aca;
+  --ifm-color-primary-lightest: #6966d2;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.08);
+
+  /* For readability concerns, you should choose a lighter palette in dark mode. */
+  &[data-theme="dark"] {
+    --ifm-color-primary: #c0beef;
+    --ifm-color-primary-dark: #9f9ce7;
+    --ifm-color-primary-darker: #8e8ae2;
+    --ifm-color-primary-darkest: #7d79de;
+    --ifm-color-primary-light: #e1e0f7;
+    --ifm-color-primary-lighter: #f2f2fc;
+    --ifm-color-primary-lightest: #ffffff;
+    --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.code-block-error-line {
+  background-color: #ff000020;
+  display: block;
+  margin: 0 calc(-1 * var(--ifm-pre-padding));
+  padding: 0 var(--ifm-pre-padding);
+  border-left: 3px solid #ff000080;
+}

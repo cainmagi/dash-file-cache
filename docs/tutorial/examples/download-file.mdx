@@ -1,0 +1,193 @@
+---
+id: download-file
+sidebar_label: Download file
+title: Example of the downloader
+description: An example of downloading a file by the Downloader component
+slug: /examples/download-file
+---
+
+import mdiLanguagePython from "@iconify-icons/mdi/language-python";
+
+import { demoURL } from "@site/src/envs/variables";
+import DarkButton from "@site/src/components/DarkButton";
+
+# Example of the downloader
+
+<div className="float-right indark-inv">
+
+|                  Example of using the downloader                  |
+| :---------------------------------------------------------------: |
+| ![Example of the downloader](./static/example-download-file.webp) |
+
+</div>
+
+Check the following link to review the demo of downloading a file.
+
+<p>
+  <DarkButton to={demoURL("download_file.py")} icon={mdiLanguagePython}>
+    {"download_file.py"}
+  </DarkButton>
+</p>
+
+<div className="d-flow-root">
+
+:::info
+
+Running the exmaple requires users to install the optional dependencies by
+
+```shell
+python -m pip install dash[diskcache]
+```
+
+:::
+
+</div>
+
+This small demo only provides one <kbd>Start</kbd> button.
+
+1. By clicking it, a short waiting period will be simulated and the progress of the
+   callback will be displayed.
+2. When the callback gets finalized, the cache type and the address of the file to be
+   downloaded will be displayed and the downloading event will automatically start.
+
+## Define the cache and the downloader
+
+In the initialization method, we provide both the `ServiceData(...)` and the downloader
+component.
+
+```python showLineNumbers
+class Demo:
+    def __init__(self) -> None:
+        # highlight-next-line
+        self.service = ServiceData(CacheFile(None))
+        self.root = os.path.dirname(__file__)
+
+        # highlight-start
+        self.downloader = Downloader(
+            id="download",
+            to_addr=(
+                lambda trigger: (trigger[8:] if trigger.startswith("success-") else "")
+            ),
+        )
+        # highlight-end
+```
+
+To simulate the process of preparing a large file, we store the data with
+`CacheFile(...)` which is compatible with the background callback.
+
+The `downloader` is initialized with two arguments. The first argument is merely the
+component id. The second argument is a function accepting one `str` and returning one
+`str`. This argument is provided to handle the input from the callback:
+
+1. The `downloader` is fired by letting the `downloader.as_output` fired by the input
+   of another component.
+2. However, `downloader.as_output` may not be the address used for accessing the cache.
+   In this example, the `downloader.as_output` accepts an input like
+   
+   ```
+   success-/cache-data?uid=...
+   ```
+
+   where the `success-` represents the status code. This status code may be used for
+   checking whether the data is correctly prepared.
+3. Therefore, we provide `to_addr`. When the `downloader.as_output` is updated, the
+   new value will be pre-processed by `to_addr(value)` and the result is guaranteed
+   to be the address of the cached file or an empty string. By this way, the input
+   value of the downloading event will be sanitized.
+
+## Define the layout
+
+The implementation of the layout contains two buttons and two outputs.
+
+```python showLineNumbers
+html.Div(
+    (
+        html.Div(
+            html.P(
+                (
+                    html.Span(
+                        "Download a image:", style={"paddingRight": "0.5rem"}
+                    ),
+                    html.Button(id="btn", children="Start"),
+                )
+            )
+        ),
+        html.Div((html.P(("Progress:", html.Span(id="prog"))))),
+        html.Div((html.P("Cache type:"), html.P(id="type"))),
+        html.Div((html.P("Cache address:"), html.P(id="addr"))),
+        self.downloader.layout(),
+    ),
+)
+```
+
+Similar to the other examples, here we only use one button with `id=btn` to start the
+callback. The returned value of the callback will be handled by the layout provided by
+the downloader (`self.downloader.layout()`).
+
+## Define the callbacks
+
+In this example, we use the background callback to display the progress. We
+deliberately make the callback wait for a short period to simulate the process of
+preparing the large-size data.
+
+```python showLineNumbers
+@app.callback(
+    Output("type", "children"),
+    Output("addr", "children"),
+    Input("btn", "n_clicks"),
+    background=True,
+    running=[
+        (Output("btn", "disabled"), True, False),
+    ],
+    progress=[Output("prog", "children")],
+    manager=background_callback_manager,
+    prevent_initial_call=True,
+)
+def click_get_image(
+    set_progress: Callable[[Tuple[str]], None], n_clicks: Optional[int]
+):
+    if not n_clicks:
+        return dash.no_update, dash.no_update
+    file_path = os.path.join(self.root, "test_image.svg")
+    n = 10
+    for i in range(n):
+        time.sleep(0.1)
+
+        set_progress(("{0}%".format(int(round((i + 1) / n * 100))),))
+    addr = self.service.register(
+        file_path,
+        # highlight-next-line
+        content_type="image/svg+xml; charset=utf-8",
+        mime_type="image/svg+xml",
+        one_time_service=True,
+        # highlight-next-line
+        download=True,
+    )
+    return str(file_path.__class__.__name__), addr
+```
+
+The second argument is the address of the cached data. This callback has two special
+configurations. The first configuration is the `content_type`, where we provide the
+`charset` of the text file. The second configuration is `download=True`. If the file
+is cached for downloading, this argument should be always specified as `True`.
+
+The returned address will be used to fire another callback subsequently, the definition
+of the next callback is:
+
+```python showLineNumbers
+@app.callback(
+    self.downloader.as_output,
+    Input("addr", "children"),
+    prevent_initial_call=True,
+)
+def trigger_downloading_event(addr):
+    if not addr:
+        return dash.no_update
+    # highlight-next-line
+    return "success-{0}".format(addr)
+```
+
+This callback simulate the process of validating the address. The results will be
+combined by the status code and the cached data address. This value can be accessed
+by other callbacks via `self.downloader.as_input`, and the downloading event will
+accept the file address by using `to_addr(...)` to sanitize this callback value.

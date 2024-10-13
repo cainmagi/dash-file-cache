@@ -1,0 +1,680 @@
+---
+id: LRUDict
+title: LRUDict
+sidebar_label: LRUDict
+slug: /apis/caches/lrudict/LRUDict
+description: The dictionary powered by the least recently used cache.
+---
+
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, { IconObjType } from "@site/src/components/APITopBar";
+
+<APITopBar type="class" source="caches/lrudict.py#L107" />
+
+```python
+ldict = LRUDict(maxsize: int = 10)
+ldict: LRUDict[str, T] = LRUDict(**kwargs: T, maxsize: int = 10)
+ldict: LRUDict[K, T] = LRUDict(data={k1: ..., k2: ...}, maxsize: int = 10)
+ldict: Mapping[str, T] = LRUDict(
+    data={"key1": ..., "key2": ...}, **kwargs: T, maxsize: int = 10
+)
+ldict: Mapping[K, T] = LRUDict(
+    data=((key, val) for (key, val) in ...), maxsize: int = 10
+)
+ldict: Mapping[str, T] = LRUDict(
+    data=((key, val) for (key, val) in ...), **kwargs, maxsize: int = 10
+)
+```
+
+The dictionary powered by the least recently used cache, where `K, T` are generic types.
+
+Limit size, evicting the least recently looked-up key when full.
+
+This LRUDict is also ensured to be thread-safe.
+
+This LRUDict would not allow the implicit releasing of the buffer by default.
+Users need to use [`pop()`](#-pop) method and delete the popped object to release the
+buffer explictly.
+
+## Arguments
+
+|  Argument  |         Type         | Required | <center>Description</center>                                                      |
+| :--------: | :------------------: | :------: | --------------------------------------------------------------------------------- |
+|   `data`   | `{K: T} \| [(K, T)]` |          | The data used for creating the dictionary.                                        |
+| `**kwargs` |         `T`          |          | The data specified in the keyword arguments and used for creating the dictionary. |
+| `maxsize`  |        `int`         |          | The maximum of items (size) of the cache.                                         |
+
+:::tip
+
+Note that the initialization of this dictionary is totally the same as [`dict()`<IconExternalLink/>][link-dict] in Python STL.
+
+:::
+
+## Methods
+
+### <IconObjType type="method"/> `clear`
+
+```python
+ldict.clear()
+```
+
+Remove all items from the dictionary.
+
+---
+
+### <IconObjType type="method"/> `copy`
+
+```python
+new_ldict: LRUDict[K, T] = ldict.copy()
+```
+
+Return a shallow copy of the dictionary.
+
+---
+
+### <IconObjType type="method"/> `fromkeys`
+
+```python
+new_ldict: LRUDict[str, T] = LRUDict.fromkeys(
+    iterable: Iterable[str], value: T | None = None, maxsize: int = 10
+)
+```
+
+Create a new LRU-cached dictionary with keys from iterable and values set to value.
+
+#### Requires
+
+|  Argument  |      Type       |             Required              | <center>Description</center>                                                            |
+| :--------: | :-------------: | :-------------------------------: | --------------------------------------------------------------------------------------- |
+| `iterable` | `Iterable[str]` | <InlineIcon icon={vsiCheckIcon}/> | An iterable object that will be used as the key values of the newly created dictionary. |
+|  `value`   |       `T`       |                                   | The value that will be assigned to all keywords in the created dictionary.              |
+| `maxsize`  |      `int`      |                                   | The size of the cache.                                                                  |
+
+#### Returns
+
+|  Argument   |       Type        | <center>Description</center>                                                                                                         |
+| :---------: | :---------------: | :----------------------------------------------------------------------------------------------------------------------------------- |
+| `new_ldict` | `LRUDict[str, T]` | The newly initialized LRU-cache dictionary, where the key values are provided by `iterable` and all values are specified as `value`. |
+
+---
+
+### <IconObjType type="method"/> `get`
+
+```python
+value: T | None = ldict.get(key: K)
+value: T | S = ldict.get(key: K, default: S)
+```
+
+Return the value for `key` if `key` is in the dictionary, else `default`. If `default`
+is not given, it defaults to `None`, so that this method never raises a `KeyError`.
+
+#### Requires
+
+| Argument  | Type |             Required              | <center>Description</center>                                              |
+| :-------: | :--: | :-------------------------------: | ------------------------------------------------------------------------- |
+|   `key`   | `K`  | <InlineIcon icon={vsiCheckIcon}/> | The keyword to be queried.                                                |
+| `default` | `S`  |                                   | The default value that is used when `key` is not found in the dictionary. |
+
+#### Returns
+
+| Argument |   Type   | <center>Description</center>                               |
+| :------: | :------: | ---------------------------------------------------------- |
+| `value`  | `T \| S` | The queried value or the value specified by `default=...`. |
+
+---
+
+### <IconObjType type="method"/> `setdefault`
+
+```python
+value: T | None = ldict.setdefault(key: K)
+value: T | S = ldict.setdefault(key: K, default: S)
+```
+
+If `key` is in the dictionary, return its value. If not, insert `key` with a value of
+`default` and return `default`. `default` defaults to `None`.
+
+#### Requires
+
+| Argument  | Type |             Required              | <center>Description</center>                                              |
+| :-------: | :--: | :-------------------------------: | ------------------------------------------------------------------------- |
+|   `key`   | `K`  | <InlineIcon icon={vsiCheckIcon}/> | The keyword to be queried.                                                |
+| `default` | `S`  |                                   | The default value that is used when `key` is not found in the dictionary. |
+
+#### Returns
+
+| Argument |   Type   | <center>Description</center>                               |
+| :------: | :------: | ---------------------------------------------------------- |
+| `value`  | `T \| S` | The queried value or the value specified by `default=...`. |
+
+---
+
+### <IconObjType type="method"/> `pop`
+
+```python
+value: T = ldict.pop(key: K)
+value: T | S = ldict.pop(key: K, default: S)
+```
+
+If `key` is in the dictionary, remove it and return its value, else return `default`.
+If `default` is not given and key is not in the dictionary, a `KeyError` is raised.
+
+#### Requires
+
+| Argument  | Type |             Required              | <center>Description</center>                                              |
+| :-------: | :--: | :-------------------------------: | ------------------------------------------------------------------------- |
+|   `key`   | `K`  | <InlineIcon icon={vsiCheckIcon}/> | The keyword to be queried.                                                |
+| `default` | `S`  |                                   | The default value that is used when `key` is not found in the dictionary. |
+
+#### Returns
+
+| Argument |   Type   | <center>Description</center>                                                  |
+| :------: | :------: | ----------------------------------------------------------------------------- |
+| `value`  | `T \| S` | The removed value specified by `key` or the value specified by `default=...`. |
+
+---
+
+### <IconObjType type="method"/> `popitem`
+
+```python
+key, value = ldict.popitem()
+```
+
+Remove and return a `(key, value)` pair from the dictionary. Pairs are returned in
+LIFO order.
+
+`popitem()` is useful to destructively iterate over a dictionary, as often used in
+set algorithms. If the dictionary is empty, calling `popitem()` raises a `KeyError`.
+
+#### Returns
+
+| Argument | Type | <center>Description</center>                  |
+| :------: | :--: | :-------------------------------------------- |
+|  `key`   | `K`  | The keyword of the returned and removed item. |
+| `value`  | `T`  | The value of the returned and removed item.   |
+
+---
+
+### <IconObjType type="method"/> `recent_popitem`
+
+```python
+key, value = ldict.recent_popitem()
+```
+
+The same as [`popitem()`](#-popitem).
+
+#### Returns
+
+| Argument | Type | <center>Description</center>                  |
+| :------: | :--: | :-------------------------------------------- |
+|  `key`   | `K`  | The keyword of the returned and removed item. |
+| `value`  | `T`  | The value of the returned and removed item.   |
+
+---
+
+### <IconObjType type="method"/> `eldest_popitem`
+
+```python
+key, value = ldict.eldest_popitem()
+```
+
+Run [`popitem()`](#-popitem) but pop the eldest item.
+
+#### Returns
+
+| Argument | Type | <center>Description</center>                  |
+| :------: | :--: | :-------------------------------------------- |
+|  `key`   | `K`  | The keyword of the returned and removed item. |
+| `value`  | `T`  | The value of the returned and removed item.   |
+
+---
+
+### <IconObjType type="method"/> `update`
+
+```python
+ldict.update(data, /, **kwargs: T)
+ldict.update(data={k1: ..., k2: ...}, /)
+ldict.update(data={"key1": ..., "key2": ...}, /, **kwargs: T)
+ldict.update(data=((key, val) for (key, val) in ...), /)
+ldict.update(data=((key, val) for (key, val) in ...), /, **kwargs: T)
+```
+
+Update the dictionary with the key/value pairs from other, overwriting existing keys.
+Return `None`.
+
+`update()` accepts either another object with a [`keys()`](#-keys) method (in which
+case [`__getitem__()`](#-__getitem__) is called with every key returned from the
+method). or an iterable of key/value pairs (as tuples or other iterables of length
+two). If keyword arguments are specified, the dictionary is then updated with those
+key/value pairs: `ldict.update(red=1, blue=2)`.
+
+#### Requires
+
+|  Argument  |         Type         | Required | <center>Description</center>                                                      |
+| :--------: | :------------------: | :------: | --------------------------------------------------------------------------------- |
+|   `data`   | `{K: T} \| [(K, T)]` |          | The data used for updating the dictionary.                                        |
+| `**kwargs` |         `T`          |          | The data specified in the keyword arguments and used for creating the dictionary. |
+
+---
+
+### <IconObjType type="method"/> `keys`
+
+```python
+keys: Iterator[K] = ldict.keys()
+```
+
+`LRUDict(...).keys()` is an ordered set-like object providing a view on `LRUDict`'s
+keys.
+
+#### Returns
+
+| Argument |     Type      | <center>Description</center>          |
+| :------: | :-----------: | :------------------------------------ |
+|  `keys`  | `Iterator[K]` | The iterator of all ordered keywords. |
+
+---
+
+### <IconObjType type="method"/> `values`
+
+```python
+values: Iterator[T] = ldict.values()
+```
+
+`LRUDict(...).values()` is an ordered set-like object providing a view on `LRUDict`'s
+values.
+
+#### Returns
+
+| Argument |     Type      | <center>Description</center>        |
+| :------: | :-----------: | :---------------------------------- |
+| `values` | `Iterator[T]` | The iterator of all ordered values. |
+
+---
+
+### <IconObjType type="method"/> `items`
+
+```python
+items: Iterator[Tuple[K, T]] = ldict.items()
+```
+
+`LRUDict(...).items()` is an ordered set-like object providing a view on `LRUDict`'s
+items.
+
+#### Returns
+
+| Argument |          Type           | <center>Description</center>                  |
+| :------: | :---------------------: | :-------------------------------------------- |
+| `items`  | `Iterator[Tuple[K, T]]` | The iterator of all ordered dictionary items. |
+
+---
+
+### <IconObjType type="method"/> `reversed`
+
+```python
+rev_keys: Iterator[K] = ldict.reversed()
+```
+
+Return a reverse iterator over the keys of the dictionary. This is a shortcut for
+`reversed(LRUDict.keys())`.
+
+#### Returns
+
+|  Argument  |     Type      | <center>Description</center>                        |
+| :--------: | :-----------: | :-------------------------------------------------- |
+| `rev_keys` | `Iterator[K]` | The iterator of all keywords in the reversed order. |
+
+---
+
+### <IconObjType type="method"/> `move_to_recent`
+
+```python
+ldict.move_to_recent(key: K)
+```
+
+Move a specific key to the most recent place of the `LRUDict`.
+
+#### Requires
+
+| Argument | Type |             Required              | <center>Description</center>                                                   |
+| :------: | :--: | :-------------------------------: | ------------------------------------------------------------------------------ |
+|  `key`   | `K`  | <InlineIcon icon={vsiCheckIcon}/> | The keyword of the item that will be marked as the recent item by this method. |
+
+---
+
+### <IconObjType type="method"/> `index`
+
+```python
+idx: int = ldict.index(key: K)
+```
+
+Given the keyword, return the priority index of this keyword in the `LRUDict`.
+
+This method will not influence the order of keys.
+
+#### Requires
+
+| Argument | Type |             Required              | <center>Description</center>                        |
+| :------: | :--: | :-------------------------------: | --------------------------------------------------- |
+|  `key`   | `K`  | <InlineIcon icon={vsiCheckIcon}/> | The keyword of the item index that will be queried. |
+
+#### Returns
+
+| Argument | Type  | <center>Description</center>                                                  |
+| :------: | :---: | :---------------------------------------------------------------------------- |
+|  `idx`   | `int` | The index of the queried item. A smaller value represents a more recent item. |
+
+---
+
+### <IconObjType type="method"/> `back_index`
+
+```python
+key: K = ldict.index(idx: int)
+```
+
+Given the priority index, get the corresponding keyword in the `LRUDict`.
+
+This method will not influence the order of keys.
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center>         |
+| :------: | :---: | :-------------------------------: | ------------------------------------ |
+|  `idx`   | `int` | <InlineIcon icon={vsiCheckIcon}/> | The index of the item to be queried. |
+
+#### Returns
+
+| Argument | Type | <center>Description</center>              |
+| :------: | :--: | :---------------------------------------- |
+|  `key`   | `K`  | The keyword of the item queried by `idx`. |
+
+---
+
+### <IconObjType type="method"/> `reverse`
+
+```python
+ldict.reverse()
+```
+
+Revert the priority order of keys in this `LRUDict`.
+
+---
+
+### <IconObjType type="method"/> `rotate`
+
+```python
+ldict.rotate(n: int)
+```
+
+Rotate the priority order of keys in this `LRUDict` by `n` steps to the lower
+priority direction. If n is negative, rotate to the higher priority direction.
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center>                                      |
+| :------: | :---: | :-------------------------------: | ----------------------------------------------------------------- |
+|   `n`    | `int` | <InlineIcon icon={vsiCheckIcon}/> | The number of steps for rotating to the lower priority direction. |
+
+## Properties
+
+### <IconObjType type="param"/> `maxsize`
+
+```python
+maxsize: int = ldict.maxsize
+```
+
+The maximal size of the LRU dictionary cache.
+
+---
+
+### <IconObjType type="param"/> `is_full`
+
+```python
+is_full: bool = ldict.is_full
+```
+
+Whether the dict is full.
+
+---
+
+### <IconObjType type="param"/> `recent`
+
+```python
+key: K = ldict.recent
+```
+
+Get the keyword of the recent item.
+
+---
+
+### <IconObjType type="param"/> `eldest`
+
+```python
+key: K = ldict.eldest
+```
+
+Get the keyword of the eldest item, i.e. the item to be removed if the
+`dict` is full and the new value arrives.
+
+---
+
+### <IconObjType type="param"/> `recent_val`
+
+```python
+value: T = ldict.recent_val
+```
+
+Get the value of the recent item.
+
+---
+
+### <IconObjType type="param"/> `eldest_val`
+
+```python
+value: T = ldict.eldest_val
+```
+
+Get the value of the eldest item, i.e. the item to be removed if the
+`dict` is full and the new value arrives.
+
+---
+
+### <IconObjType type="param"/> `recent_item`
+
+```python
+key, value = ldict.recent_item
+```
+
+Get the recent `(key, val)` item.
+
+---
+
+### <IconObjType type="param"/> `eldest_item`
+
+```python
+key, value = ldict.eldest_item
+```
+
+Get the eldest `(key, val)` item, i.e. the item to be removed if the
+`dict` is full and the new value arrives.
+
+## Operators
+
+### <IconObjType type="op"/> `__len__`
+
+```python
+dict_len: int = len(ldict)
+```
+
+Return the number of items in the dictionary `ldict`.
+
+#### Returns
+
+|  Argument  | Type  | <center>Description</center>           |
+| :--------: | :---: | :------------------------------------- |
+| `dict_len` | `int` | The number of items in the dictionary. |
+
+---
+
+### <IconObjType type="op"/> `__contains__`
+
+```python
+flag: bool = key in ldict
+inv_flag: bool = key not in ldict
+```
+
+Return `True` if `ldict` has a key `key`, else `False`.
+
+#### Requires
+
+| Argument | Type |             Required              | <center>Description</center> |
+| :------: | :--: | :-------------------------------: | ---------------------------- |
+|  `key`   | `K`  | <InlineIcon icon={vsiCheckIcon}/> | The keyword to be validated. |
+
+#### Returns
+
+| Argument |  Type  | <center>Description</center>                               |
+| :------: | :----: | :--------------------------------------------------------- |
+|  `flag`  | `bool` | If `True`, the given `key` value exists in the dictionary. |
+
+---
+
+### <IconObjType type="op"/> `__getitem__`
+
+```python
+value: T = ldict[key]
+```
+
+Return the item of `ldict` with key `key`. Raises a `KeyError` if `key` is not in the
+map. Note that this method will cause the queried item marked as the recent one.
+
+#### Requires
+
+| Argument | Type |             Required              | <center>Description</center>            |
+| :------: | :--: | :-------------------------------: | --------------------------------------- |
+|  `key`   | `K`  | <InlineIcon icon={vsiCheckIcon}/> | The keyword used for quering the value. |
+
+#### Returns
+
+| Argument | Type | <center>Description</center>    |
+| :------: | :--: | :------------------------------ |
+| `value`  | `T`  | The value of the queried `key`. |
+
+---
+
+### <IconObjType type="op"/> `__setitem__`
+
+```python
+value: T
+ldict[key] = value
+```
+
+Set `ldict[key]` to `value`. Note that this method will cause the queried item marked
+as the recent one.
+
+#### Requires
+
+| Argument | Type |             Required              | <center>Description</center>                      |
+| :------: | :--: | :-------------------------------: | ------------------------------------------------- |
+|  `key`   | `K`  | <InlineIcon icon={vsiCheckIcon}/> | The keyword used for quering the value to be set. |
+| `value`  | `T`  | <InlineIcon icon={vsiCheckIcon}/> | The value to be set in the dictionary.            |
+
+---
+
+### <IconObjType type="op"/> `__delitem__`
+
+```python
+del ldict[key]
+```
+
+Remove `ldict[key]` from `ldict`. Raises a `KeyError` if key is not in the map.
+
+#### Requires
+
+| Argument | Type |             Required              | <center>Description</center>                          |
+| :------: | :--: | :-------------------------------: | ----------------------------------------------------- |
+|  `key`   | `K`  | <InlineIcon icon={vsiCheckIcon}/> | The keyword used for quering the value to be removed. |
+
+---
+
+### <IconObjType type="op"/> `__iter__`
+
+```python
+for key in ldict:
+    key: K
+```
+
+Return an iterator over the keys of the dictionary. This is a shortcut for `iter(ldict.keys())`.
+
+---
+
+### <IconObjType type="op"/> `__or__`
+
+```python
+new_ldict: LRUDict[K, T] = ldict | other_dict
+```
+
+Create a new `LRUDict` with the merged keys and values of this `LRUDict` and
+other, which can be an arbitrary mapping type. The values of other take
+priority when the keys are shared.
+
+#### Requires
+
+|   Argument   |      Type       |             Required              | <center>Description</center>                                   |
+| :----------: | :-------------: | :-------------------------------: | -------------------------------------------------------------- |
+| `other_dict` | `Mapping[K, T]` | <InlineIcon icon={vsiCheckIcon}/> | The other dictionary that will override the values in `ldict`. |
+
+#### Returns
+
+|  Argument   |      Type       | <center>Description</center>                        |
+| :---------: | :-------------: | :-------------------------------------------------- |
+| `new_ldict` | `LRUDict[K, T]` | A new `LRUDict` merged by `ldict` and `other_dict`. |
+
+---
+
+### <IconObjType type="op"/> `__ror__`
+
+```python
+new_ldict: LRUDict[K, T] = other_dict | ldict
+```
+
+Create a new `LRUDict` with the merged keys and values of this `LRUDict` and
+other, which can be an arbitrary mapping type. The values of this `LRUDict`
+take priority when the keys are shared.
+
+Note that this method is used only when `other_dict` does not implement the `__or__`
+operator.
+
+#### Requires
+
+|   Argument   |      Type       |             Required              | <center>Description</center>                                          |
+| :----------: | :-------------: | :-------------------------------: | --------------------------------------------------------------------- |
+| `other_dict` | `Mapping[K, T]` | <InlineIcon icon={vsiCheckIcon}/> | The other dictionary that will be overriden by the values in `ldict`. |
+
+#### Returns
+
+|  Argument   |      Type       | <center>Description</center>                        |
+| :---------: | :-------------: | :-------------------------------------------------- |
+| `new_ldict` | `LRUDict[K, T]` | A new `LRUDict` merged by `other_dict` and `ldict`. |
+
+---
+
+### <IconObjType type="op"/> `__ior__`
+
+```python
+ldict |= other_dict
+```
+
+Update this `LRUDict` with keys and values from other, which may be either
+a mapping or an iterable of key/value pairs. The values of other take priority
+when keys are shared.
+
+#### Requires
+
+|   Argument   |      Type       |             Required              | <center>Description</center>                                              |
+| :----------: | :-------------: | :-------------------------------: | ------------------------------------------------------------------------- |
+| `other_dict` | `Mapping[K, T]` | <InlineIcon icon={vsiCheckIcon}/> | The other dictionary that will modify and override the values in `ldict`. |
+
+[link-dict]: https://docs.python.org/3/library/stdtypes.html#dict

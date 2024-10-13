@@ -1,0 +1,227 @@
+---
+id: cache
+sidebar_label: Cache
+title: How to use caches
+description: Use different types of cache according to the usage scenarios.
+slug: /usages/cache
+---
+
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import IconLink from "@site/src/components/IconLink";
+
+# How to use caches
+
+All cache instances are the subtype of `CacheAbstract`. Users can use the following method to determine whether an unknown variable is a cache or not.
+
+```python
+is_a_cache: bool = isinstance(value, dash_file_cache.caches.abstract.CacheAbstract)
+```
+
+The `caches` module are designed for letting users to initialize the `service`. In most cases, users should only use the cache like this:
+
+```python
+import dash_file_cache as dfc
+
+service = dfc.ServiceData(dfc.CachePlain(1))
+```
+
+where `dfc.CachePlain` can be replaced by `dfc.CacheQueue` or `dfc.CacheFile`. The usage scenarios for these caches are different:
+
+|    Cache     | Scenarios                                                                                                                                                                                      |
+| :----------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CachePlain` | The `service` is always accessed by the same process (but can be accessed by different threads). It can be used if the data can be kept in the memory and the background callback is not used. |
+| `CacheQueue` | The `service` needs to be accessed by different processes. When the background callback is used, `CachePlain` will not work but this cache still works. The data is still kept in the memory.  |
+| `CacheFile`  | The `service` needs to be accessed by different processes, and the cached data should be kept in the disk rather than the memory.                                                              |
+
+:::tip
+
+The background callback is a feature of `dash>=2.6`. To find more details about this feature, please check
+
+<IconLink href="https://dash.plotly.com/background-callbacks" />
+
+:::
+
+## Use the cache with service
+
+### `CachePlain`
+
+The usage of the cache should be like this:
+
+```python
+service = dfc.ServiceData(dfc.CachePlain(cache_size: int))
+```
+
+where the size is the maximum of items that can be kept in the cache. If the cache is full, adding a new value to the cache will cause the least-recently-used (LRU) value removed.
+
+### `CacheQueue`
+
+```python
+service = dfc.ServiceData(dfc.CacheQueue(cache_size: int, qobj: queue.Queue))
+```
+
+Different from `CachePlain`, this queue-based cache needs a queue object as the first argument. This queue object should be provided by a [Process Data Manager<IconExternalLink/>][link-manager].
+In many cases, such a manager needs to be initialized guarded by the `if __name__ == "__main__"` check. For example,
+
+```python title="use_queue_with_manager.py" showLineNumbers
+import multiprocessing as mproc
+import dash
+import dash_file_cache as dfc
+
+
+def create_app():
+    app = dash.Dash("demo")
+
+    ctx = mproc.get_context("spawn")
+    man = ctx.Manager()
+    service = dfc.ServiceData(dfc.CacheQueue(1, man.Queue()))
+    service.serve(app)
+    return app
+
+
+if __name__ == "__main__":
+    # highlight-next-line
+    app = create_app()
+    app.run()
+```
+
+where we need to ensure that `create_app()` is used in `if __name__ == "__main__"`. That's because `create_app` needs to initialize a new `Manager()`.
+
+### `CacheFile`
+
+```python
+service = dfc.ServiceData(dfc.CacheFile(cache_dir: str | None = None, chunk_size: int = 1))
+```
+
+The initialization of `CacheFile` takes two arguments.
+
+The first argument `cache_dir` specifies the directory where the cache data is saved. If it is not specified, will use the system temporary folder.
+When the cache is not used anymore (typically, this case happens when the program exists), the folder will be removed.
+
+The second argument is the `chunk_size` when saving or loading data from the cache. Its unit is MB. Users do not need to change it in most cases.
+
+Different from `CacheQueue`, the initialization of `CacheFile` can be put anywhere.
+
+## Use the cache independently
+
+:::warning
+
+For somehow, you should not use these internal features mentioned in the following parts. Note that the best way of using `CacheAbstract` is to work with `ServiceData`.
+
+:::
+
+The abstract class [`CacheAbstract`](../../apis/caches/abstract/CacheAbstract.mdx) provides the following functionalities:
+
+|     Method     | <center>Description</center>                                                                                                                          |
+| :------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     `dump`     | Put a value into the cache. Since some caches may be implemented by LRU scheduling, adding a new value into the cache may cause an old value removed. |
+|     `load`     | Fetch a value from the cache. Running this method will not make the returned value deleted from the cache.                                            |
+|    `remove`    | Explicitly remove a value from the cache. The removed value will not be accessed anymore.                                                             |
+| `__contains__` | Check whether a keyword exists in the cache.                                                                                                          |
+
+Supposes we have a cache, the usage could be like this:
+
+```python title="test_cache.py" showLineNumbers
+import dash_file_cache as dfc
+
+# The following codes are written by the style of Python>=3.12
+def test[S, T](cache: dfc.caches.abstract.CacheAbstract[S, T], info: S, value: T):
+    cache.dump("newval", info=info, value=value)
+    assert "newval" in cache
+    _info, _value_loader = cache.load_info("newval")
+    assert info == _info
+
+    # highlight-start
+    # _value_loader is used for deferred loading for the value.
+    _value = _value_loader()
+    # highlight-end
+    assert value == _value
+```
+
+The above generic function accepts three values. The first one is the cache. The second and the third values
+are `info` and `value`, respectively. When using the cache, both the `info` and `value` will be saved in the cache.
+However, when the value is loaded from the cache, the behavior of the returned values will be different:
+
+```python
+_info, _value_loder = cache.load("newval")
+_info: S
+_value_loader: Callable[[], T]
+```
+
+where `_info` will be loaded instantly. However, `_value_loader` will be a closure that returns the value to be loaded.
+This mechanism allows users to put some light-weighted information in `info` while the large-amount data in `value`,
+and implement the conditional loading by the following steps:
+
+1. Check whether `_info` satisfies some specific conditions.
+2. If the condition is not fulfiled, abort `_value_loader` by not calling it.
+
+### Example of using the [`CachePlain`](../../apis/caches/memory/CachePlain.mdx) independently
+
+Take the following codes as an example:
+
+```python title="CachePlain_and_conditonal_loading.py" showLineNumbers
+import io
+import dash_file_cache as dfc
+
+data = io.BytesIO(" " * 1024)
+len_data = len(data)
+
+cache = dfc.CachePlain()
+cache.dump("newval", info=len_data, value=data)
+
+info, value_loader = cache.load("newval")
+# highlight-next-line
+if isinstance(info, int) and info > 0:
+    print(value_loader())
+```
+
+The loaded `info` is the length of the data. If the length is `0`, will not load the value.
+
+### Example of using the [`CacheQueue`](../../apis/caches/memory/CacheQueue.mdx) independently
+
+Using `CacheQueue` is a little bit tricky, because `CacheQueue` contains some data that should
+not be passed to the sub-processes. Therefore, we specially provide a `mirror` property of `CacheQueue`
+to allows the access of the cache in the subprocess.
+
+```python title="CacheQueue_and_pool.py" showLineNumbers
+import multiprocessing as mproc
+from concurrent.futures import ProcessPoolExecutor
+import dash_file_cache as dfc
+
+if __name__ == "__main__":
+    ctx = mproc.get_context("spawn")
+    man = ctx.Manager()
+
+    cache = dfc.CacheQueue(3, man.Queue())
+    # highlight-next-line
+    cache_m = cache.mirror  # `cache` cannot be directly sent to the process pool.
+
+    with ProcessPoolExecutor(mp_context=ctx) as exe:
+        exe.submit(cache_m.dump, "a", 1, 1).result()
+        exe.submit(cache_m.dump, "b", 2, 2).result()
+        exe.submit(cache_m.dump, "c", 3, 3).result()
+        exe.submit(cache_m.dump, "d", 4, 4).result()
+
+    print(dict(cache.cache.items()))
+    # {'d': (4, 4), 'c': (3, 3), 'b': (2, 2)}
+```
+
+This example pass `cache.mirror` into the process pool. The values are added to the cache in the sub-processes.
+After all, the cached values can be accessed in the main process.
+
+### Do not use [`CacheFile`](../../apis/caches/tempfile/CacheFile.mdx) independently
+
+Different from `CachePlain` and `CacheQueue` which accept arbitrary types of data, `CacheFile` can be only used for
+caching the data that can be saved on the disk. In other words, `CacheFile` itself does not provide the file serialization or deserialization.
+When using this value with `ServiceData`, since users can only register a file path or a file-like object to the cache, the usage of `CacheFile`
+has no difference compared with `CachePlain` or `CacheQueue`. However, in most cases, `CacheFile` cannot be used for replacing `CachePlain` or
+`CacheQueue`.
+
+`CacheFile` has such behaviors:
+
+1. If a path of a file is registered to `CacheFile`, only the path will be registered because we assume that the registered path refers to a
+   file that permanently saved on the disk.
+2. If a file-like object (`StringIO` or `BytesIO`) are registered to `CacheFile`, the file-like object will be saved as a copy in the temporary
+   storage of the cache.
+
+[link-manager]: https://docs.python.org/3/library/multiprocessing.html#managers

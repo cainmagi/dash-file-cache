@@ -1,0 +1,32 @@
+---
+id: index
+title: tempfile
+sidebar_label: tempfile
+slug: /apis/caches/tempfile
+description: The cache implemented by temporary directories.
+---
+
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import APITopBar, { IconObjType } from "@site/src/components/APITopBar";
+
+<APITopBar type="module" source="caches/tempfile.py" />
+
+The cache implemented by temporary directories. Since the data is maintained as files,
+currently, the implementation in this module can be only used for caching the file-like
+objects. The cached files are stored in a temorary directory and can be accessed by
+any programs as long as the files do not reach the end of life.
+
+Note that this module is totally implemented by the Python Standard Library (PySTL).
+It has some limitations. For example,
+
+1. All files will not be deleted until the program exit. The temporary folder is
+   removed only at the exit of the main process.
+2. During the running of the program, the files will not be deleted even if they are
+   manually marked as end-of-life. These files are simply truncated as empty files.
+
+## Classes
+
+|                                     Member                                     | <center>Description</center>                          |
+| :----------------------------------------------------------------------------: | :---------------------------------------------------- |
+| [<IconObjType type="class" hasText={true} text="CacheFile"/>](./CacheFile.mdx) | The cache implementation based on a temporary folder. |

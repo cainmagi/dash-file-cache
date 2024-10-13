@@ -1,0 +1,59 @@
+---
+id: CacheQueueMirror
+title: CacheQueue.CacheQueueMirror
+sidebar_label: CacheQueueMirror
+slug: /apis/caches/memory/CacheQueueMirror
+description: The process-compatible instance of `CacheQueue`.
+---
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, { IconObjType } from "@site/src/components/APITopBar";
+
+<APITopBar type="class" source="caches/memory.py#L206" />
+
+```python
+cache: CacheQueue[Info, Data]
+cache_mirror: CacheQueue.CacheQueueMirror[Info, Data] = cache.mirror
+```
+
+The process-compatible instance of [`CacheQueue`](./CacheQueue.mdx).
+
+Most functionalities of this mirror object are disabled. It only provides the
+[`dump()`](#-dump) method for allowing the sub-process send the data to the cache in
+the main process.
+
+:::danger
+
+Users should not initialize this mirror object by using
+
+```python
+from dash_file_cache.caches.memory import CacheQueue
+
+
+CacheQueue.CacheQueueMirror(...)
+```
+
+In other words, the instances of `CacheQueueMirror` should be always acquired by the
+property [`CacheQueue().mirror`](./CacheQueue#-mirror).
+
+:::
+
+## Methods
+
+### <IconObjType type="method"/> `dump`
+
+```python
+cache.dump(key: str, info: Info, data: Data)
+```
+
+Dump data to the cache.
+
+#### Requires
+
+| Argument |  Type  |             Required              | <center>Description</center>                                                                       |
+| :------: | :----: | :-------------------------------: | -------------------------------------------------------------------------------------------------- |
+|  `key`   | `str`  | <InlineIcon icon={vsiCheckIcon}/> | The key value of this new data. If the `key` exists in the cache, will replace the original value. |
+|  `info`  | `Info` | <InlineIcon icon={vsiCheckIcon}/> | The light-weighted metadata to be dumped into the cache.                                           |
+|  `data`  | `Data` | <InlineIcon icon={vsiCheckIcon}/> | The data to be dumped into the cache.                                                              |

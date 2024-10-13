@@ -1,0 +1,299 @@
+---
+id: CacheQueue
+title: CacheQueue
+sidebar_label: CacheQueue
+slug: /apis/caches/memory/CacheQueue
+description: The cache implementation based on process-sharable Queue().
+---
+
+import useBaseUrl from "@docusaurus/useBaseUrl";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+import vsiTerminalIcon from "@iconify-icons/codicon/terminal";
+
+import DarkButton from "@site/src/components/DarkButton";
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, { IconObjType } from "@site/src/components/APITopBar";
+
+<APITopBar type="class" source="caches/memory.py#L167" />
+
+```python
+cache = CacheQueue[Info, Data](
+    cache_size: int,
+    qobj: queue.Queue | Callable[[], queue.Queue] | None = None
+)
+```
+
+The cache implementation based on process-sharable
+[`Queue()`<IconExternalLink/>][link-queue].
+
+Note that a threading queue can be also used here. But it is recommended to use
+[`multiprocessing.get_context(...).Manager().Queue()`<IconExternalLink/>][link-queue].
+
+This `CacheQueue` instance is designed for caching the data among processes. This
+cache can be accessed by the background callbacks.
+
+Any instance of this class will create a daemon thread if it is in the main
+process. This daemon thread keeps listening to the queue.
+
+Manipulation of this cache is processing-safe.
+
+## Aliases
+
+This class can be acquired by
+
+```python
+import dash_file_cache as dfc
+
+
+dfc.CacheQueue
+dfc.caches.CacheQueue
+dfc.caches.memory.CacheQueue
+```
+
+## Arguments
+
+|   Argument   |                        Type                        |             Required              | <center>Description</center>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| :----------: | :------------------------------------------------: | :-------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cache_size` |                       `int`                        | <InlineIcon icon={vsiCheckIcon}/> | The size of the cache, i.e. the maximum of items in the cache. When the cache is full, adding more data in the cache will cause the eldest data to quit from the cache.                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+|    `qobj`    | `queue.Queue \| Callable[[], queue.Queue] \| None` |                                   | The queue object provided by either of `queue.Queue()` or the `multiprocessing.get_context(...).Manager().Queue()`.<br/>It is used for synchronize the data from the sub-processes to the main process.<br/>If this value is `None`, it means that the property `CacheQueue().qobj` will be implemented later. This property needs to be configured before the first time when this cache is used.<br/>If this value is a function returning a queue. It means that the function will be used for deferred loading. In other words, the queue will be initialized when it is actually used for the first time. |
+
+## Methods
+
+### <IconObjType type="method"/> `is_in`
+
+```python
+flag: bool = cache.is_in(key: str)
+```
+
+Check whether `key` is registered in the cache.
+
+The [`__contains__`](#-__contains__) operator is delegated to this method.
+
+:::danger
+
+Please only use this method in the main process. It will not work in any subprocess.
+
+:::
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center> |
+| :------: | :---: | :-------------------------------: | ---------------------------- |
+|  `key`   | `str` | <InlineIcon icon={vsiCheckIcon}/> | The keyword to be validated. |
+
+#### Returns
+
+| Argument |  Type  | <center>Description</center>                          |
+| :------: | :----: | :---------------------------------------------------- |
+|  `flag`  | `bool` | If `True`, the given `key` value exists in the cache. |
+
+---
+
+### <IconObjType type="method"/> `remove`
+
+```python
+info: Info = cache.remove(key: str)
+```
+
+Remove the info of one cached item from this cache.
+
+Using this method implies that the data in the cache reaches its end of life.
+Only the cache item information will still be usable.
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center>           |
+| :------: | :---: | :-------------------------------: | -------------------------------------- |
+|  `key`   | `str` | <InlineIcon icon={vsiCheckIcon}/> | The keyword of the data to be removed. |
+
+#### Returns
+
+| Argument |  Type  | <center>Description</center>                      |
+| :------: | :----: | :------------------------------------------------ |
+|  `info`  | `Info` | The light-weighted metadata queried in the cache. |
+
+---
+
+### <IconObjType type="method"/> `dump`
+
+```python
+cache.dump(key: str, info: Info, data: Data)
+```
+
+Dump data to the cache.
+
+#### Requires
+
+| Argument |  Type  |             Required              | <center>Description</center>                                                                       |
+| :------: | :----: | :-------------------------------: | -------------------------------------------------------------------------------------------------- |
+|  `key`   | `str`  | <InlineIcon icon={vsiCheckIcon}/> | The key value of this new data. If the `key` exists in the cache, will replace the original value. |
+|  `info`  | `Info` | <InlineIcon icon={vsiCheckIcon}/> | The light-weighted metadata to be dumped into the cache.                                           |
+|  `data`  | `Data` | <InlineIcon icon={vsiCheckIcon}/> | The data to be dumped into the cache.                                                              |
+
+---
+
+### <IconObjType type="method"/> `load`
+
+```python
+info, data_loader = cache.load(key: str)
+```
+
+Load the data by a specific keyword.
+
+:::danger
+
+Please only use this method in the main process. It will not work in any subprocess.
+
+:::
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center>                                                                            |
+| :------: | :---: | :-------------------------------: | ------------------------------------------------------------------------------------------------------- |
+|  `key`   | `str` | <InlineIcon icon={vsiCheckIcon}/> | The key value of to be queried. If `key` does not exist in the cache, will raise a `FileNotFoundError`. |
+
+#### Returns
+
+|   Argument    |         Type         | <center>Description</center>                                                                                                                                            |
+| :-----------: | :------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|    `info`     |        `Info`        | The light-weighted metadata queried in the cache.                                                                                                                       |
+| `data_loader` | `Callable[[], Data]` | The lazy loader for the data. This function implements a deferred loading mechanism allowing that the large-size data to be actually loaded when this method is called. |
+
+---
+
+### <IconObjType type="method"/> `load_info`
+
+```python
+info: Info = cache.load_info(key: str)
+```
+
+Load the metadata by a specific keyword.
+
+This method is implemented by fetching the returned value `load(key)[0]`.
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center>                                                                            |
+| :------: | :---: | :-------------------------------: | ------------------------------------------------------------------------------------------------------- |
+|  `key`   | `str` | <InlineIcon icon={vsiCheckIcon}/> | The key value of to be queried. If `key` does not exist in the cache, will raise a `FileNotFoundError`. |
+
+#### Returns
+
+| Argument |  Type  | <center>Description</center>                      |
+| :------: | :----: | :------------------------------------------------ |
+|  `info`  | `Info` | The light-weighted metadata queried in the cache. |
+
+---
+
+### <IconObjType type="method"/> `load_data`
+
+```python
+data: Data = cache.load_data(key: str)
+```
+
+Load the data by a specific keyword.
+
+This method is implemented by fetching and calling `load(key)[1]()`.
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center>                                                                            |
+| :------: | :---: | :-------------------------------: | ------------------------------------------------------------------------------------------------------- |
+|  `key`   | `str` | <InlineIcon icon={vsiCheckIcon}/> | The key value of to be queried. If `key` does not exist in the cache, will raise a `FileNotFoundError`. |
+
+#### Returns
+
+| Argument |  Type  | <center>Description</center>                                                                                            |
+| :------: | :----: | :---------------------------------------------------------------------------------------------------------------------- |
+|  `data`  | `Data` | The data object queried in the cache. Since `data` may be large, this value should be a file-like object in most cases. |
+
+## Properties
+
+### <IconObjType type="param"/> `qobj`
+
+```python
+qobj: queue.Queue = cache.qobj
+
+new_qobj: queue.Queue | None
+cache.qobj = new_qobj
+```
+
+The queue object used for sharing data among processes.
+
+Set this property with `None` will not take any effect.
+
+---
+
+### <IconObjType type="param"/> `mirror`
+
+```python
+cache_mirror: CacheQueueMirror[Info, Data] = cache.mirror
+```
+
+The queue mirror. This value is a [`CacheQueueMirror`](./CacheQueueMirror.mdx).
+This method should be used when [`dump()`](#-dump) needs to be called in sub-processes.
+
+---
+
+### <IconObjType type="param"/> `cache`
+
+```python
+cache_dict: LRUDict[str, Tuple[Info, Data]] = cache.cache
+```
+
+Get the low-level LRU cache object of this instance. This value is an [`LRUDict`](../lrudict/LRUDict.mdx).
+
+:::danger
+
+Note that this property is not accessible in a sub-process.
+
+:::
+
+## Operators
+
+### <IconObjType type="op"/> `__contains__`
+
+```python
+flag: bool = key in cache
+```
+
+Check whether `key` is registered in the cache.
+
+:::danger
+
+Please only use this operator in the main process. It will not work in any subprocess.
+
+:::
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center> |
+| :------: | :---: | :-------------------------------: | ---------------------------- |
+|  `key`   | `str` | <InlineIcon icon={vsiCheckIcon}/> | The keyword to be validated. |
+
+#### Returns
+
+| Argument |  Type  | <center>Description</center>                          |
+| :------: | :----: | :---------------------------------------------------- |
+|  `flag`  | `bool` | If `True`, the given `key` value exists in the cache. |
+
+[link-queue]: https://docs.python.org/3/library/multiprocessing.html#multiprocessing.managers.SyncManager.Queue
+
+## Examples
+
+See
+
+## Examples
+
+See
+
+<p>
+  <DarkButton
+    to={useBaseUrl("/docs/examples/cache-types")}
+    icon={vsiTerminalIcon}
+  >
+    {"Cache types"}
+  </DarkButton>
+</p>

@@ -1,0 +1,40 @@
+---
+id: index
+title: memory
+sidebar_label: memory
+slug: /apis/caches/memory
+description: The caches implemented by the data exchanges in the memory.
+---
+
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import APITopBar, { IconObjType } from "@site/src/components/APITopBar";
+
+<APITopBar type="module" source="caches/memory.py" />
+
+The caches implemented by the data exchanges in the memory. Since the data is
+maintained in the memory. A very large file (for example, a file exceeding the size of
+the memory) may cause such caches to fail.
+
+A good thing is that such caches can be used for storing any kinds of data. Note that
+sharing data among processes needs the data to support
+[`pickle`<IconExternalLink/>][link-pickle].
+
+This module provides two implementations:
+
+1. [CachePlain](./CachePlain.mdx): Share data within the same process. It will not work
+   if the background callbacks are used.
+2. [CacheQueue](./CacheQueue.mdx): Share data based on a queue shared by multiple
+   processes. It can work among threads or processes. Therefore, it is compatible with
+   the background callbacks.
+
+## Classes
+
+|                                            Member                                            | <center>Description</center>                                                                   |
+| :------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------- |
+|       [<IconObjType type="class" hasText={true} text="CachePlain"/>](./CachePlain.mdx)       | The plain implementation of the cache.                                                         |
+|       [<IconObjType type="class" hasText={true} text="CacheQueue"/>](./CacheQueue.mdx)       | The cache implementation based on process-sharable [`Queue()`<IconExternalLink/>][link-queue]. |
+| [<IconObjType type="class" hasText={true} text="CacheQueueMirror"/>](./CacheQueueMirror.mdx) | The process-compatible instance of [`CacheQueue`](./CacheQueue.mdx).                           |
+
+[link-pickle]: https://docs.python.org/3/library/pickle.html
+[link-queue]: https://docs.python.org/3/library/multiprocessing.html#multiprocessing.managers.SyncManager.Queue

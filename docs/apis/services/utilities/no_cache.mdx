@@ -1,0 +1,91 @@
+---
+id: no_cache
+title: no_cache
+sidebar_label: no_cache
+slug: /apis/services/utilities/no_cache
+description: A deocrator adding no_cache property to the flask services.
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import APITopBar, { IconObjType } from "@site/src/components/APITopBar";
+
+<APITopBar
+  type="func"
+  isPrivate={true}
+  isDecorator={true}
+  source="services/utilities.py#L36"
+/>
+
+```python
+@no_cache
+def func(): ...
+```
+
+A deocrator adding `no_cache` property to the `flask` services.
+
+This decorator will mark the response of a service by `no_cache`. It is useful when the
+same value needs to be triggered for multiple times. For example, in some cases, users
+may need to click a button to download a file. If `no_cache` is not configured, clicking
+the button for the second time will not trigger any events unless the file to be served
+is changed.
+
+In other words, this decorator is used for disabling the cache for some specific
+services.
+
+## Arguments
+
+No argument is needed.
+
+## Examples
+
+### <IconObjType type="term"/> Decorate a file event
+
+<Tabs
+  defaultValue="codes"
+  values={[
+    { label: 'Codes', value: 'codes', },
+    { label: 'Results', value: 'results', },
+  ]
+}>
+
+<TabItem value="codes">
+
+```python
+import io
+import flask
+from dash_file_cache.utilities import no_cache
+
+
+app = flask.Flask("demo")
+
+
+@no_cache
+@app.route("/")
+def index():
+    return flask.send_file(
+        io.BytesIO("test file".encode()),
+        mimetype="text/plain",
+        as_attachment=True,
+        download_name="test.txt",
+    )
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+</TabItem>
+
+<TabItem value="results">
+
+A file named `text.txt` will be downloaded, the file content is
+
+```
+test file
+```
+
+</TabItem>
+
+</Tabs>

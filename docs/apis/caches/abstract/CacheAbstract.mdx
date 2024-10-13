@@ -1,0 +1,186 @@
+---
+id: CacheAbstract
+title: CacheAbstract
+sidebar_label: CacheAbstract
+slug: /apis/caches/abstract/CacheAbstract
+description: The abstract cache class.
+---
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, { IconObjType } from "@site/src/components/APITopBar";
+
+<APITopBar type="class" isAbstract={true} source="caches/abstract.py#L42" />
+
+```python
+cache = CacheAbstract[Info, Data]()
+```
+
+The abstract cache class, where `Info` and `Data` are generic types.
+
+In this project, `Info` and `Data` are configured as
+[`CachedFileInfo`](../typehints/CachedFileInfo.mdx) and
+[`CachedData`](../typehints/CachedData.mdx), respectively.
+
+Derive this base class to provide more implementations of caches.
+
+## Abstract Methods
+
+### <IconObjType type="method"/> `is_in`
+
+```python
+flag: bool = cache.is_in(key: str)
+```
+
+Abstract method checking whether `key` is registered in the cache.
+
+The [`__contains__`](#-__contains__) operator is delegated to this method.
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center> |
+| :------: | :---: | :-------------------------------: | ---------------------------- |
+|  `key`   | `str` | <InlineIcon icon={vsiCheckIcon}/> | The keyword to be validated. |
+
+#### Returns
+
+| Argument |  Type  | <center>Description</center>                          |
+| :------: | :----: | :---------------------------------------------------- |
+|  `flag`  | `bool` | If `True`, the given `key` value exists in the cache. |
+
+---
+
+### <IconObjType type="method"/> `remove`
+
+```python
+info: Info = cache.remove(key: str)
+```
+
+Abstract method for removing the info of one cached item from this cache.
+
+Using this method implies that the data in the cache reaches its end of life.
+Only the cache item information will still be usable.
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center>           |
+| :------: | :---: | :-------------------------------: | -------------------------------------- |
+|  `key`   | `str` | <InlineIcon icon={vsiCheckIcon}/> | The keyword of the data to be removed. |
+
+#### Returns
+
+| Argument |  Type  | <center>Description</center>                      |
+| :------: | :----: | :------------------------------------------------ |
+|  `info`  | `Info` | The light-weighted metadata queried in the cache. |
+
+---
+
+### <IconObjType type="method"/> `dump`
+
+```python
+cache.dump(key: str, info: Info, data: Data)
+```
+
+Abstract method for dumping data to the cache.
+
+#### Requires
+
+| Argument |  Type  |             Required              | <center>Description</center>                                                                       |
+| :------: | :----: | :-------------------------------: | -------------------------------------------------------------------------------------------------- |
+|  `key`   | `str`  | <InlineIcon icon={vsiCheckIcon}/> | The key value of this new data. If the `key` exists in the cache, will replace the original value. |
+|  `info`  | `Info` | <InlineIcon icon={vsiCheckIcon}/> | The light-weighted metadata to be dumped into the cache.                                           |
+|  `data`  | `Data` | <InlineIcon icon={vsiCheckIcon}/> | The data to be dumped into the cache.                                                              |
+
+---
+
+### <IconObjType type="method"/> `load`
+
+```python
+info, data_loader = cache.load(key: str)
+```
+
+Abstract method for loading the data by a specific keyword.
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center>                                                                            |
+| :------: | :---: | :-------------------------------: | ------------------------------------------------------------------------------------------------------- |
+|  `key`   | `str` | <InlineIcon icon={vsiCheckIcon}/> | The key value of to be queried. If `key` does not exist in the cache, will raise a `FileNotFoundError`. |
+
+#### Returns
+
+|   Argument    |         Type         | <center>Description</center>                                                                                                                                            |
+| :-----------: | :------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|    `info`     |        `Info`        | The light-weighted metadata queried in the cache.                                                                                                                       |
+| `data_loader` | `Callable[[], Data]` | The lazy loader for the data. This function implements a deferred loading mechanism allowing that the large-size data to be actually loaded when this method is called. |
+
+## Methods
+
+### <IconObjType type="method"/> `load_info`
+
+```python
+info: Info = cache.load_info(key: str)
+```
+
+Load the metadata by a specific keyword.
+
+This method is implemented by fetching the returned value `load(key)[0]`.
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center>                                                                            |
+| :------: | :---: | :-------------------------------: | ------------------------------------------------------------------------------------------------------- |
+|  `key`   | `str` | <InlineIcon icon={vsiCheckIcon}/> | The key value of to be queried. If `key` does not exist in the cache, will raise a `FileNotFoundError`. |
+
+#### Returns
+
+| Argument |  Type  | <center>Description</center>                      |
+| :------: | :----: | :------------------------------------------------ |
+|  `info`  | `Info` | The light-weighted metadata queried in the cache. |
+
+---
+
+### <IconObjType type="method"/> `load_data`
+
+```python
+data: Data = cache.load_data(key: str)
+```
+
+Load the data by a specific keyword.
+
+This method is implemented by fetching and calling `load(key)[1]()`.
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center>                                                                            |
+| :------: | :---: | :-------------------------------: | ------------------------------------------------------------------------------------------------------- |
+|  `key`   | `str` | <InlineIcon icon={vsiCheckIcon}/> | The key value of to be queried. If `key` does not exist in the cache, will raise a `FileNotFoundError`. |
+
+#### Returns
+
+| Argument |  Type  | <center>Description</center>                                                                                            |
+| :------: | :----: | :---------------------------------------------------------------------------------------------------------------------- |
+|  `data`  | `Data` | The data object queried in the cache. Since `data` may be large, this value should be a file-like object in most cases. |
+
+## Operators
+
+### <IconObjType type="op"/> `__contains__`
+
+```python
+flag: bool = key in cache
+```
+
+Check whether `key` is registered in the cache.
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center> |
+| :------: | :---: | :-------------------------------: | ---------------------------- |
+|  `key`   | `str` | <InlineIcon icon={vsiCheckIcon}/> | The keyword to be validated. |
+
+#### Returns
+
+| Argument |  Type  | <center>Description</center>                          |
+| :------: | :----: | :---------------------------------------------------- |
+|  `flag`  | `bool` | If `True`, the given `key` value exists in the cache. |

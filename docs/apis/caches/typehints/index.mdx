@@ -1,0 +1,23 @@
+---
+id: index
+title: typehints
+sidebar_label: typehints
+slug: /apis/caches/typehints
+description: Extra typehints used by this project.
+---
+
+import APITopBar, { IconObjType } from "@site/src/components/APITopBar";
+
+<APITopBar type="module" source="caches/typehints.py" />
+
+Extra typehints used by this project.
+
+## Typehints
+
+|                                         Member                                          |    Type     | <center>Description</center>                                                    |
+| :-------------------------------------------------------------------------------------: | :---------: | :------------------------------------------------------------------------------ |
+| [<IconObjType type="type" hasText={true} text="CachedFileInfo"/>](./CachedFileInfo.mdx) | `TypedDict` | The metadata of the cached file.                                                |
+|     [<IconObjType type="type" hasText={true} text="CachedPath"/>](./CachedPath.mdx)     | `TypedDict` | The string path or the path-like object specifying a file existing on the disk. |
+| [<IconObjType type="type" hasText={true} text="CachedStringIO"/>](./CachedStringIO.mdx) | `TypedDict` | The data of one cached `StringIO` data.                                         |
+|  [<IconObjType type="type" hasText={true} text="CachedBytesIO"/>](./CachedBytesIO.mdx)  | `TypedDict` | The data of one cached `BytesIO` data.                                          |
+|     [<IconObjType type="type" hasText={true} text="CachedData"/>](./CachedData.mdx)     |   `Union`   | The typehint of the cached data.                                                |

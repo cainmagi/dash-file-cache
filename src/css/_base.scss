@@ -1,0 +1,90 @@
+/**
+ * Basic styles.
+ */
+
+p,
+th,
+td,
+div {
+  &.left {
+    text-align: left;
+  }
+  &.center {
+    text-align: center;
+  }
+  &.right {
+    text-align: right;
+  }
+  &.maxspan {
+    width: max-content;
+  }
+  &.noemph {
+    opacity: 0.75;
+    &:hover,
+    &:focus {
+      opacity: 1;
+    }
+  }
+}
+
+a.noline:hover {
+  text-decoration: var(--ifm-link-decoration);
+  filter: brightness(85%);
+
+  html[data-theme="dark"] & {
+    filter: brightness(125%);
+  }
+}
+
+img {
+  &.ondark-inv {
+    html[data-theme="dark"] & {
+      filter: invert(88.1%) hue-rotate(180deg);
+    }
+  }
+  .indark-inv & {
+    html[data-theme="dark"] & {
+      filter: invert(88.1%) hue-rotate(180deg);
+    }
+  }
+}
+
+.float-right {
+  float: right;
+  width: 50%;
+  margin-left: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+
+  @media screen and (max-width: 996px) {
+    & {
+      margin-left: 0;
+      margin-top: 0;
+      margin-bottom: 0;
+      float: none;
+      width: 100%;
+    }
+  }
+}
+
+.d-flow-root {
+  display: flow-root;
+}
+
+.button.button--index.button--secondary.button--outline {
+  html[data-theme="dark"] & {
+    $btn-fg: contrast-color(#c0beef);
+    &:not(.button--active):not(:hover):not(:active) {
+      color: $btn-fg;
+      border-color: $btn-fg;
+    }
+    &:hover,
+    &:active,
+    &.button--active {
+      $btn-bg: contrast-color($btn-fg);
+      color: $btn-bg;
+      border-color: $btn-fg;
+      background-color: $btn-fg;
+    }
+  }
+}

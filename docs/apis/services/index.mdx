@@ -1,0 +1,27 @@
+---
+id: index
+title: services
+sidebar_label: services
+slug: /apis/services
+description: The flask services.
+---
+
+import APITopBar, { IconObjType } from "@site/src/components/APITopBar";
+
+<APITopBar type="package" source="services/__init__.py" />
+
+The flask services. Bind these services to the Dash/Flask applications to provide
+extra functionalities.
+
+## Modules
+
+|                                        Member                                         | <center>Description</center>              |
+| :-----------------------------------------------------------------------------------: | :---------------------------------------- |
+|      [<IconObjType type="module" hasText={true} text="data"/>](./data/index.mdx)      | Service(s) related to the data exchanges. |
+| [<IconObjType type="module" hasText={true} text="utilities"/>](./utilities/index.mdx) | Utilities related to the Flask services.  |
+
+## Aliases
+
+|                            Member                             | <center>Alias of</center>                                 |
+| :-----------------------------------------------------------: | :-------------------------------------------------------- |
+| <IconObjType type="class" hasText={true} text="ServiceData"/> | [`dfc.services.data.ServiceData`](./data/ServiceData.mdx) |
