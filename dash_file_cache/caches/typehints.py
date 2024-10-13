@@ -37,6 +37,7 @@ gets called, the value will be produced."""
 
 
 __all__ = (
+    "Deferred",
     "CachedFileInfo",
     "CachedPath",
     "CachedStringIO",
