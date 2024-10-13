@@ -4,8 +4,7 @@
   <a href="https://github.com/cainmagi/dash-file-cache/releases/latest"><img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/cainmagi/dash-file-cache?logo=github&sort=semver&style=flat-square"></a>
   <a href="https://github.com/cainmagi/dash-file-cache/releases"><img alt="GitHub all releases" src="https://img.shields.io/github/downloads/cainmagi/dash-file-cache/total?logo=github&style=flat-square"></a>
   <a href="https://github.com/cainmagi/dash-file-cache/blob/main/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/cainmagi/dash-file-cache?style=flat-square&logo=opensourceinitiative&logoColor=white"></a>
-  <a href="https://pypi.org/project/dash-file-cache"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/dash-file-cache?style=flat-square&logo=pypi&logoColor=white&label=pypi"
-  "></a>
+  <a href="https://pypi.org/project/dash-file-cache"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/dash-file-cache?style=flat-square&logo=pypi&logoColor=white&label=pypi"/></a>
 </p>
 <p align="center">
   <a href="https://github.com/cainmagi/dash-file-cache/actions/workflows/python-package.yml"><img alt="GitHub Actions (Build)" src="https://img.shields.io/github/actions/workflow/status/cainmagi/dash-file-cache/python-package.yml?style=flat-square&logo=githubactions&logoColor=white&label=build"></a>
@@ -115,9 +114,9 @@ if __name__ == "__main__":
 
 Check http://127.0.0.1:8080 to see the following results:
 
-| The minimal demo |
-| ---------------- |
-| ![pic-demo-minimal][pic-demo-minimal]
+|           The minimal demo            |
+| :-----------------------------------: |
+| ![pic-demo-minimal][pic-demo-minimal] |
 
 ## 3. Documentation
 

@@ -6,6 +6,10 @@
 
 ### 0.1.2 @ 10/13/2024
 
+#### :wrench: Fix
+
+1. Fix: Correct a typo of the html tags in the readme file.
+
 #### :floppy_disk: Change
 
 1. Remove unused `utilities.no_cache`.
