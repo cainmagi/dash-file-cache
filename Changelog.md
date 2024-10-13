@@ -4,6 +4,12 @@
 
 ## CHANGELOG
 
+### 0.1.2 @ 10/13/2024
+
+#### :mega: New
+
+1. Synchronize the document contents to the newest version.
+
 ### 0.1.0 @ 10/13/2024
 
 #### :mega: New

@@ -1,0 +1,20 @@
+---
+id: Deferred
+title: Deferred
+sidebar_label: Deferred
+slug: /apis/caches/typehints/Deferred
+description: The typehint of a deferred value.
+---
+
+import APITopBar, { IconObjType } from "@site/src/components/APITopBar";
+
+<APITopBar type="type" source="caches/typehints.py#L34" />
+
+```python
+Deferred = Callable[[], T]
+```
+
+`Deferred` is a shortcut of a type composition.
+
+`Deferred` is a deferred value. This value is lazy-loaded by a function. Only when
+this function gets called, the value will be produced.

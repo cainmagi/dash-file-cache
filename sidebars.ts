@@ -118,6 +118,7 @@ const sidebars: SidebarsConfig = {
             id: "apis/caches/typehints/index",
           },
           items: [
+            "apis/caches/typehints/Deferred",
             "apis/caches/typehints/CachedFileInfo",
             "apis/caches/typehints/CachedPath",
             "apis/caches/typehints/CachedStringIO",
@@ -192,7 +193,6 @@ const sidebars: SidebarsConfig = {
       },
       items: [
         "apis/utilities/is_in_main_process",
-        "apis/utilities/no_cache",
         "apis/utilities/remove_temp_dir",
         "apis/utilities/TempDir",
         "apis/utilities/StreamFinalizer",
