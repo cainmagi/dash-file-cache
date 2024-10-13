@@ -16,6 +16,7 @@
 
 1. Remove unused `utilities.no_cache`.
 2. Adjust the ignore list of `pyright`, `black` and `flake8`.
+3. Adjust the typehints of `services.data.ServiceData`.
 
 ### 0.1.1 @ 10/09/2024
 

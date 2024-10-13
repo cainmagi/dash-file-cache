@@ -319,7 +319,7 @@ class ServiceData:
             init_every_request: ClassVar[bool] = False
 
             @no_cache
-            def get(self):
+            def get(self) -> flask.Response:
                 req = flask.request
                 uid = req.args.get("uid", type=str, default="")
                 download = req.args.get("download", type=bool, default=False)
