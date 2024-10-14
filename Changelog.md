@@ -14,7 +14,7 @@
 
 1. Fix: Remove a duplicated part in `/docs/apis/caches/memory/CacheQueue`.
 2. Fix: Correct a typo in the title of `/docs/category/examples`.
-3. Fix: The alias of `Downloader` should be listed in `/docs/apis`
+3. Fix: The alias of `Downloader` should be listed in `/docs/apis`.
 
 ### 0.1.0 @ 10/13/2024
 
