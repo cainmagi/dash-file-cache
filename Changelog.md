@@ -4,7 +4,7 @@
 
 ## CHANGELOG
 
-### 0.1.2 @ 10/13/2024
+### 0.1.2 @ 10/14/2024
 
 #### :mega: New
 
@@ -13,6 +13,7 @@
 #### :wrench: Fix
 
 1. Fix: Remove a duplicated part in `/docs/apis/caches/memory/CacheQueue`.
+2. Fix: Correct a typo in the title of `/docs/category/examples`.
 
 ### 0.1.0 @ 10/13/2024
 

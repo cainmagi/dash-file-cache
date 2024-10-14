@@ -40,7 +40,7 @@ const sidebars: SidebarsConfig = {
       collapsed: false,
       link: {
         type: "generated-index",
-        title: "Usages",
+        title: "Examples",
         slug: "/category/examples",
         description: "Explanations of the example codes.",
       },
