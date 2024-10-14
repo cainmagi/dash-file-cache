@@ -10,6 +10,8 @@ import DarkButton from "@site/src/components/DarkButton";
 import octInfo16 from "@iconify-icons/octicon/info-16";
 import IconExternalLink from "@theme/Icon/ExternalLink";
 
+import { repoURL } from "@site/src/envs/variables";
+
 # Install the package
 
 Run the following command to install the package:
@@ -64,10 +66,7 @@ python -m pytest tests
 The package is only compatible with `python>=3.8`. If you find the package fails to pass the tests, please
 
 <p>
-  <DarkButton
-    to="https://github.com/cainmagi/dash-file-cache/issues/new"
-    icon={octInfo16}
-  >
+  <DarkButton to={repoURL("issues/new/choose")} icon={octInfo16}>
     {"Fire an issue"}
   </DarkButton>
 </p>

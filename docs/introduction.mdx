@@ -12,6 +12,7 @@ import octRepoForked16 from "@iconify-icons/octicon/repo-forked-16";
 import octShareAndroid16 from "@iconify-icons/octicon/share-android-16";
 import octiconShield16 from "@iconify-icons/octicon/shield-16";
 
+import { rawURL, repoURL } from "@site/src/envs/variables";
 import DarkButton from "@site/src/components/DarkButton";
 
 # Introduction
@@ -23,7 +24,7 @@ Utilities for providing convenient methods to serve cached data in Plotly-Dash o
 The data cache enables the following features:
 
 1. Load a server-side file dynamically and send the file to users (the frontend).
-2. Support in-memory files (like io.BytesIO()) or on-disk files (specified by a path).
+2. Support in-memory files (like `io.BytesIO()`) or on-disk files (specified by a path).
 3. Support different kinds of cache (single-thread, multi-processing, or file-based).
 4. A customized component helping the dashboard trigger a download event from the server side.
 
@@ -102,9 +103,9 @@ if __name__ == "__main__":
 
 Check http://127.0.0.1:8080 to see the following results:
 
-|                                                                The minimal demo                                                                 |
-| :---------------------------------------------------------------------------------------------------------------------------------------------: |
-| <img alt="demo-minimal" className="ondark-inv" src="https://raw.githubusercontent.com/cainmagi/dash-file-cache/main/display/demo-minimal.png"/> |
+|                                        The minimal demo                                        |
+| :--------------------------------------------------------------------------------------------: |
+| <img alt="demo-minimal" className="ondark-inv" src={rawURL("main/display/demo-minimal.png")}/> |
 
 ## Related materials
 
@@ -112,10 +113,7 @@ Changelog:
 
 <p>
   {
-    <DarkButton
-      to="https://github.com/cainmagi/dash-file-cache/blob/main/Changelog.md"
-      icon={octClock16}
-    >
+    <DarkButton to={repoURL("blob/main/Changelog.md")} icon={octClock16}>
       Changelog
     </DarkButton>
   }
@@ -125,10 +123,7 @@ License of this project:
 
 <p>
   {
-    <DarkButton
-      to="https://github.com/cainmagi/dash-file-cache/blob/main/LICENSE"
-      icon={octLaw16}
-    >
+    <DarkButton to={repoURL("blob/main/LICENSE")} icon={octLaw16}>
       GPL v3 License
     </DarkButton>
   }
@@ -139,7 +134,7 @@ Guidelines for the contributions:
 <p>
   {
     <DarkButton
-      to="https://github.com/cainmagi/dash-file-cache/blob/main/CONTRIBUTING.md"
+      to={repoURL("blob/main/CONTRIBUTING.md")}
       icon={octRepoForked16}
     >
       Contributing
@@ -152,7 +147,7 @@ Contributor covenant code of conduct:
 <p>
   {
     <DarkButton
-      to="https://github.com/cainmagi/dash-file-cache/blob/main/CODE_OF_CONDUCT.md"
+      to={repoURL("blob/main/CODE_OF_CONDUCT.md")}
       icon={octShareAndroid16}
     >
       Code of conduct
@@ -164,10 +159,7 @@ Security policy:
 
 <p>
   {
-    <DarkButton
-      to="https://github.com/cainmagi/dash-file-cache/blob/main/SECURITY.md"
-      icon={octiconShield16}
-    >
+    <DarkButton to={repoURL("blob/main/SECURITY.md")} icon={octiconShield16}>
       Security
     </DarkButton>
   }

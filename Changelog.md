@@ -16,6 +16,11 @@
 2. Fix: Correct a typo in the title of `/docs/category/examples`.
 3. Fix: The alias of `Downloader` should be listed in `/docs/apis`.
 
+#### :floppy_disk: Change
+
+1. Update the link of "fire an issue".
+2. Make some URLs delegated to `./src/envs`.
+
 ### 0.1.0 @ 10/13/2024
 
 #### :mega: New

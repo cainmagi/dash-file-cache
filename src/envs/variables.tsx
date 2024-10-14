@@ -10,8 +10,18 @@ import InlineIcon from "../components/InlineIcon";
 import mdiDot from "@iconify-icons/mdi/dot";
 
 const variables = {
+  repoURL: "https://github.com/cainmagi/dash-file-cache",
+  rawURL: "https://raw.githubusercontent.com/cainmagi/dash-file-cache",
   sourceURL:
     "https://github.com/cainmagi/dash-file-cache/blob/90214d58c0610976d7af1c583a35f83784c0c80c",
+};
+
+export const rawURL = (url: string): string => {
+  return variables.rawURL + "/" + url;
+};
+
+export const repoURL = (url: string): string => {
+  return variables.repoURL + "/" + url;
 };
 
 export const demoURL = (url: string): string => {
