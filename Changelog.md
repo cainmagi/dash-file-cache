@@ -4,6 +4,12 @@
 
 ## CHANGELOG
 
+### 0.1.2 @ 10/28/2024
+
+#### :floppy_disk: Change
+
+1. Change the configurations of the code formatter.
+
 ### 0.1.2 @ 10/14/2024
 
 #### :mega: New

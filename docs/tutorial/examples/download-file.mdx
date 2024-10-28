@@ -8,7 +8,7 @@ slug: /examples/download-file
 
 import mdiLanguagePython from "@iconify-icons/mdi/language-python";
 
-import { demoURL } from "@site/src/envs/variables";
+import {demoURL} from "@site/src/envs/variables";
 import DarkButton from "@site/src/components/DarkButton";
 
 # Example of the downloader
@@ -83,13 +83,14 @@ component id. The second argument is a function accepting one `str` and returnin
    of another component.
 2. However, `downloader.as_output` may not be the address used for accessing the cache.
    In this example, the `downloader.as_output` accepts an input like
-   
+
    ```
    success-/cache-data?uid=...
    ```
 
    where the `success-` represents the status code. This status code may be used for
    checking whether the data is correctly prepared.
+
 3. Therefore, we provide `to_addr`. When the `downloader.as_output` is updated, the
    new value will be pre-processed by `to_addr(value)` and the result is guaranteed
    to be the address of the cached file or an empty string. By this way, the input
