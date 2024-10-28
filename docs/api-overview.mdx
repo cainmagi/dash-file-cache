@@ -6,11 +6,10 @@ description: The overview of all APIs.
 slug: /apis/
 ---
 
-import ThemedComponent from "@site/src/components/ThemedComponent";
-import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 
-import OverviewLightSVG from "./static/overview-light.svg";
-import OverviewDarkSVG from "./static/overview-dark.svg";
+import ThemedImage from "@theme/ThemedImage";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
 
 # Overview of APIs
 
@@ -18,9 +17,15 @@ import OverviewDarkSVG from "./static/overview-dark.svg";
 
 Utilities for providing convenient methods to serve cached data in Plotly-Dash or Flask.
 
-<p>
-  <ThemedComponent light={<OverviewLightSVG />} dark={<OverviewDarkSVG />} />
-</p>
+<div className="mb-default">
+  <ThemedImage
+    alt="Overview of Dash File Cache"
+    sources={{
+      light: useBaseUrl("/img/overview-light.svg"),
+      dark: useBaseUrl("/img/overview-dark.svg"),
+    }}
+  />
+</div>
 
 This graph shows the high-level overview of the whole package. The most commonly used
 functionalities are the caches like `CachePlain`, the service factory `ServiceData`,

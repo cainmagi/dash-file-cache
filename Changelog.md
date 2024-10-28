@@ -14,6 +14,7 @@
 #### :floppy_disk: Change
 
 1. Change the configurations of the code formatter.
+2. Move figures to the global space.
 
 ### 0.1.2 @ 10/14/2024
 
