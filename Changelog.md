@@ -15,6 +15,7 @@
 
 1. Change the configurations of the code formatter.
 2. Move figures to the global space.
+3. Modify the format of the license from `.md` to `.mdx`.
 
 ### 0.1.2 @ 10/14/2024
 
