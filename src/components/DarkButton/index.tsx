@@ -1,19 +1,19 @@
 /* DarkButton
  * Author: cainmagi@gmail.com
  */
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 
 import Link from "@docusaurus/Link";
-import { IconifyIcon, InlineIcon } from "@iconify/react";
+import {IconifyIcon, InlineIcon} from "@iconify/react";
 // import useThemeContext from '@theme/hooks/useThemeContext'; //docs: https://v2.docusaurus.io/docs/2.0.0-alpha.69/theme-classic#usethemecontext
 /* Refactor:
 The original useThemeContext has been replaced by the new API useColorMode
 https://github.com/facebook/docusaurus/pull/6289
 */
-import { useColorMode } from "@docusaurus/theme-common";
+import {useColorMode} from "@docusaurus/theme-common";
 
 const useButtonTheme = () => {
-  const { colorMode, setColorMode } = useColorMode();
+  const {colorMode, setColorMode} = useColorMode();
   const isDarkTheme = colorMode === "dark";
   if (isDarkTheme) {
     return `button--secondary button--outline`;
@@ -26,6 +26,7 @@ type DarkButtonProps = {
   index?: boolean;
   to: string;
   icon?: IconifyIcon | string;
+  iconVspace?: number;
   children: React.ReactNode;
 };
 
@@ -44,12 +45,17 @@ const DarkButton = (props: DarkButtonProps): JSX.Element => {
 
   const curStyle = useButtonTheme();
 
-  let className;
-  if (props.index) {
-    className = `button ${curStyle} button--lg button--index`;
-  } else {
-    className = `button ${curStyle} button--lg`;
-  }
+  const className = props.index
+    ? `button ${curStyle} button--lg button--index`
+    : `button ${curStyle} button--lg`;
+
+  const typeIconVspace = typeof props.iconVspace;
+  const iconVspace =
+    typeIconVspace === "undefined"
+      ? "-0.3rem"
+      : typeIconVspace === "number" && Math.abs(props.iconVspace) > 0.001
+      ? `${props.iconVspace}rem`
+      : "0";
 
   return (
     <Link key={String(mounted)} className={className} to={props.to}>
@@ -57,7 +63,10 @@ const DarkButton = (props: DarkButtonProps): JSX.Element => {
         <InlineIcon
           icon={props.icon}
           width="1.35rem"
-          style={{ verticalAlign: "-0.3rem", marginRight: "1ex" }}
+          style={{
+            verticalAlign: iconVspace,
+            marginRight: "1ex",
+          }}
         />
       )}
       {props.children}

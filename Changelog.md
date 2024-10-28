@@ -6,6 +6,11 @@
 
 ### 0.1.2 @ 10/28/2024
 
+#### :mega: New
+
+1. Upgrade the document design to the latest version, where the versions of the source
+   codes and examples will be centralized and automatically inferred.
+
 #### :floppy_disk: Change
 
 1. Change the configurations of the code formatter.

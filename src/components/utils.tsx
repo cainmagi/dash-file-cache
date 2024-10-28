@@ -1,4 +1,4 @@
-import Heading, { Props as HeadingProps } from "@theme/Heading";
+import Heading, {Props as HeadingProps} from "@theme/Heading";
 
 type HeadingSafeProps = HeadingProps & JSX.IntrinsicElements["h1"];
 

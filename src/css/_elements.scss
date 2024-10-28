@@ -1,0 +1,82 @@
+input {
+  &[type="text"] {
+    height: 32px;
+    padding: 6px 10px;
+    background-color: var(--ifm-background-color);
+    border: 1px solid var(--ifm-font-color-base);
+    color: var(--ifm-font-color-base);
+    color-scheme: var(--ifm-color-scheme);
+    border-radius: 4px;
+    box-shadow: none;
+    box-sizing: border-box;
+  }
+  &[type="checkbox"] {
+    width: 1.2em;
+    height: 1rem;
+    accent-color: var(--ifm-color-primary);
+    color-scheme: var(--ifm-color-scheme);
+  }
+}
+
+.select {
+  position: relative;
+  min-width: 200px;
+
+  svg {
+    position: relative;
+    right: 24px;
+    margin-bottom: 3px;
+    width: 10px;
+    height: 6px;
+    stroke-width: 2px;
+    stroke: var(--ifm-font-color-base);
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
+  }
+
+  select {
+    -webkit-appearance: none;
+    appearance: none;
+    padding: 7px 40px 7px 12px;
+    width: auto;
+    border: 1px solid var(--ifm-font-color-base);
+    border-radius: 5px;
+    background: var(--ifm-background-color);
+    color: var(--ifm-font-color-base);
+    box-shadow: 0 1px 3px -2px var(--ifm-font-color-base);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 16px;
+    transition: all 150ms ease;
+    &:required:invalid {
+      color: var(--ifm-color-emphasis-500);
+    }
+  }
+
+  option {
+    color: var(--ifm-font-color-base);
+    &[value=""][disabled] {
+      display: none;
+    }
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--ifm-color-primary);
+    box-shadow: 0 0 0 2px #4540c825;
+  }
+
+  &:hover + svg {
+    stroke: var(--ifm-color-primary);
+  }
+
+  svg.sprites {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    user-select: none;
+  }
+}

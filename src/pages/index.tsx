@@ -1,17 +1,17 @@
 import clsx from "clsx";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
-import { HeadingSafe as Heading } from "../components/utils";
-import Translate, { translate } from "@docusaurus/Translate";
+import {HeadingSafe as Heading} from "../components/utils";
+import Translate, {translate} from "@docusaurus/Translate";
 
 import styles from "./index.module.scss";
 
 import DarkButton from "@site/src/components/DarkButton";
 
-import LogoSVG from "../../static/img/logo.svg";
+import LogoSVG from "@site/static/img/logo.svg";
 
 function HomepageHeader() {
-  const { siteConfig } = useDocusaurusContext();
+  const {siteConfig} = useDocusaurusContext();
   return (
     <header className={clsx("hero hero--primary", styles.heroBanner)}>
       <div className="container">
@@ -25,7 +25,7 @@ function HomepageHeader() {
           <Translate
             id="index.sub-title"
             description="Sub-title text in the cover."
-            values={{ subtitle: siteConfig.tagline }}
+            values={{subtitle: siteConfig.tagline}}
           >
             {"{subtitle}"}
           </Translate>
@@ -57,7 +57,7 @@ function HomepageHeader() {
 }
 
 export default function Home(): JSX.Element {
-  const { siteConfig } = useDocusaurusContext();
+  const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
       title={translate(
@@ -66,7 +66,7 @@ export default function Home(): JSX.Element {
           description: "The title displayed in the website head.",
           message: "Hello from {title}",
         },
-        { title: siteConfig.title }
+        {title: siteConfig.title}
       )}
       description={translate(
         {
@@ -74,12 +74,11 @@ export default function Home(): JSX.Element {
           description: "The description displayed in the website head.",
           message: "{descr}",
         },
-        { descr: siteConfig.tagline }
+        {descr: siteConfig.tagline}
       )}
     >
       <HomepageHeader />
-      <main>
-      </main>
+      <main></main>
     </Layout>
   );
 }

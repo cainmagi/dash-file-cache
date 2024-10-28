@@ -71,6 +71,12 @@ img {
   display: flow-root;
 }
 
+.alert {
+  a.button {
+    --ifm-link-decoration: none;
+  }
+}
+
 .button.button--index.button--secondary.button--outline {
   html[data-theme="dark"] & {
     $btn-fg: contrast-color(#c0beef);
@@ -87,4 +93,8 @@ img {
       background-color: $btn-fg;
     }
   }
+}
+
+.button > svg:first-child {
+  margin-left: -1ex;
 }

@@ -1,7 +1,7 @@
 import Link from "@docusaurus/Link";
 import IconExternalLink from "@theme/Icon/ExternalLink";
 
-import { IconifyIcon } from "@iconify/react";
+import {IconifyIcon} from "@iconify/react";
 import InlineIcon from "./InlineIcon";
 
 export type IconLinkProps = {
@@ -14,7 +14,7 @@ export type IconLinkProps = {
  * Render a link with an Icon.
  * @param props - text, href, and icon of the link. If the icon is not specified, will
  *   use the external link icon to render it.
- * @returns The <link/> component with `href` configured. 
+ * @returns The <link/> component with `href` configured.
  */
 const IconLink = (props: IconLinkProps): JSX.Element => {
   const text = props.text || props.href;

@@ -14,7 +14,11 @@ import vsiCheckIcon from "@iconify-icons/codicon/check";
 import InlineIcon from "@site/src/components/InlineIcon";
 import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
 
-<APITopBar type="func" isPrivate={true} source="services/utilities.py#L61" />
+<APITopBar
+  type="func"
+  isPrivate={true}
+  source="services.utilities.get_server"
+/>
 
 ```python
 server: flask.Flask = get_server(app: dash.Dash | flask.Flask)

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { IconifyIcon, InlineIcon } from "@iconify/react";
+import {IconifyIcon, InlineIcon} from "@iconify/react";
 
 export type InlineIconMProps = {
   icon: IconifyIcon | string;
@@ -16,20 +16,28 @@ export type InlineIconMProps = {
  * @returns The <InlineIcon/> component with the customization.
  */
 const InlineIconM = (props: InlineIconMProps): JSX.Element => {
+  const typeVspace = typeof props.vspace;
+  const vspace =
+    typeVspace === "undefined"
+      ? "-0.4rem"
+      : typeVspace === "number" && Math.abs(props.vspace) > 0.001
+      ? `${props.vspace}rem`
+      : "0";
+
   return props.text ? (
     <>
       <InlineIcon
         icon={props.icon}
         width="1.35rem"
-        style={{ verticalAlign: `${props.vspace || -0.4}rem` }}
+        style={{verticalAlign: vspace}}
       />
-      <span style={{ marginLeft: "0.3rem" }}>{props.text}</span>
+      <span style={{marginLeft: "0.3rem"}}>{props.text}</span>
     </>
   ) : (
     <InlineIcon
       icon={props.icon}
       width="1.35rem"
-      style={{ verticalAlign: `${props.vspace || -0.4}rem` }}
+      style={{verticalAlign: vspace}}
     />
   );
 };
