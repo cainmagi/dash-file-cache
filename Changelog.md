@@ -13,6 +13,7 @@
 #### :wrench: Fix
 
 1. Fix: Correct some typos in the English documents.
+2. Fix: Fix a typo causing the broken anchor issue.
 
 ### 0.1.2 @ 10/28/2024
 
