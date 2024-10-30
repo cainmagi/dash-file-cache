@@ -1,0 +1,70 @@
+{
+  "sidebar.tutorial.category.Usages": {
+    "message": "用法",
+    "description": "The label for category Usages in sidebar tutorial"
+  },
+  "sidebar.tutorial.category.Usages.link.generated-index.title": {
+    "message": "学习使用Dash File Cache",
+    "description": "The generated-index page title for category Usages in sidebar tutorial"
+  },
+  "sidebar.tutorial.category.Usages.link.generated-index.description": {
+    "message": "简明教程，纵览此库的各种基础用法。",
+    "description": "The generated-index page description for category Usages in sidebar tutorial"
+  },
+  "sidebar.tutorial.category.Examples": {
+    "message": "范例",
+    "description": "The label for category Examples in sidebar tutorial"
+  },
+  "sidebar.tutorial.category.Examples.link.generated-index.title": {
+    "message": "范例",
+    "description": "The generated-index page title for category Examples in sidebar tutorial"
+  },
+  "sidebar.tutorial.category.Examples.link.generated-index.description": {
+    "message": "简明导览，帮助用户理解范例代码。",
+    "description": "The generated-index page description for category Examples in sidebar tutorial"
+  },
+  "sidebar.apis.category.caches": {
+    "message": "caches",
+    "description": "The label for category caches in sidebar apis"
+  },
+  "sidebar.apis.category.abstract": {
+    "message": "abstract",
+    "description": "The label for category abstract in sidebar apis"
+  },
+  "sidebar.apis.category.lrudict": {
+    "message": "lrudict",
+    "description": "The label for category lrudict in sidebar apis"
+  },
+  "sidebar.apis.category.memory": {
+    "message": "memory",
+    "description": "The label for category memory in sidebar apis"
+  },
+  "sidebar.apis.category.tempfile": {
+    "message": "tempfile",
+    "description": "The label for category tempfile in sidebar apis"
+  },
+  "sidebar.apis.category.typehints": {
+    "message": "typehints",
+    "description": "The label for category typehints in sidebar apis"
+  },
+  "sidebar.apis.category.services": {
+    "message": "services",
+    "description": "The label for category services in sidebar apis"
+  },
+  "sidebar.apis.category.data": {
+    "message": "data",
+    "description": "The label for category data in sidebar apis"
+  },
+  "sidebar.apis.category.utilities": {
+    "message": "utilities",
+    "description": "The label for category utilities in sidebar apis"
+  },
+  "sidebar.apis.category.components": {
+    "message": "components",
+    "description": "The label for category components in sidebar apis"
+  },
+  "sidebar.apis.category.downloader": {
+    "message": "downloader",
+    "description": "The label for category downloader in sidebar apis"
+  }
+}

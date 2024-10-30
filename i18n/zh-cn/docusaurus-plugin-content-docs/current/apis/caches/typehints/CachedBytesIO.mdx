@@ -1,0 +1,29 @@
+---
+id: CachedBytesIO
+title: CachedBytesIO
+sidebar_label: CachedBytesIO
+slug: /apis/caches/typehints/CachedBytesIO
+description: BytesIO数据的缓存格式。
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="type" source="caches.typehints.CachedBytesIO" />
+
+```python
+CachedBytesIO(
+    type: "bytes",
+    data: IO[bytes]
+)
+```
+
+`CachedBytesIO`是`TypedDict`。
+
+`CachedBytesIO`是`BytesIO`数据的缓存格式。
+
+## 关键字 {#keywords}
+
+| 关键字 |    类型     | <center>说明</center>                                           |
+| :----: | :---------: | :-------------------------------------------------------------- |
+| `type` |  `"bytes"`  | 缓存数据的类型。                                                |
+| `data` | `IO[bytes]` | 缓存的二进制数据。该文件的类型可以透过文件名和`mime_type`决定。 |

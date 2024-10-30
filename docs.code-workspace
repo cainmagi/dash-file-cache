@@ -49,7 +49,12 @@
     "npm.packageManager": "yarn",
     "search.exclude": {
       "**/.yarn": true,
-      "**/.pnp.*": true
+      "**/.pnp.*": true,
+      ".git": true,
+      "node_modules": true,
+      "bower_components": true,
+      "versioned_docs": true,
+      "i18n/zh-cn/docusaurus-plugin-content-docs/version-*": true
     },
     "typescript.tsdk": ".yarn/sdks/typescript/lib",
     "typescript.enablePromptUseWorkspaceTsdk": true

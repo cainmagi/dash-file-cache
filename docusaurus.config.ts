@@ -49,7 +49,7 @@ const config: Config = {
   // may want to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: "en",
-    locales: ["en"],
+    locales: ["en", "zh-cn"],
   },
 
   presets: [
@@ -94,6 +94,10 @@ const config: Config = {
           label: "APIs",
         },
         {
+          type: "localeDropdown",
+          position: "right",
+        },
+        {
           href: "https://github.com/cainmagi/dash-file-cache",
           position: "right",
           className: "header-github-link",
@@ -136,7 +140,7 @@ const config: Config = {
               href: "mailto:cainmagi@gmail.com",
             },
             {
-              label: "Github",
+              label: "GitHub",
               href: "https://github.com/cainmagi",
             },
           ],
@@ -149,7 +153,7 @@ const config: Config = {
               href: "https://github.com/aschrc-ait-team",
             },
             {
-              label: "UH MODAL Lib",
+              label: "UH MODAL Lab",
               href: "https://modal.ece.uh.edu/",
             },
             {

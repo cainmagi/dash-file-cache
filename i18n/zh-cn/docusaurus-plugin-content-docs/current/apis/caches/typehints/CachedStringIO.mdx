@@ -1,0 +1,29 @@
+---
+id: CachedStringIO
+title: CachedStringIO
+sidebar_label: CachedStringIO
+slug: /apis/caches/typehints/CachedStringIO
+description: StringIO数据的缓存格式。
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="type" source="caches.typehints.CachedStringIO" />
+
+```python
+CachedStringIO(
+    type: "str",
+    data: IO[str]
+)
+```
+
+`CachedStringIO`是`TypedDict`。
+
+`CachedStringIO`是`StringIO`数据的缓存格式。
+
+## 关键字 {#keywords}
+
+| 关键字 |   类型    | <center>说明</center>                                         |
+| :----: | :-------: | :------------------------------------------------------------ |
+| `type` |  `"str"`  | 缓存数据的类型。                                              |
+| `data` | `IO[str]` | 缓存的文字数据。该文件的类型可以透过文件名和`mime_type`决定。 |

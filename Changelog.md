@@ -6,6 +6,10 @@
 
 ### 0.1.2 @ 10/30/2024
 
+#### :mega: New
+
+1. Finalize the `zh-cn` translation of the document version `0.1.2`.
+
 #### :wrench: Fix
 
 1. Fix: Correct some typos in the English documents.

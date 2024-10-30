@@ -1,0 +1,27 @@
+---
+id: index
+title: utilities
+sidebar_label: utilities
+slug: /apis/utilities
+description: 用来处理文件和请求的共用工具。
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="module" isPrivate={true} source="utilities" />
+
+用来处理文件和请求的共用工具。
+
+## 类 {#classes}
+
+|                                            成员                                            | <center>说明</center>                    |
+| :----------------------------------------------------------------------------------------: | :--------------------------------------- |
+|         [<IconObjType type="class" hasText={true} text="TempDir"/>](./TempDir.mdx)         | 管理临时目录的句柄。                     |
+| [<IconObjType type="class" hasText={true} text="StreamFinalizer"/>](./StreamFinalizer.mdx) | 当流成功推送时，针对流IO调用的终结器。 |
+
+## 函数 {#functions}
+
+|                                              成员                                               | <center>说明</center>          |
+| :---------------------------------------------------------------------------------------------: | :----------------------------- |
+| [<IconObjType type="func" hasText={true} text="is_in_main_process"/>](./is_in_main_process.mdx) | 用来检查当前进程是否是主进程。 |
+|    [<IconObjType type="func" hasText={true} text="remove_temp_dir"/>](./remove_temp_dir.mdx)    | 删除临时目录。                 |

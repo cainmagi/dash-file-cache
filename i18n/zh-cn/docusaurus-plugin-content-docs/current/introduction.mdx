@@ -1,0 +1,166 @@
+---
+id: introduction
+title: 简介
+description: 介绍Dash File Cache。Dash File Cache是Dash的扩展包，用以提供便捷的数据缓存与推送服务。
+slug: /
+---
+
+import InlineIcon from "@site/src/components/InlineIcon";
+import octClock16 from "@iconify-icons/octicon/clock-16";
+import octLaw16 from "@iconify-icons/octicon/law-16";
+import octRepoForked16 from "@iconify-icons/octicon/repo-forked-16";
+import octShareAndroid16 from "@iconify-icons/octicon/share-android-16";
+import octiconShield16 from "@iconify-icons/octicon/shield-16";
+
+import {rawURL, repoURL} from "@site/src/envs/variables";
+import DarkButton from "@site/src/components/DarkButton";
+
+# 简介
+
+Dash File Cache是一个Dash扩展包。
+
+本扩展为Plotly-Dash和Flask、提供了便捷的数据缓存实现，用以将缓存数据推送到客户端。
+
+所实现的数据缓存提供了以下功能：
+
+1. 在服务端、动态地载入文件，并将该文件发送给用户（即前端）。
+2. 支持将缓存数据置于内存中（如`io.BytesIO()`）或硬盘上（透过提供文件路径实现）。
+3. 支持几种不同类型的缓存实现（单进程、多进程、或基于文件的缓存）。
+4. 提供了一个、用来从服务端触发下载事件的定制组件。
+
+## 最小范例 {#the-minimal-example}
+
+接下来的代码展示了本扩展包的一个最小范例。
+
+```python title="example_minimal.py" showLineNumbers
+from typing import Optional
+
+import io
+
+import dash
+from dash import html
+from dash import Input, Output
+
+from dash_file_cache import ServiceData, CachePlain
+
+app = dash.Dash("demo")
+service = ServiceData(CachePlain(1))
+service.serve(app)
+
+app.layout = html.Div(
+    (
+        html.Div(
+            html.P(
+                (
+                    html.Span("Get Image:", style={"paddingRight": "0.5rem"}),
+                    html.Button(id="btn", children="Image"),
+                )
+            )
+        ),
+        html.Div((html.P("Cache address:"), html.P(id="addr"))),
+        html.Div((html.P("Cached Image:"), html.Img(id="cache"))),
+    ),
+)
+
+
+@app.callback(
+    Output("addr", "children"),
+    Input("btn", "n_clicks"),
+    prevent_initial_call=True,
+)
+def click_get_image(
+    n_clicks: Optional[int],
+):
+    if not n_clicks:
+        return dash.no_update
+
+    addr = service.register(
+        io.StringIO(
+            R'<svg height="100" width="100" xmlns="http://www.w3.org/2000/svg">'
+            R'<circle r="45" cx="50" cy="50" fill="red" /></svg>'
+        ),
+        content_type="image/svg+xml",
+        mime_type="image/svg+xml",
+        one_time_service=True,
+    )
+    return addr
+
+
+@app.callback(
+    Output("cache", "src"),
+    Input("addr", "children"),
+    prevent_initial_call=True,
+)
+def update_cache(addr):
+    if not addr:
+        return dash.no_update
+    return addr
+
+
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port="8080", debug=True)
+```
+
+登入 http://127.0.0.1:8080 ，可观察到以下结果：
+
+|                                            最小范例                                            |
+| :--------------------------------------------------------------------------------------------: |
+| <img alt="demo-minimal" className="ondark-inv" src={rawURL("main/display/demo-minimal.png")}/> |
+
+## 相关材料 {#related-materials}
+
+更新手记：
+
+<p>
+  {
+    <DarkButton to={repoURL("blob/main/Changelog.md")} icon={octClock16}>
+      更新手记
+    </DarkButton>
+  }
+</p>
+
+本项目的许可证：
+
+<p>
+  {
+    <DarkButton to={repoURL("blob/main/LICENSE")} icon={octLaw16}>
+      MIT协议
+    </DarkButton>
+  }
+</p>
+
+合作与贡献指南：
+
+<p>
+  {
+    <DarkButton
+      to={repoURL("blob/main/CONTRIBUTING.md")}
+      icon={octRepoForked16}
+    >
+      贡献本项目
+    </DarkButton>
+  }
+</p>
+
+贡献者利用规约：
+
+<p>
+  {
+    <DarkButton
+      to={repoURL("blob/main/CODE_OF_CONDUCT.md")}
+      icon={octShareAndroid16}
+    >
+      利用规约
+    </DarkButton>
+  }
+</p>
+
+漏洞防治与安全策略：
+
+<p>
+  {
+    <DarkButton to={repoURL("blob/main/SECURITY.md")} icon={octiconShield16}>
+      安全策略
+    </DarkButton>
+  }
+</p>

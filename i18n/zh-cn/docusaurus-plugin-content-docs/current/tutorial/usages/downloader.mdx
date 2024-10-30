@@ -1,0 +1,207 @@
+---
+id: downloader
+sidebar_label: 下载
+title: 使用下载组件
+description: 下载组件为透过callback触发下载事件、提供了一种便捷的解决方案。
+slug: /usages/downloader
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import IconLink from "@site/src/components/IconLink";
+
+# 使用下载组件
+
+Dash File Cache提供了一个工厂实例，以实现一个组件，用来透过callback触发下载事件。
+
+```python
+downloader = Downloader(id: str)
+```
+
+以下代码对比了分别使用、和不使用`Downloader`的实现。这两种实现的效果是等价的。
+
+<Tabs
+  defaultValue="with-downloader"
+  values={[
+    { label: '使用Downloader', value: 'with-downloader', },
+    { label: '不使用Downloader', value: 'without-downloader', },
+  ]
+}>
+
+<TabItem value="with-downloader">
+
+```python title="with_downloader.py" showLineNumbers
+import io
+
+from typing import Optional
+
+import dash
+from dash import html
+from dash import Input
+import dash_file_cache as dfc
+
+
+app = dash.Dash("demo")
+service = dfc.ServiceData(dfc.CachePlain(1))
+# highlight-next-line
+service.serve(app)
+
+downloader = dfc.Downloader("downloader", None)
+
+app.layout = html.Div(
+    (
+        html.Div(html.Button(id="btn", children="Download")),
+        downloader.layout()
+    )
+)
+
+downloader.use_callbacks(app)
+
+
+# highlight-next-line
+@app.callback(downloader.as_output, Input("btn", "n_clicks"))
+def a_callback_creating_data(n_clicks: Optional[int]) -> str:
+    if not n_clicks:
+        return dash.no_update
+    address = service.register(
+        fobj=io.StringIO("test file data..."),
+        file_name="test.txt",
+        mime_type="text/plain",
+        one_time_service=True,
+        # highlight-next-line
+        download=True,
+    )
+    return address
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+</TabItem>
+
+<TabItem value="without-downloader">
+
+```python title="without_downloader.py" showLineNumbers
+import io
+
+from typing import Optional
+
+import dash
+from dash import html
+from dash import Output, Input
+import dash_file_cache as dfc
+
+
+app = dash.Dash("demo")
+service = dfc.ServiceData(dfc.CachePlain(1))
+# highlight-next-line
+service.serve(app)
+
+downloader = dfc.Downloader("downloader", None)
+
+app.layout = html.Div(
+    (
+        html.Div(html.Button(id="btn", children="Download")),
+        html.Div(id="downloader-js-finish-trigger", hidden=True),
+        html.Div(id="downloader-js-trigger", hidden=True),
+        html.Div(id="downloader-trigger", hidden=True),
+    )
+)
+
+
+@app.callback(Output("downloader-trigger", "children"), Input("btn", "n_clicks"))
+def a_callback_creating_data(n_clicks: Optional[int]) -> str:
+    if not n_clicks:
+        return dash.no_update
+    address = service.register(
+        fobj=io.StringIO("test file data..."),
+        file_name="test.txt",
+        mime_type="text/plain",
+        one_time_service=True,
+        # highlight-next-line
+        download=True,
+    )
+    return address
+
+
+@app.callback(
+    Output("downloader-js-trigger", "children"),
+    Input("downloader-trigger", "children"),
+    prevent_initial_call=True,
+)
+def download_redirect(trigger: Optional[str]):
+    """Trigger of download link redirection."""
+    if not trigger:
+        return dash.no_update
+    return trigger
+
+
+app.clientside_callback(
+    """
+    function (uri) {
+        var link = document.createElement("a");
+        link.setAttribute("download", "");
+        link.setAttribute("target", "_blank");
+        link.setAttribute("rel", "no-refresh");
+        link.href = uri;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        return "success";
+    }
+    """,
+    Output("downloader-js-finish-trigger", "children"),
+    Input("downloader-js-trigger", "children"),
+    prevent_initial_call=True,
+)
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+</TabItem>
+
+</Tabs>
+
+`Downloader(...)`本身并非一个dash组件。不过，调用`downloader.layout()`，将会返回与该实例相
+关的dash组件。而`download.use_callbacks(app)`提供了用来触发下载事件的callback。
+
+使用`Downloader(...)`可分为三步：
+
+1. 透过`downloader.layout()`将组件添加到dashboard。
+2. 透过`downloader.use_callbacks(app)`绑定callback。该callback将来自`dash.Output(...)`的
+   信号转换成了下载事件。
+3. 定义一个callback，其中输出信号定义为`downloader.as_output`。该输出信号的值需要定义为将要
+   下载的文件对应的地址。这样的地址可以透过`ServiceData(...)`获取。
+
+将文件注册到缓存时，切记指定`file_name`的值，并且标记`download=True`。这些设置确保了动态
+生成的链接必定会触发下载事件，且所下载文件的文件名由`file_name`指定。
+
+## 使用该下载组件的理由 {#why-should-we-use-this-downloader}
+
+直到`dash==2.18.x`，[`dcc.Download`<IconExternalLink/>][link-dccdownload]组件仍然直接作
+用于字节串数据。这意味着，数据会先在服务端编码成字节串、然后发送到客户端（浏览器）。换言之，
+[`dcc.send_file`<IconExternalLink/>][link-dash-sendfile]不是
+[`flask.send_file`<IconExternalLink/>][link-flask-sendfile]的
+封装。它无法处理大体量的数据。
+
+相对地，这里提供的解决方案，是基于
+[`flask.stream_with_context`<IconExternalLink/>][link-flask-streamwcon]的。下载组件直接
+访问可下载数据的地址、从而确保了与任意大小的数据兼容。
+
+:::info
+
+在未来的版本，将会提供一个真正的纯dash组件，其接口与
+[`dcc.Download`<IconExternalLink/>][link-dccdownload]和本扩展包的`ServiceData`
+完全兼容。该组件会作为下载文件的最终解决方案。
+
+:::
+
+[link-dccdownload]:https://dash.plotly.com/dash-core-components/download
+[link-dash-sendfile]:https://github.com/plotly/dash/issues/1874
+[link-flask-sendfile]:https://flask.palletsprojects.com/zh-cn/main/api/#flask.send_file
+[link-flask-streamwcon]:https://flask.palletsprojects.com/zh-cn/main/api/#flask.stream_with_context

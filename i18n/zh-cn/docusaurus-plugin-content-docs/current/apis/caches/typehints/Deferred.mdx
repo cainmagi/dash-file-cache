@@ -1,0 +1,19 @@
+---
+id: Deferred
+title: Deferred
+sidebar_label: Deferred
+slug: /apis/caches/typehints/Deferred
+description: 延迟值的类型标记。
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="type" source="caches.typehints.Deferred" />
+
+```python
+Deferred = Callable[[], T]
+```
+
+`Deferred`是一个复合类型的简写。
+
+`Deferred`用来标记一个延迟值。该值由函数懒加载。只有调用该函数的时候，值才会实际生成。

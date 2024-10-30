@@ -1,0 +1,53 @@
+---
+id: api-overview
+sidebar_label: 总览
+title: API总览
+description: 对所有API的总览。
+slug: /apis/
+---
+
+import useBaseUrl from "@docusaurus/useBaseUrl";
+
+import ThemedImage from "@theme/ThemedImage";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+# API 总览
+
+<APITopBar type="package" source="." />
+
+本扩展为Plotly-Dash和Flask、提供了便捷的数据缓存实现，用以将缓存数据推送到客户端。
+
+<div className="mb-default">
+  <ThemedImage
+    alt="Overview of Dash File Cache"
+    sources={{
+      light: useBaseUrl("/img/overview-light.svg"),
+      dark: useBaseUrl("/img/overview-dark.svg"),
+    }}
+  />
+</div>
+
+上图展示了
+上图展示了整个模块的大体结构。其中，核心功能包括：诸如
+[`CachePlain`](./apis/caches/memory/CachePlain.mdx)的缓存类、用以提供服务的工厂类
+[`ServiceData`](./apis/services/data/ServiceData.mdx)，
+以及[`Downloader`](./apis/components/downloader/Downloader.mdx)组件。
+
+## 模块 {#modules}
+
+|                                             成员                                              | <center>说明</center>          |
+| :-------------------------------------------------------------------------------------------: | :----------------------------- |
+|     [<IconObjType type="package" hasText={true} text="caches"/>](./apis/caches/index.mdx)     | 缓存的实现。                   |
+|   [<IconObjType type="package" hasText={true} text="services"/>](./apis/services/index.mdx)   | Flask服务。                   |
+| [<IconObjType type="package" hasText={true} text="components"/>](./apis/components/index.mdx) | 本模块包提供的额外组件。       |
+|  [<IconObjType type="module" hasText={true} text="utilities"/>](./apis/utilities/index.mdx)   | 用来处理文件和请求的共用工具。 |
+
+## 别名 {#aliases}
+
+|                             成员                              | <center>别名取自</center>                                                             |
+| :-----------------------------------------------------------: | :------------------------------------------------------------------------------------ |
+| <IconObjType type="class" hasText={true} text="CachePlain"/>  | [`dfc.caches.memory.CachePlain`](./apis/caches/memory/CachePlain.mdx)                 |
+| <IconObjType type="class" hasText={true} text="CacheQueue"/>  | [`dfc.caches.memory.CacheQueue`](./apis/caches/memory/CacheQueue.mdx)                 |
+|  <IconObjType type="class" hasText={true} text="CacheFile"/>  | [`dfc.caches.tempfile.CacheFile`](./apis/caches/tempfile/CacheFile.mdx)               |
+| <IconObjType type="class" hasText={true} text="ServiceData"/> | [`dfc.services.data.ServiceData`](./apis/services/data/ServiceData.mdx)               |
+| <IconObjType type="class" hasText={true} text="Downloader"/>  | [`dfc.components.downloader.Downloader`](./apis/components/downloader/Downloader.mdx) |

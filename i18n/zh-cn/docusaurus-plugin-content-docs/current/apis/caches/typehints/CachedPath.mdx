@@ -1,0 +1,31 @@
+---
+id: CachedPath
+title: CachedPath
+sidebar_label: CachedPath
+slug: /apis/caches/typehints/CachedPath
+description: 用来标记硬盘上存在的某文件的字符串路径、或类路径对象。
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="type" source="caches.typehints.CachedPath" />
+
+```python
+CachedPath(
+    type: "path",
+    path: str | os.PathLike
+)
+```
+
+`CachedPath`是`TypedDict`。
+
+该值可以封装一个字符串路径或类路径对象，用来指向存在于硬盘上的某文件。
+
+在此情境下，`CachedPath`只存储路径。文件则总是通过二进制数据流的形式读取。
+
+## 关键字 {#keywords}
+
+| 关键字 |         类型         | <center>说明</center>            |
+| :-----: | :------------------: | :-------------------------------------- |
+| `type`  |       `"path"`       | 缓存数据的类型。          |
+| `path`  | `str \| os.PathLike` | 指向硬盘上所存文件的路径。 |

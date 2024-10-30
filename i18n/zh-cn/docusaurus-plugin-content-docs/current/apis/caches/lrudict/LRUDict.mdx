@@ -1,0 +1,668 @@
+---
+id: LRUDict
+title: LRUDict
+sidebar_label: LRUDict
+slug: /apis/caches/lrudict/LRUDict
+description: 由最久未使用缓存驱动的字典。
+---
+
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="class" source="caches.lrudict.LRUDict" />
+
+```python
+ldict = LRUDict(maxsize: int = 10)
+ldict: LRUDict[str, T] = LRUDict(**kwargs: T, maxsize: int = 10)
+ldict: LRUDict[K, T] = LRUDict(data={k1: ..., k2: ...}, maxsize: int = 10)
+ldict: Mapping[str, T] = LRUDict(
+    data={"key1": ..., "key2": ...}, **kwargs: T, maxsize: int = 10
+)
+ldict: Mapping[K, T] = LRUDict(
+    data=((key, val) for (key, val) in ...), maxsize: int = 10
+)
+ldict: Mapping[str, T] = LRUDict(
+    data=((key, val) for (key, val) in ...), **kwargs, maxsize: int = 10
+)
+```
+
+由最久未使用（least recently used, LRU）缓存驱动的字典，其中`K, T`均是泛型。
+
+容量限定，当缓存字典填满时，检查最久未查询过的关键字，并清出该数据。
+
+`LRUDict`同时是保证线程安全的。
+
+该`LRUDict`在默认情况下，不会隐式地释放缓冲区内的数据。要确保数据从内存中删除，需要显示地调用
+[`pop()`](#-pop)方法，并针对返回值进行删除。
+
+## 参数 {#arguments}
+
+|    参数    |         类型         | 必选 | <center>说明</center>                      |
+| :--------: | :------------------: | :--: | ------------------------------------------ |
+|   `data`   | `{K: T} \| [(K, T)]` |      | 用来创建字典的数据。                       |
+| `**kwargs` |         `T`          |      | 在关键字参数中指定的，用来创建字典的数据。 |
+| `maxsize`  |        `int`         |      | 缓存最多可容纳的数据条目数（即缓存容量）。 |
+
+:::tip
+
+注意，该字典的初始化用法与Python标准库中[`dict()`<IconExternalLink/>][link-dict]完全一致。
+
+:::
+
+## 方法 {#methods}
+
+### <IconObjType type="method"/> `clear` {#-clear}
+
+```python
+ldict.clear()
+```
+
+移除字典中的所有元素。
+
+---
+
+### <IconObjType type="method"/> `copy` {#-copy}
+
+```python
+new_ldict: LRUDict[K, T] = ldict.copy()
+```
+
+返回原字典的浅拷贝。
+
+---
+
+### <IconObjType type="method"/> `fromkeys` {#-fromkeys}
+
+```python
+new_ldict: LRUDict[str, T] = LRUDict.fromkeys(
+    iterable: Iterable[str], value: T | None = None, maxsize: int = 10
+)
+```
+
+使用来自可遍历对象的关键字`iterable`创建一个新LRU缓存字典，并将键值设为`value`。
+
+#### 输入 {#requires}
+
+|    参数    |      类型       |               必选                | <center>说明</center>                      |
+| :--------: | :-------------: | :-------------------------------: | ------------------------------------------ |
+| `iterable` | `Iterable[str]` | <InlineIcon icon={vsiCheckIcon}/> | 可遍历对象，用来为新创建的字典提供关键字。 |
+|  `value`   |       `T`       |                                   | 共同值，新创建字典的所有关键字都赋以该值。 |
+| `maxsize`  |      `int`      |                                   | 缓存的容量。                               |
+
+#### 输出 {#returns}
+
+|    参数     |       类型        | <center>说明</center>                                                            |
+| :---------: | :---------------: | :------------------------------------------------------------------------------- |
+| `new_ldict` | `LRUDict[str, T]` | 新初始化的LRU缓存字典，其中，关键字提供自`iterable`，且所有值均设置为`value`。 |
+
+---
+
+### <IconObjType type="method"/> `get` {#-get}
+
+```python
+value: T | None = ldict.get(key: K)
+value: T | S = ldict.get(key: K, default: S)
+```
+
+如果`key`存在于字典中则返回`key`的值，否则返回`default`。 如果`default`未给出则默认
+为`None`，因而此方法绝不会抛出`KeyError`。
+
+#### 输入 {#requires-1}
+
+|   参数    | 类型 |               必选                | <center>说明</center>            |
+| :-------: | :--: | :-------------------------------: | -------------------------------- |
+|   `key`   | `K`  | <InlineIcon icon={vsiCheckIcon}/> | 用来查询的关键字。               |
+| `default` | `S`  |                                   | 当关键字未找到时，返回的默认值。 |
+
+#### 输出 {#returns-1}
+
+|  参数   |   类型   | <center>说明</center>                   |
+| :-----: | :------: | --------------------------------------- |
+| `value` | `T \| S` | 查询到的值，或由`default=...`指定的值。 |
+
+---
+
+### <IconObjType type="method"/> `setdefault` {#-setdefault}
+
+```python
+value: T | None = ldict.setdefault(key: K)
+value: T | S = ldict.setdefault(key: K, default: S)
+```
+
+如果字典存在关键字`key`，返回它的值。如果不存在，插入值为`default`的关键字`key`，并返
+回`default`。`default`默认为`None`。
+
+#### 输入 {#requires-2}
+
+|   参数    | 类型 |               必选                | <center>说明</center>            |
+| :-------: | :--: | :-------------------------------: | -------------------------------- |
+|   `key`   | `K`  | <InlineIcon icon={vsiCheckIcon}/> | 用来查询的关键字。               |
+| `default` | `S`  |                                   | 当关键字未找到时，返回的默认值。 |
+
+#### 输出 {#returns-2}
+
+|  参数   |   类型   | <center>说明</center>                   |
+| :-----: | :------: | --------------------------------------- |
+| `value` | `T \| S` | 查询到的值，或由`default=...`指定的值。 |
+
+---
+
+### <IconObjType type="method"/> `pop` {#-pop}
+
+```python
+value: T = ldict.pop(key: K)
+value: T | S = ldict.pop(key: K, default: S)
+```
+
+如果`key`存在于字典中则将其移除并返回其值，否则返回`default`。 如果`default`未给出
+且`key`不存在于字典中，则会抛出`KeyError`。
+
+#### 输入 {#requires-3}
+
+|   参数    | 类型 |               必选                | <center>说明</center>            |
+| :-------: | :--: | :-------------------------------: | -------------------------------- |
+|   `key`   | `K`  | <InlineIcon icon={vsiCheckIcon}/> | 用来查询的关键字。               |
+| `default` | `S`  |                                   | 当关键字未找到时，返回的默认值。 |
+
+#### 输出 {#returns-3}
+
+|  参数   |   类型   | <center>说明</center>                   |
+| :-----: | :------: | --------------------------------------- |
+| `value` | `T \| S` | 查询到的值，或由`default=...`指定的值。 |
+
+---
+
+### <IconObjType type="method"/> `popitem` {#-popitem}
+
+```python
+key, value = ldict.popitem()
+```
+
+从字典中移除并返回一个（关键字，值）对。 键值对会按后进先出的顺序被返回。
+
+`popitem()`适用于对字典进行消耗性的迭代，这在集合算法中经常被使用。 如果字典为空，
+调用`popitem()`将抛出`KeyError`。
+
+#### 输出 {#returns-4}
+
+|  参数   | 类型 | <center>说明</center>  |
+| :-----: | :--: | :--------------------- |
+|  `key`  | `K`  | 所返回键值对的关键字。 |
+| `value` | `T`  | 所返回键值对的值。     |
+
+---
+
+### <IconObjType type="method"/> `recent_popitem` {#-recent_popitem}
+
+```python
+key, value = ldict.recent_popitem()
+```
+
+与[`popitem()`](#-popitem)相同。
+
+#### 输出 {#returns-5}
+
+|  参数   | 类型 | <center>说明</center>  |
+| :-----: | :--: | :--------------------- |
+|  `key`  | `K`  | 所返回键值对的关键字。 |
+| `value` | `T`  | 所返回键值对的值。     |
+
+---
+
+### <IconObjType type="method"/> `eldest_popitem` {#-eldest_popitem}
+
+```python
+key, value = ldict.eldest_popitem()
+```
+
+运行[`popitem()`](#-popitem)但弹出的是最久未使用的键值对（先进先出）。
+
+#### 输出 {#returns-6}
+
+|  参数   | 类型 | <center>说明</center>  |
+| :-----: | :--: | :--------------------- |
+|  `key`  | `K`  | 所返回键值对的关键字。 |
+| `value` | `T`  | 所返回键值对的值。     |
+
+---
+
+### <IconObjType type="method"/> `update` {#-update}
+
+```python
+ldict.update(data, /, **kwargs: T)
+ldict.update(data={k1: ..., k2: ...}, /)
+ldict.update(data={"key1": ..., "key2": ...}, /, **kwargs: T)
+ldict.update(data=((key, val) for (key, val) in ...), /)
+ldict.update(data=((key, val) for (key, val) in ...), /, **kwargs: T)
+```
+
+使用来自`data`的键/值对更新字典，覆盖原有的关键字。 返回`None`。
+
+`update()`可接收一个实现了[`keys()`](#-keys)方法的对象（且，每次取得该方法返回的`key`，该
+关键字都会传递到[`__getitem__()`](#-__getitem__)）。亦可接收一个可遍历对象，其中每次遍历
+取得的是一个键值对（例如，每次遍历返回两个值的元组、或其他可遍历对象）。设若指定了关键字参数，
+则字典随后会按照、形如接下来例子的键值对参数得到更新：`ldict.update(red=1, blue=2)`.
+
+#### 输入 {#requires-4}
+
+|    参数    |         类型         | 必选 | <center>说明</center>                    |
+| :--------: | :------------------: | :--: | ---------------------------------------- |
+|   `data`   | `{K: T} \| [(K, T)]` |      | 用来更新字典的数据。                     |
+| `**kwargs` |         `T`          |      | 用来更新字典的、由关键字参数指定的数据。 |
+
+---
+
+### <IconObjType type="method"/> `keys` {#-keys}
+
+```python
+keys: Iterator[K] = ldict.keys()
+```
+
+`LRUDict(...).keys()`是一个有序类集合对象，用来提供`LRUDict`的关键字视图。
+
+#### 输出 {#returns-7}
+
+|  参数  |     类型      | <center>说明</center>        |
+| :----: | :-----------: | :--------------------------- |
+| `keys` | `Iterator[K]` | 针对所有关键字的有序迭代器。 |
+
+---
+
+### <IconObjType type="method"/> `values` {#-values}
+
+```python
+values: Iterator[T] = ldict.values()
+```
+
+`LRUDict(...).values()`是一个有序类集合对象，用来提供`LRUDict`的值视图。
+
+#### 输出 {#returns-8}
+
+|   参数   |     类型      | <center>说明</center>    |
+| :------: | :-----------: | :----------------------- |
+| `values` | `Iterator[T]` | 针对所有值的有序迭代器。 |
+
+---
+
+### <IconObjType type="method"/> `items` {#-items}
+
+```python
+items: Iterator[Tuple[K, T]] = ldict.items()
+```
+
+`LRUDict(...).items()`是一个有序类集合对象，用来提供`LRUDict`的键值对视图。
+
+#### 输出 {#returns-9}
+
+|  参数   |          类型           | <center>说明</center>        |
+| :-----: | :---------------------: | :--------------------------- |
+| `items` | `Iterator[Tuple[K, T]]` | 针对所有字典项的有序迭代器。 |
+
+---
+
+### <IconObjType type="method"/> `reversed` {#-reversed}
+
+```python
+rev_keys: Iterator[K] = ldict.reversed()
+```
+
+返回字典关键字的逆向迭代器。该方法是`reversed(LRUDict.keys())`的简写。
+
+#### 输出 {#returns-10}
+
+|    参数    |     类型      | <center>说明</center>            |
+| :--------: | :-----------: | :------------------------------- |
+| `rev_keys` | `Iterator[K]` | 针对所有关键字的逆向有序迭代器。 |
+
+---
+
+### <IconObjType type="method"/> `move_to_recent` {#-move_to_recent}
+
+```python
+ldict.move_to_recent(key: K)
+```
+
+将某个特定的关键字，移动到`LRUDict`最近的位置。
+
+#### 输入 {#requires-5}
+
+| 参数  | 类型 |               必选                | <center>说明</center>                                      |
+| :---: | :--: | :-------------------------------: | ---------------------------------------------------------- |
+| `key` | `K`  | <InlineIcon icon={vsiCheckIcon}/> | 所移动的字典项的关键字，该方法将其标记为最近使用的字典项。 |
+
+---
+
+### <IconObjType type="method"/> `index` {#-index}
+
+```python
+idx: int = ldict.index(key: K)
+```
+
+给定关键字，返回该关键字在`LRUDict`中的优先级排序下标。
+
+调用该方法不会影响关键字在字典中的顺序。
+
+#### 输入 {#requires-6}
+
+| 参数  | 类型 |               必选                | <center>说明</center>        |
+| :---: | :--: | :-------------------------------: | ---------------------------- |
+| `key` | `K`  | <InlineIcon icon={vsiCheckIcon}/> | 用来查询字典项下标的关键字。 |
+
+#### 输出 {#returns-11}
+
+| 参数  | 类型  | <center>说明</center>                                      |
+| :---: | :---: | :--------------------------------------------------------- |
+| `idx` | `int` | 所查询到的字典项的下标。该下标值越小，则表示该字典项越近。 |
+
+---
+
+### <IconObjType type="method"/> `back_index` {#-back_index}
+
+```python
+key: K = ldict.index(idx: int)
+```
+
+给定优先级下标，获取该下标在`LRUDict`对应的关键字。
+
+调用该方法不会影响关键字在字典中的顺序。
+
+#### 输入 {#requires-7}
+
+| 参数  | 类型  |               必选                | <center>说明</center>        |
+| :---: | :---: | :-------------------------------: | ---------------------------- |
+| `idx` | `int` | <InlineIcon icon={vsiCheckIcon}/> | 用来查询关键字的字典项下标。 |
+
+#### 输出 {#returns-12}
+
+| 参数  | 类型 | <center>说明</center>           |
+| :---: | :--: | :------------------------------ |
+| `key` | `K`  | 透过`idx`查询到的字典项关键字。 |
+
+---
+
+### <IconObjType type="method"/> `reverse` {#-reverse}
+
+```python
+ldict.reverse()
+```
+
+翻转`LRUDict`中各关键字的优先级顺序。
+
+---
+
+### <IconObjType type="method"/> `rotate` {#-rotate}
+
+```python
+ldict.rotate(n: int)
+```
+
+向低优先级的方向，将`LRUDict`的关键字循环移动`n`步。若`n`取负值，则向高优先级的方向移动。
+
+#### 输入 {#requires-8}
+
+| 参数 | 类型  |               必选                | <center>说明</center>          |
+| :--: | :---: | :-------------------------------: | ------------------------------ |
+| `n`  | `int` | <InlineIcon icon={vsiCheckIcon}/> | 向低优先级方向循环移动的步数。 |
+
+## 属性 {#properties}
+
+### <IconObjType type="param"/> `maxsize` {#-maxsize}
+
+```python
+maxsize: int = ldict.maxsize
+```
+
+LRU 字典缓存的容量（最大尺寸）。
+
+---
+
+### <IconObjType type="param"/> `is_full` {#-is_full}
+
+```python
+is_full: bool = ldict.is_full
+```
+
+字典`ldict`是否填满。
+
+---
+
+### <IconObjType type="param"/> `recent` {#-recent}
+
+```python
+key: K = ldict.recent
+```
+
+最近字典项的关键字。
+
+---
+
+### <IconObjType type="param"/> `eldest` {#-eldest}
+
+```python
+key: K = ldict.eldest
+```
+
+最久未使用字典项的关键字。换言之，若`ldict`填满，则向字典添加新值的行为、会导致该字典项从
+字典清出。
+
+---
+
+### <IconObjType type="param"/> `recent_val` {#-recent_val}
+
+```python
+value: T = ldict.recent_val
+```
+
+最近字典项的值。
+
+---
+
+### <IconObjType type="param"/> `eldest_val` {#-eldest_val}
+
+```python
+value: T = ldict.eldest_val
+```
+
+最久未使用字典项的值。换言之，若`ldict`填满，则向字典添加新值的行为、会导致该字典项
+从字典清出。
+
+---
+
+### <IconObjType type="param"/> `recent_item` {#-recent_item}
+
+```python
+key, value = ldict.recent_item
+```
+
+最近的字典项（键值对）。
+
+---
+
+### <IconObjType type="param"/> `eldest_item` {#-eldest_item}
+
+```python
+key, value = ldict.eldest_item
+```
+
+最久未使用字典项（键值对`(key, val)`）。换言之，若`ldict`填满，则向字典添加新值的行为、会导
+致该字典项从字典清出。
+
+## 运算符 {#operators}
+
+### <IconObjType type="op"/> `__len__`
+
+```python
+dict_len: int = len(ldict)
+```
+
+返回字典`ldict`中包含的字典项数目。
+
+#### 输出 {#returns-13}
+
+|    参数    | 类型  | <center>说明</center>  |
+| :--------: | :---: | :--------------------- |
+| `dict_len` | `int` | 字典所含的字典项数目。 |
+
+---
+
+### <IconObjType type="op"/> `__contains__`
+
+```python
+flag: bool = key in ldict
+inv_flag: bool = key not in ldict
+```
+
+若`ldict`含有关键字`key`，返回`True`，否则返回`False`。
+
+#### 输入 {#requires-9}
+
+| 参数  | 类型 |               必选                | <center>说明</center> |
+| :---: | :--: | :-------------------------------: | --------------------- |
+| `key` | `K`  | <InlineIcon icon={vsiCheckIcon}/> | 要验证的关键字。      |
+
+#### 输出 {#returns-14}
+
+|  参数  |  类型  | <center>说明</center>                                  |
+| :----: | :----: | :----------------------------------------------------- |
+| `flag` | `bool` | 若该值为 `True`，则表明给定的关键字`key`存在于字典中。 |
+
+---
+
+### <IconObjType type="op"/> `__getitem__`
+
+```python
+value: T = ldict[key]
+```
+
+返回`ldict`中以`key`为关键字的项。 若映射中不存在`key`，则会抛出`KeyError`。注意，调用
+该方法会将所查询的字典项标记为最近。
+
+#### 输入 {#requires-10}
+
+| 参数  | 类型 |               必选                | <center>说明</center> |
+| :---: | :--: | :-------------------------------: | --------------------- |
+| `key` | `K`  | <InlineIcon icon={vsiCheckIcon}/> | 用来查询值的关键字。  |
+
+#### 输出 {#returns-15}
+
+|  参数   | 类型 | <center>说明</center> |
+| :-----: | :--: | :-------------------- |
+| `value` | `T`  | 由`key`查询到的值。   |
+
+---
+
+### <IconObjType type="op"/> `__setitem__`
+
+```python
+value: T
+ldict[key] = value
+```
+
+将`ldict[key]`设置为`value`。注意，调用该方法会将所查询的字典项标记为最近。
+
+#### 输入 {#requires-11}
+
+|  参数   | 类型 |               必选                | <center>说明</center>                  |
+| :-----: | :--: | :-------------------------------: | -------------------------------------- |
+|  `key`  | `K`  | <InlineIcon icon={vsiCheckIcon}/> | 用来查询、要设置的值、所对应的关键字。 |
+| `value` | `T`  | <InlineIcon icon={vsiCheckIcon}/> | 用来设置于字典中的值。                 |
+
+---
+
+### <IconObjType type="op"/> `__delitem__`
+
+```python
+del ldict[key]
+```
+
+从`ldict`移除`ldict[key]`。若关键字`key`不存在于字典中，抛出`KeyError`。
+
+#### 输入 {#requires-12}
+
+| 参数  | 类型 |               必选                | <center>说明</center>                      |
+| :---: | :--: | :-------------------------------: | ------------------------------------------ |
+| `key` | `K`  | <InlineIcon icon={vsiCheckIcon}/> | 用来查询、要移除的字典项，所对应的关键字。 |
+
+---
+
+### <IconObjType type="op"/> `__iter__`
+
+```python
+for key in ldict:
+    key: K
+```
+
+将字典的所有关键字返回为有序迭代器。该运算符是`iter(ldict.keys())`的简写。
+
+---
+
+### <IconObjType type="op"/> `__or__`
+
+```python
+new_ldict: LRUDict[K, T] = ldict | other_dict
+```
+
+将该`LRUDict`和另一个字典`other_dict`、所有的键值对合成为一个新的`LRUDict`。此处
+“另一个字典”可以是任何映射类型的实例。当某关键字同时出现于两个字典中时，位于`other_dict`
+的值具有更高的优先级。
+
+#### 输入 {#requires-13}
+
+|     参数     |      类型       |               必选                | <center>说明</center>           |
+| :----------: | :-------------: | :-------------------------------: | ------------------------------- |
+| `other_dict` | `Mapping[K, T]` | <InlineIcon icon={vsiCheckIcon}/> | 用来覆盖`ldict`值得另一个字典。 |
+
+#### 输出 {#returns-16}
+
+|    参数     |      类型       | <center>说明</center>                        |
+| :---------: | :-------------: | :------------------------------------------- |
+| `new_ldict` | `LRUDict[K, T]` | 新的`LRUDict`，由`ldict`和`other_dict`合成。 |
+
+---
+
+### <IconObjType type="op"/> `__ror__`
+
+```python
+new_ldict: LRUDict[K, T] = other_dict | ldict
+```
+
+将该`LRUDict`和另一个字典`other_dict`、所有的键值对合成为一个新的`LRUDict`。此处
+“另一个字典”可以是任何映射类型的实例。当某关键字同时出现于两个字典中时，位于`LRUDict`
+的值具有更高的优先级。
+
+注意该方法只会在`other_dict`未提供`__or__`运算符得情况下起使用。
+
+#### 输入 {#requires-14}
+
+|     参数     |      类型       |               必选                | <center>说明</center>         |
+| :----------: | :-------------: | :-------------------------------: | ----------------------------- |
+| `other_dict` | `Mapping[K, T]` | <InlineIcon icon={vsiCheckIcon}/> | 用来扩增`ldict`的另一个字典。 |
+
+#### 输出 {#returns-17}
+
+|    参数     |      类型       | <center>说明</center>                        |
+| :---------: | :-------------: | :------------------------------------------- |
+| `new_ldict` | `LRUDict[K, T]` | 新的`LRUDict`，由`other_dict`和`ldict`合成。 |
+
+---
+
+### <IconObjType type="op"/> `__ior__`
+
+```python
+ldict |= other_dict
+```
+
+将另一个字典或键值对`other_dict`更新到`LRUDict`中。当某关键字同时出现于两个字典中时，
+位于`other_dict`的值具有更高的优先级。
+
+#### 输入 {#requires-15}
+
+|     参数     |      类型       |               必选                | <center>说明</center>                 |
+| :----------: | :-------------: | :-------------------------------: | ------------------------------------- |
+| `other_dict` | `Mapping[K, T]` | <InlineIcon icon={vsiCheckIcon}/> | 用来修改和覆盖`ldict`值的另一个字典。 |
+
+[link-dict]: https://docs.python.org/zh-cn/3/library/stdtypes.html#dict

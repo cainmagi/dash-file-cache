@@ -1,0 +1,58 @@
+---
+id: CacheQueueMirror
+title: CacheQueue.CacheQueueMirror
+sidebar_label: CacheQueueMirror
+slug: /apis/caches/memory/CacheQueueMirror
+description: CacheQueue的进程兼容实例。
+---
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="class" source="caches.memory.CacheQueueMirror" />
+
+```python
+cache: CacheQueue[Info, Data]
+cache_mirror: CacheQueue.CacheQueueMirror[Info, Data] = cache.mirror
+```
+
+[`CacheQueue`](./CacheQueue.mdx)的进程兼容实例。
+
+该镜像的绝大多数功能都禁用了。它只提供[`dump()`](#-dump)方法，用来在子进程中向主进程的缓存
+发送数据。
+
+:::danger
+
+不应使用以下方法取得该实例：
+
+```python
+from dash_file_cache.caches.memory import CacheQueue
+
+
+CacheQueue.CacheQueueMirror(...)
+```
+
+换言之，`CacheQueueMirror`的实例应当永远透过[`CacheQueue().mirror`](./CacheQueue#-mirror)
+获取。
+
+:::
+
+## 方法 {#methods}
+
+### <IconObjType type="method"/> `dump` {#-dump}
+
+```python
+cache.dump(key: str, info: Info, data: Data)
+```
+
+向缓存中置入数据。
+
+#### 输入 {#requires}
+
+|  参数  |  类型  |               必选                | <center>说明</center>                                       |
+| :----: | :----: | :-------------------------------: | ----------------------------------------------------------- |
+| `key`  | `str`  | <InlineIcon icon={vsiCheckIcon}/> | 新数据的关键字。若该关键字`key`已存在于缓存中，则替换原值。 |
+| `info` | `Info` | <InlineIcon icon={vsiCheckIcon}/> | 要写入缓存中数据的轻量化信息。                              |
+| `data` | `Data` | <InlineIcon icon={vsiCheckIcon}/> | 要写入缓存中的数据。                                        |

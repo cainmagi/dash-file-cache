@@ -1,0 +1,133 @@
+---
+id: change-image
+sidebar_label: 变更图片
+title: 范例：动态变更载入的图片
+description: 以下范例，展示了使用callback载入、并展示图片的方法。
+slug: /examples/change-image
+---
+
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import mdiLanguagePython from "@iconify-icons/mdi/language-python";
+
+import {demoURL} from "@site/src/envs/variables";
+import DarkButton from "@site/src/components/DarkButton";
+
+# 范例：动态变更载入的图片
+
+<div className="float-right indark-inv">
+
+|                        范例：动态变更载入的图片                         |
+| :---------------------------------------------------------------------: |
+| ![Example of change the image](/img/examples/example-change-image.webp) |
+
+</div>
+
+以下链接提供了一个修改展示图片的范例。
+
+<p>
+  <DarkButton to={demoURL("change_image.py")} icon={mdiLanguagePython}>
+    {"change_image.py"}
+  </DarkButton>
+</p>
+
+该范例实现了以下效果：
+
+1. 两个按钮：<kbd>Image 1</kbd>和<kbd>Image 2</kbd>.
+   1. 按下<kbd>Image 1</kbd>，则当前图片替换为第一张图片。
+   2. 按下<kbd>Image 2</kbd>，则当前图片替换为第二张图片。
+2. 按下按钮的时候，缓存数据的地址，和加载的图片将会展示在页面上。
+3. 默认情况下（即页面刷新时），当前图片会重置成第一张图片。
+
+## 定义布局 {#define-the-layout}
+
+所实现的布局中，包含两个按钮和两个输出。
+
+```python showLineNumbers
+html.Div(
+    (
+        html.Div(
+            html.P(
+                (
+                    html.Span("Get Image:", style={"paddingRight": "0.5rem"}),
+                    html.Button(id="btn-img1", children="Image 1"),
+                    html.Button(id="btn-img2", children="Image 2"),
+                )
+            )
+        ),
+        html.Div((html.P("Cache address:"), html.P(id="addr"))),
+        html.Div((html.P("Cached Image:"), html.Img(id="cache"))),
+    ),
+)
+```
+
+按下任意按钮，则地址（`addr`）和图片（`cache`）将会刷新。
+
+即使没有配置`html.Img`的默认值，刷新页面时，所展示的图片仍然会重置为第一张图。这是因为图片
+组件的默认值已经由callback设置了。
+
+## 定义callback {#define-the-callbacks}
+
+Callback的触发事件是按下按钮。根据所按按钮的ID，所载入图片的对应路径将会不同。服务方法
+`self.service.register(...)` 接收数据和文件信息作为输入，并返回用来访问图片的地址。
+
+```python showLineNumbers
+@app.callback(
+    Output("addr", "children"),
+    Input("btn-img1", "n_clicks"),
+    Input("btn-img2", "n_clicks"),
+    # highlight-next-line
+    prevent_initial_call=False,
+)
+def click_get_image(
+    n_clicks_img1: Optional[int],
+    n_clicks_img2: Optional[int],
+):
+    prop_id = str(dash.callback_context.triggered[0]["prop_id"])
+    if prop_id.startswith("btn-img1") and n_clicks_img1:
+        file_path = os.path.join(self.root, "test_image.svg")
+    elif prop_id.startswith("btn-img2") and n_clicks_img2:
+        file_path = os.path.join(self.root, "test_philips_PM5544.svg")
+    else:
+        # highlight-next-line
+        file_path = os.path.join(self.root, "test_image.svg")
+    addr = self.service.register(
+        file_path,
+        content_type="image/svg+xml",
+        mime_type="image/svg+xml",
+        one_time_service=True,
+    )
+    return addr
+```
+
+Callback设置成了会在应用初始化时触发一次（参见选项
+[`prevent_initial_call`<IconExternalLink/>][link-prevent-initial-call]）。此情况下，
+`prop_id`的值将是`.`，且载入的图片将是`test_image.svg`。
+
+返回值应当是如下形式的地址：
+
+```
+/cache-data?uid=...
+```
+
+该地址会连锁触发另一个callback，其定义如下：
+
+```python showLineNumbers
+@app.callback(
+    Output("cache", "src"),
+    Input("addr", "children"),
+    prevent_initial_call=True,
+)
+def update_cache(addr):
+    if not addr:
+        return dash.no_update
+    return addr
+```
+
+这一callback、在地址不为空的情况下，会将地址传递给图片组件的`src`属性。换言之，图片的数据源
+最终会设置为`/cache-data?uid=...`的形式。
+
+当图片地址得到更新时，由于浏览器会读取图片、并立刻访问缓存地址，从而触发数据的载入，客户端将以
+`flask.stream_with_context`的方式接收数据。
+
+[link-prevent-initial-call]: https://dash.plotly.com/advanced-callbacks#prevent-callback-execution-upon-initial-component-render

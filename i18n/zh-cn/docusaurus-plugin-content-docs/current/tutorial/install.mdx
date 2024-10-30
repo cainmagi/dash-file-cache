@@ -1,0 +1,75 @@
+---
+id: install
+sidebar_label: 安装
+title: 安装本项目的Python包
+description: 安装本项目的PyPI发布版、或开发版本。
+slug: /install
+---
+
+import DarkButton from "@site/src/components/DarkButton";
+import octInfo16 from "@iconify-icons/octicon/info-16";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import {repoURL} from "@site/src/envs/variables";
+
+# 安装本项目的Python包
+
+运行以下命令，安装模块包：
+
+```shell
+pip install dash-file-cache
+```
+
+## 额外功能 {#extra-features}
+
+透过设置可选依赖项，可以安装更多功能：
+
+```shell
+pip install dash-file-cache[option1,option2...]
+```
+
+|  选项  | <center>支持的功能</center>                                                                                            |
+| :----: | :--------------------------------------------------------------------------------------------------------------------- |
+| `test` | 安装用于进行[`pytest`<IconExternalLink/>][link-pytest]测试的依赖项。这些依赖项只用于单元测试，不用于提供任何实际功能。 |
+| `dev`  | 安装开发者依赖项。构建模块包的时候才有可能需要这些依赖项。                                                             |
+
+## 安装GitHub版本 {#install-the-github-version}
+
+在开发阶段，GitHub上的版本有可能比在PyPI发布的版本新。如果用户需要安装GitHub版本，请确保已经
+安装了[Git<IconExternalLink/>][link-git]。确保一些需要的软件都准备无虞后，运行下列命令安装
+开发者版本：
+
+```shell
+git clone https://github.com/cainmagi/dash-file-cache
+cd dash-file-cache
+python -m pip install .[dev]
+```
+
+:::tip
+
+若有需要，可以在`pip install`命令的后面加上`-e`。这将令所安装的模块支持即时修改。亦即，
+对从GitHub上clone的项目做出的任何改动都将反馈到全局安装的`dash_file_cache`模块包上。
+
+:::
+
+## 运行测试 {#run-the-tests}
+
+要检查此项目是否兼容当前设备，请确保已经安装了[Git<IconExternalLink/>][link-git]。之后，
+请按照以下命令clone项目并运行测试：
+
+```shell
+git clone https://github.com/cainmagi/dash-file-cache
+cd dash-file-cache
+python -m pip install .[test]
+python -m pytest tests
+```
+
+本项目只兼容到`python>=3.8`版本。如果你发现你所使用的版本无法通过单元测试，请提交问题报告：
+
+<p>
+  <DarkButton to={repoURL("issues/new/choose")} icon={octInfo16}>
+    {"Fire an issue"}
+  </DarkButton>
+</p>
+
+[link-git]: https://git-scm.com/downloads
