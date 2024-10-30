@@ -15,6 +15,7 @@
 1. Fix: Correct some typos in the English documents.
 2. Fix: Fix a typo causing the broken anchor issue.
 3. Fix: Make the action step of `yarn install` synchronized with the newest API.
+4. Fix: `zh-cn` document cannot handle the line break correctly. Remove the unexpected line breaks.
 
 ### 0.1.2 @ 10/28/2024
 

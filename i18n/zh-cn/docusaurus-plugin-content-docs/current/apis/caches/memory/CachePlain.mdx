@@ -23,11 +23,9 @@ cache = CachePlain[Info, Data](cache_size: int)
 
 缓存的简单实现，其中`Info`和`Data`是泛型。
 
-本项目中，`Info`和`Data`分别设置为[`CachedFileInfo`](../typehints/CachedFileInfo.mdx)和
-[`CachedData`](../typehints/CachedData.mdx)。
+本项目中，`Info`和`Data`分别设置为[`CachedFileInfo`](../typehints/CachedFileInfo.mdx)和[`CachedData`](../typehints/CachedData.mdx)。
 
-`CachePlain`的实例仅能在线程间共享缓存数据。它可以用在普通的callback中。然而，对于背景callback
-而言，子进程内任何对`CachePlain`修改都将在callback结束时被舍弃。
+`CachePlain`的实例仅能在线程间共享缓存数据。它可以用在普通的callback中。然而，对于背景callback而言，子进程内任何对`CachePlain`修改都将在callback结束时被舍弃。
 
 对该缓存的操作是线程安全的。
 

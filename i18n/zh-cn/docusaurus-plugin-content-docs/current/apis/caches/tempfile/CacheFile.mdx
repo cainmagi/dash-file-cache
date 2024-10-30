@@ -27,12 +27,9 @@ cache = CacheFile(
 
 基于临时目录的缓存实现。
 
-不同于形如[`CachePlain`](../memory/CachePlain.mdx)和
-[`CacheQueue`](../memory/CacheQueue.mdx)的、基于内存的缓存，该缓存`CacheFile`纯粹是通过
-文件I/O实现的。故此，该缓存无法自动删除过期的文件。用户需要自行处理对这些临时文件的维护。
+不同于形如[`CachePlain`](../memory/CachePlain.mdx)和[`CacheQueue`](../memory/CacheQueue.mdx)的、基于内存的缓存，该缓存`CacheFile`纯粹是通过文件I/O实现的。故此，该缓存无法自动删除过期的文件。用户需要自行处理对这些临时文件的维护。
 
-不过，当程序的退出事件被[`atexit`<IconExternalLink/>][link-atexit]捕获到时，整个临时文件
-夹都会被删除。
+不过，当程序的退出事件被[`atexit`<IconExternalLink/>][link-atexit]捕获到时，整个临时文件夹都会被删除。
 
 ## 别名 {#aliases}
 
@@ -234,8 +231,7 @@ cache.chunk_size = new_chunk_size
 cache_dir: TempDir = cache.dir
 ```
 
-获取该缓存的临时目录（参见[`TempDir`](../../utilities/TempDir.mdx)）。将该值导出到其他
-`CacheFile`的实例，将会使得该目录被共享。
+获取该缓存的临时目录（参见[`TempDir`](../../utilities/TempDir.mdx)）。将该值导出到其他`CacheFile`的实例，将会使得该目录被共享。
 
 ## 运算符 {#operators}
 

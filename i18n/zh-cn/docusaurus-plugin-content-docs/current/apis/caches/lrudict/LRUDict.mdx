@@ -36,8 +36,7 @@ ldict: Mapping[str, T] = LRUDict(
 
 `LRUDict`同时是保证线程安全的。
 
-该`LRUDict`在默认情况下，不会隐式地释放缓冲区内的数据。要确保数据从内存中删除，需要显示地调用
-[`pop()`](#-pop)方法，并针对返回值进行删除。
+该`LRUDict`在默认情况下，不会隐式地释放缓冲区内的数据。要确保数据从内存中删除，需要显示地调用[`pop()`](#-pop)方法，并针对返回值进行删除。
 
 ## 参数 {#arguments}
 
@@ -108,8 +107,7 @@ value: T | None = ldict.get(key: K)
 value: T | S = ldict.get(key: K, default: S)
 ```
 
-如果`key`存在于字典中则返回`key`的值，否则返回`default`。 如果`default`未给出则默认
-为`None`，因而此方法绝不会抛出`KeyError`。
+如果`key`存在于字典中则返回`key`的值，否则返回`default`。 如果`default`未给出则默认为`None`，因而此方法绝不会抛出`KeyError`。
 
 #### 输入 {#requires-1}
 
@@ -133,8 +131,7 @@ value: T | None = ldict.setdefault(key: K)
 value: T | S = ldict.setdefault(key: K, default: S)
 ```
 
-如果字典存在关键字`key`，返回它的值。如果不存在，插入值为`default`的关键字`key`，并返
-回`default`。`default`默认为`None`。
+如果字典存在关键字`key`，返回它的值。如果不存在，插入值为`default`的关键字`key`，并返回`default`。`default`默认为`None`。
 
 #### 输入 {#requires-2}
 
@@ -158,8 +155,7 @@ value: T = ldict.pop(key: K)
 value: T | S = ldict.pop(key: K, default: S)
 ```
 
-如果`key`存在于字典中则将其移除并返回其值，否则返回`default`。 如果`default`未给出
-且`key`不存在于字典中，则会抛出`KeyError`。
+如果`key`存在于字典中则将其移除并返回其值，否则返回`default`。 如果`default`未给出且`key`不存在于字典中，则会抛出`KeyError`。
 
 #### 输入 {#requires-3}
 
@@ -184,8 +180,7 @@ key, value = ldict.popitem()
 
 从字典中移除并返回一个（关键字，值）对。 键值对会按后进先出的顺序被返回。
 
-`popitem()`适用于对字典进行消耗性的迭代，这在集合算法中经常被使用。 如果字典为空，
-调用`popitem()`将抛出`KeyError`。
+`popitem()`适用于对字典进行消耗性的迭代，这在集合算法中经常被使用。 如果字典为空，调用`popitem()`将抛出`KeyError`。
 
 #### 输出 {#returns-4}
 
@@ -242,10 +237,7 @@ ldict.update(data=((key, val) for (key, val) in ...), /, **kwargs: T)
 
 使用来自`data`的键/值对更新字典，覆盖原有的关键字。 返回`None`。
 
-`update()`可接收一个实现了[`keys()`](#-keys)方法的对象（且，每次取得该方法返回的`key`，该
-关键字都会传递到[`__getitem__()`](#-__getitem__)）。亦可接收一个可遍历对象，其中每次遍历
-取得的是一个键值对（例如，每次遍历返回两个值的元组、或其他可遍历对象）。设若指定了关键字参数，
-则字典随后会按照、形如接下来例子的键值对参数得到更新：`ldict.update(red=1, blue=2)`.
+`update()`可接收一个实现了[`keys()`](#-keys)方法的对象（且，每次取得该方法返回的`key`，该关键字都会传递到[`__getitem__()`](#-__getitem__)）。亦可接收一个可遍历对象，其中每次遍历取得的是一个键值对（例如，每次遍历返回两个值的元组、或其他可遍历对象）。设若指定了关键字参数，则字典随后会按照、形如接下来例子的键值对参数得到更新：`ldict.update(red=1, blue=2)`.
 
 #### 输入 {#requires-4}
 
@@ -446,8 +438,7 @@ key: K = ldict.recent
 key: K = ldict.eldest
 ```
 
-最久未使用字典项的关键字。换言之，若`ldict`填满，则向字典添加新值的行为、会导致该字典项从
-字典清出。
+最久未使用字典项的关键字。换言之，若`ldict`填满，则向字典添加新值的行为、会导致该字典项从字典清出。
 
 ---
 
@@ -467,8 +458,7 @@ value: T = ldict.recent_val
 value: T = ldict.eldest_val
 ```
 
-最久未使用字典项的值。换言之，若`ldict`填满，则向字典添加新值的行为、会导致该字典项
-从字典清出。
+最久未使用字典项的值。换言之，若`ldict`填满，则向字典添加新值的行为、会导致该字典项从字典清出。
 
 ---
 
@@ -488,8 +478,7 @@ key, value = ldict.recent_item
 key, value = ldict.eldest_item
 ```
 
-最久未使用字典项（键值对`(key, val)`）。换言之，若`ldict`填满，则向字典添加新值的行为、会导
-致该字典项从字典清出。
+最久未使用字典项（键值对`(key, val)`）。换言之，若`ldict`填满，则向字典添加新值的行为、会导致该字典项从字典清出。
 
 ## 运算符 {#operators}
 
@@ -538,8 +527,7 @@ inv_flag: bool = key not in ldict
 value: T = ldict[key]
 ```
 
-返回`ldict`中以`key`为关键字的项。 若映射中不存在`key`，则会抛出`KeyError`。注意，调用
-该方法会将所查询的字典项标记为最近。
+返回`ldict`中以`key`为关键字的项。 若映射中不存在`key`，则会抛出`KeyError`。注意，调用该方法会将所查询的字典项标记为最近。
 
 #### 输入 {#requires-10}
 
@@ -606,9 +594,7 @@ for key in ldict:
 new_ldict: LRUDict[K, T] = ldict | other_dict
 ```
 
-将该`LRUDict`和另一个字典`other_dict`、所有的键值对合成为一个新的`LRUDict`。此处
-“另一个字典”可以是任何映射类型的实例。当某关键字同时出现于两个字典中时，位于`other_dict`
-的值具有更高的优先级。
+将该`LRUDict`和另一个字典`other_dict`、所有的键值对合成为一个新的`LRUDict`。此处“另一个字典”可以是任何映射类型的实例。当某关键字同时出现于两个字典中时，位于`other_dict`的值具有更高的优先级。
 
 #### 输入 {#requires-13}
 
@@ -630,9 +616,7 @@ new_ldict: LRUDict[K, T] = ldict | other_dict
 new_ldict: LRUDict[K, T] = other_dict | ldict
 ```
 
-将该`LRUDict`和另一个字典`other_dict`、所有的键值对合成为一个新的`LRUDict`。此处
-“另一个字典”可以是任何映射类型的实例。当某关键字同时出现于两个字典中时，位于`LRUDict`
-的值具有更高的优先级。
+将该`LRUDict`和另一个字典`other_dict`、所有的键值对合成为一个新的`LRUDict`。此处“另一个字典”可以是任何映射类型的实例。当某关键字同时出现于两个字典中时，位于`LRUDict`的值具有更高的优先级。
 
 注意该方法只会在`other_dict`未提供`__or__`运算符得情况下起使用。
 
@@ -656,8 +640,7 @@ new_ldict: LRUDict[K, T] = other_dict | ldict
 ldict |= other_dict
 ```
 
-将另一个字典或键值对`other_dict`更新到`LRUDict`中。当某关键字同时出现于两个字典中时，
-位于`other_dict`的值具有更高的优先级。
+将另一个字典或键值对`other_dict`更新到`LRUDict`中。当某关键字同时出现于两个字典中时，位于`other_dict`的值具有更高的优先级。
 
 #### 输入 {#requires-15}
 

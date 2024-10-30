@@ -12,18 +12,14 @@ import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
 
 <APITopBar type="module" source="caches.memory" />
 
-透过内存数据交换实现的缓存。由于这些缓存是在数据中维护的，大体量数据（for example
-（例如，超过规定尺寸）可能会导致缓存失效。
+透过内存数据交换实现的缓存。由于这些缓存是在数据中维护的，大体量数据（for example（例如，超过规定尺寸）可能会导致缓存失效。
 
-该模块的一大好处是，所有的缓存类型都可以携带任意类型的数据。另，要跨进程共享数据，需要使用
-[CacheQueue](./CacheQueue.mdx)、、且`data`需要支持
-[`pickle`<IconExternalLink/>][link-pickle]。
+该模块的一大好处是，所有的缓存类型都可以携带任意类型的数据。另，要跨进程共享数据，需要使用[CacheQueue](./CacheQueue.mdx)、、且`data`需要支持[`pickle`<IconExternalLink/>][link-pickle]。
 
 该模块提供了两种实现：
 
 1. [CachePlain](./CachePlain.mdx): 同进程内共享数据。使用背景callback时，该缓存失效。
-2. [CacheQueue](./CacheQueue.mdx): 跨进程共享数据。可以使用任意线程、进程访问该缓存。换言之，
-   该缓存与背景callback兼容。
+2. [CacheQueue](./CacheQueue.mdx): 跨进程共享数据。可以使用任意线程、进程访问该缓存。换言之，该缓存与背景callback兼容。
 
 ## 类 {#classes}
 

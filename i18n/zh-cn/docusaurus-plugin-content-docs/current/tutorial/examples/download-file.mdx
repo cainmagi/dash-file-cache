@@ -71,12 +71,10 @@ class Demo:
 
 为了模拟准备一个大体量文件的过程，使用`CacheFile(...)`缓存数据，其支持背景callback。
 
-`downloader`的初始化接收两个参数。第一个参数只是组件ID。第二个参数需要是一个“接收一个`str`，
-又返回一个`str`”的函数。该参数用来处理callback的输入。：
+`downloader`的初始化接收两个参数。第一个参数只是组件ID。第二个参数需要是一个“接收一个`str`，又返回一个`str`”的函数。该参数用来处理callback的输入。：
 
 1. `downloader`会透过另一callback定义的`downloader.as_output`信号触发。
-2. 然而，`downloader.as_output`所接收的值可能并非直接是用来访问缓存的地址。在这一例子中，
-   `downloader.as_output`所接收的输入形式为：
+2. 然而，`downloader.as_output`所接收的值可能并非直接是用来访问缓存的地址。在这一例子中，`downloader.as_output`所接收的输入形式为：
 
    ```
    success-/cache-data?uid=...
@@ -84,9 +82,7 @@ class Demo:
 
    其中`success-`代表了状态码。该状态码可以用来检查数据是否正常地准备好了。
 
-3. 因此，需要提供`to_addr`参数。当`downloader.as_output`更新时，新的值会被`to_addr(value)`
-   预处理，从而保证预处理的结果是一个能直接用来访问缓存的地址、或是一个空字符串。透过这一设计，
-   下载事件的输入值可以得到保障。
+3. 因此，需要提供`to_addr`参数。当`downloader.as_output`更新时，新的值会被`to_addr(value)`预处理，从而保证预处理的结果是一个能直接用来访问缓存的地址、或是一个空字符串。透过这一设计，下载事件的输入值可以得到保障。
 
 ## 定义布局 {#define-the-layout}
 
@@ -113,8 +109,7 @@ html.Div(
 )
 ```
 
-与其他范例相若，此处只有`id=btn`的按钮能触发callback。Callback的返回值由布局中的下载器
-（`self.downloader.layout()`）处理。
+与其他范例相若，此处只有`id=btn`的按钮能触发callback。Callback的返回值由布局中的下载器（`self.downloader.layout()`）处理。
 
 ## 定义callback {#define-the-callbacks}
 
@@ -156,9 +151,7 @@ def click_get_image(
     return str(file_path.__class__.__name__), addr
 ```
 
-第二个输出值为缓存数据的地址。此callback含有两个特殊设置。其一是`content_type`的配置，包含
-了文字文件的`charset`。其二是`download=True`这一配置。若所缓存的文件是用来下载的，这一参数
-总是要设置为`True`。
+第二个输出值为缓存数据的地址。此callback含有两个特殊设置。其一是`content_type`的配置，包含了文字文件的`charset`。其二是`download=True`这一配置。若所缓存的文件是用来下载的，这一参数总是要设置为`True`。
 
 
 所返回的地址会连锁触发另一个callback，其定义如下：
@@ -176,6 +169,4 @@ def trigger_downloading_event(addr):
     return "success-{0}".format(addr)
 ```
 
-这一callback模拟了验证地址的过程。原始结果通常需要包含状态码和缓存数据地址。该值会透过输入
-信号`self.downloader.as_input`传递给另外的callback。下载事件透过`to_addr(...)`参数（由
-下载器的初始化设置）预处理callback的返回值，并接收处理后的地址。
+这一callback模拟了验证地址的过程。原始结果通常需要包含状态码和缓存数据地址。该值会透过输入信号`self.downloader.as_input`传递给另外的callback。下载事件透过`to_addr(...)`参数（由下载器的初始化设置）预处理callback的返回值，并接收处理后的地址。

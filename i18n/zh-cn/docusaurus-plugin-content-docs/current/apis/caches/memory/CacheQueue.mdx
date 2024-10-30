@@ -27,8 +27,7 @@ cache = CacheQueue[Info, Data](
 
 基于进程共享队列[`Queue()`<IconExternalLink/>][link-queue]的缓存实现。
 
-虽然此处的队列也可以是一个线程队列，但仍然推荐使用
-[`multiprocessing.get_context(...).Manager().Queue()`<IconExternalLink/>][link-queue]。
+虽然此处的队列也可以是一个线程队列，但仍然推荐使用[`multiprocessing.get_context(...).Manager().Queue()`<IconExternalLink/>][link-queue]。
 
 `CacheQueue`实例是为了跨进程捕获数据设计的。该缓存可以在背景 callback 中访问。
 

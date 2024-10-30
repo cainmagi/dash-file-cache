@@ -40,8 +40,7 @@ import DarkButton from "@site/src/components/DarkButton";
 
 ## 获取文件地址的脚本 {#script-for-fetching-the-address-of-the-file}
 
-由于不便于透过浏览器发送`POST`请求，这里提供了一个脚本，用来帮助获取文件列表中、第一个列出的
-文件的缓存文件地址。该脚本由Python标准库写就。
+由于不便于透过浏览器发送`POST`请求，这里提供了一个脚本，用来帮助获取文件列表中、第一个列出的文件的缓存文件地址。该脚本由Python标准库写就。
 
 ```python title="get_file_addr.py" showLineNumbers
 from urllib import request
@@ -107,8 +106,7 @@ python flask_services.py
 
 </div>
 
-令应用持续运行，并打开另一个命令行窗口。复制前一个命令行窗口中、展示的应用地址，并将该地址
-按如下方式传递给脚本：
+令应用持续运行，并打开另一个命令行窗口。复制前一个命令行窗口中、展示的应用地址，并将该地址按如下方式传递给脚本：
 
 ```shell
 python get_file_addr.py http://172.17.0.2:8080
@@ -170,6 +168,4 @@ def file_config():
 
 访问`GET`方法时，只返回了文件的元数据。文件不会实际从载入缓存。本指南中，没有用到这一功能。
 
-`POST`方法接收一个必选参数`name`和一个可选参数`download`。其中，`name`用来获取文件位于服务
-器上的路径，`self.serivce.register(...)`方法则用来返回缓存地址。调用这一方法，会令文件实际
-载入到缓存中。
+`POST`方法接收一个必选参数`name`和一个可选参数`download`。其中，`name`用来获取文件位于服务器上的路径，`self.serivce.register(...)`方法则用来返回缓存地址。调用这一方法，会令文件实际载入到缓存中。

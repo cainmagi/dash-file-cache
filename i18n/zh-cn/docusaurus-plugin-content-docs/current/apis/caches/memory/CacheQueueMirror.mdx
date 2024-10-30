@@ -20,8 +20,7 @@ cache_mirror: CacheQueue.CacheQueueMirror[Info, Data] = cache.mirror
 
 [`CacheQueue`](./CacheQueue.mdx)的进程兼容实例。
 
-该镜像的绝大多数功能都禁用了。它只提供[`dump()`](#-dump)方法，用来在子进程中向主进程的缓存
-发送数据。
+该镜像的绝大多数功能都禁用了。它只提供[`dump()`](#-dump)方法，用来在子进程中向主进程的缓存发送数据。
 
 :::danger
 
@@ -34,8 +33,7 @@ from dash_file_cache.caches.memory import CacheQueue
 CacheQueue.CacheQueueMirror(...)
 ```
 
-换言之，`CacheQueueMirror`的实例应当永远透过[`CacheQueue().mirror`](./CacheQueue#-mirror)
-获取。
+换言之，`CacheQueueMirror`的实例应当永远透过[`CacheQueue().mirror`](./CacheQueue#-mirror)获取。
 
 :::
 

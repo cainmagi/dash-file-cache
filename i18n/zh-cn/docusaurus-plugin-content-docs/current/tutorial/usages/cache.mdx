@@ -12,15 +12,13 @@ import IconLink from "@site/src/components/IconLink";
 
 # 使用缓存
 
-所有缓存实例均取自[`CacheAbstract`](../../apis/caches/abstract/CacheAbstract.mdx)的派生
-类。通过以下方法，可以判断某未知量是否是缓存的实例。
+所有缓存实例均取自[`CacheAbstract`](../../apis/caches/abstract/CacheAbstract.mdx)的派生类。通过以下方法，可以判断某未知量是否是缓存的实例。
 
 ```python
 is_a_cache: bool = isinstance(value, dash_file_cache.caches.abstract.CacheAbstract)
 ```
 
-这里的`caches`模块主要是用来帮助初始化服务（`service`)的。绝大多数情况下，缓存只会按照以下
-方式使用：
+这里的`caches`模块主要是用来帮助初始化服务（`service`)的。绝大多数情况下，缓存只会按照以下方式使用：
 
 ```python
 import dash_file_cache as dfc
@@ -28,8 +26,7 @@ import dash_file_cache as dfc
 service = dfc.ServiceData(dfc.CachePlain(1))
 ```
 
-其中，`dfc.CachePlain`可以被`dfc.CacheQueue`或是`dfc.CacheFile`取代。不同类型的缓存对应着
-不同的使用情境：
+其中，`dfc.CachePlain`可以被`dfc.CacheQueue`或是`dfc.CacheFile`取代。不同类型的缓存对应着不同的使用情境：
 
 |                          缓存                           | <center>使用情境</center>                                                                                             |
 | :-----------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------- |
@@ -55,8 +52,7 @@ service = dfc.ServiceData(dfc.CachePlain(1))
 service = dfc.ServiceData(dfc.CachePlain(cache_size: int))
 ```
 
-其中，容量指的是缓存中最多能同时保有的实例数目。缓存填满时，向缓存添加新值、会导致最久未使用
-（least-recently-used，LRU）的值删去。
+其中，容量指的是缓存中最多能同时保有的实例数目。缓存填满时，向缓存添加新值、会导致最久未使用（least-recently-used，LRU）的值删去。
 
 ### `CacheQueue` {#cachequeue}
 
@@ -64,9 +60,7 @@ service = dfc.ServiceData(dfc.CachePlain(cache_size: int))
 service = dfc.ServiceData(dfc.CacheQueue(cache_size: int, qobj: queue.Queue))
 ```
 
-不同于`CachePlain`，初始化基于队列的缓存、需要提供一个队列实例、作为第二个初始化参数。该队列
-实例应当取自于[进程数据管理器<IconExternalLink/>][link-manager]。在绝大多数情形中，该管理器
-只能在`if __name__ == "__main__"`保护的区域内实例化。例如，
+不同于`CachePlain`，初始化基于队列的缓存、需要提供一个队列实例、作为第二个初始化参数。该队列实例应当取自于[进程数据管理器<IconExternalLink/>][link-manager]。在绝大多数情形中，该管理器只能在`if __name__ == "__main__"`保护的区域内实例化。例如，
 
 ```python title="use_queue_with_manager.py" showLineNumbers
 import multiprocessing as mproc
@@ -90,8 +84,7 @@ if __name__ == "__main__":
     app.run()
 ```
 
-其中，需要确保`create_app()`在`if __name__ == "__main__"`的范围内调用。这是因为
-`create_app`初始化了一个新的`Manager()`实例。
+其中，需要确保`create_app()`在`if __name__ == "__main__"`的范围内调用。这是因为`create_app`初始化了一个新的`Manager()`实例。
 
 ### `CacheFile` {#cachefile}
 
@@ -101,8 +94,7 @@ service = dfc.ServiceData(dfc.CacheFile(cache_dir: str | None = None, chunk_size
 
 初始化`CacheFile`需要提供两个参数。
 
-第一个参数，`cache_dir`，决定了缓存数据保存的位置。未指定该值的情况下，则使用系统临时文件夹作
-为该位置。直到不再需要用到缓存的时候（通常在程序退出时触发），会删除该位置对应的文件夹。
+第一个参数，`cache_dir`，决定了缓存数据保存的位置。未指定该值的情况下，则使用系统临时文件夹作为该位置。直到不再需要用到缓存的时候（通常在程序退出时触发），会删除该位置对应的文件夹。
 
 不同于`CacheQueue`，对`CacheFile`的初始化可以置于任意位置。
 
@@ -110,8 +102,7 @@ service = dfc.ServiceData(dfc.CacheFile(cache_dir: str | None = None, chunk_size
 
 :::warning
 
-或许，读者不应使用以下部分介绍的内部功能呢。最合适地使用`CacheAbstract`的方式仍然是
-和`ServiceData`共用。
+或许，读者不应使用以下部分介绍的内部功能呢。最合适地使用`CacheAbstract`的方式仍然是和`ServiceData`共用。
 
 :::
 
@@ -143,8 +134,7 @@ def test[S, T](cache: dfc.caches.abstract.CacheAbstract[S, T], info: S, value: T
     assert value == _value
 ```
 
-以上泛型函数接受三个输入值。第一个值是缓存。第二和第三个值是`info`和`value`。使用缓存时，
-`info`和`value`均会储存在缓存中。然而，读取缓存值的时候，以下返回值的行为将有所不同：
+以上泛型函数接受三个输入值。第一个值是缓存。第二和第三个值是`info`和`value`。使用缓存时，`info`和`value`均会储存在缓存中。然而，读取缓存值的时候，以下返回值的行为将有所不同：
 
 ```python
 _info, _value_loder = cache.load("newval")
@@ -152,9 +142,7 @@ _info: S
 _value_loader: Callable[[], T]
 ```
 
-其中，`_info`会立刻返回。然而，`_value_loader`不是返回值、而是一个将要提供返回值的闭包
-（closure）。这种机制允许一些轻量的、用于检查的信息存放在`info`中，而大体量的数据则储存
-于`value`中，从而实现以下的条件读取机制：
+其中，`_info`会立刻返回。然而，`_value_loader`不是返回值、而是一个将要提供返回值的闭包（closure）。这种机制允许一些轻量的、用于检查的信息存放在`info`中，而大体量的数据则储存于`value`中，从而实现以下的条件读取机制：
 
 1. 检查`_info`是否满足某些条件。
 2. 若条件不满足，直接舍弃`_value_loader`，不实际载入这一部分的值。
@@ -183,9 +171,7 @@ if isinstance(info, int) and info > 0:
 
 ### 独立使用[`CacheQueue`](../../apis/caches/memory/CacheQueue.mdx)的范例 {#example-of-using-the-cachequeue-independently}
 
-使用`CacheQueue`略显麻烦，因为`CacheQueue`本身包含了一些无法传递到子进程的数据。因此，
-`CacheQueue`专门提供了一个名为[`mirror`](../../apis/caches/memory/CacheQueue.mdx#-mirror)
-的属性，以允许在子进程中访问缓存。
+使用`CacheQueue`略显麻烦，因为`CacheQueue`本身包含了一些无法传递到子进程的数据。因此，`CacheQueue`专门提供了一个名为[`mirror`](../../apis/caches/memory/CacheQueue.mdx#-mirror)的属性，以允许在子进程中访问缓存。
 
 ```python title="CacheQueue_and_pool.py" showLineNumbers
 import multiprocessing as mproc
@@ -214,17 +200,11 @@ if __name__ == "__main__":
 
 ### 不宜独立使用[`CacheFile`](../../apis/caches/tempfile/CacheFile.mdx) {#do-not-use-cachefile-independently}
 
-不同于可以接受任意类型数据的`CachePlain`或`CacheQueue`，`CacheFile`只能用于在硬盘上缓存可以
-被保存成文件的数据。换言之，`CacheFile`本身不提供文件序列化或反序列化的功能。与`ServiceData`
-同时使用时，由于用户只能向缓存注册一条路径、或一个类文件对象，`CacheFile`的用途将与
-`CachePlain`或`CacheQueue`并无分别。然而，不使用`ServiceData`的话，绝大多数情况下，
-`CacheFile`无法直接用来取代`CachePlain`或`CacheQueue`。
+不同于可以接受任意类型数据的`CachePlain`或`CacheQueue`，`CacheFile`只能用于在硬盘上缓存可以被保存成文件的数据。换言之，`CacheFile`本身不提供文件序列化或反序列化的功能。与`ServiceData`同时使用时，由于用户只能向缓存注册一条路径、或一个类文件对象，`CacheFile`的用途将与`CachePlain`或`CacheQueue`并无分别。然而，不使用`ServiceData`的话，绝大多数情况下，`CacheFile`无法直接用来取代`CachePlain`或`CacheQueue`。
 
 `CacheFile`具备以下行为：
 
-1. 向`CacheFile`注册一条路径时，缓存中只注册了路径本身，因为这种情况下，假定文件是一直存在于
-   硬盘上的。
-2. 向`CacheFile`注册一个类文件对象（`StringIO`或`BytesIO`）时，类文件对象的拷贝则会写入到
-   缓存空间中。
+1. 向`CacheFile`注册一条路径时，缓存中只注册了路径本身，因为这种情况下，假定文件是一直存在于硬盘上的。
+2. 向`CacheFile`注册一个类文件对象（`StringIO`或`BytesIO`）时，类文件对象的拷贝则会写入到缓存空间中。
 
 [link-manager]: https://docs.python.org/zh-cn/3/library/multiprocessing.html#managers

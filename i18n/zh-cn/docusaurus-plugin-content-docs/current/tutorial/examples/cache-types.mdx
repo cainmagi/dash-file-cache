@@ -62,8 +62,7 @@ python -m pip install dash[diskcache]
    2. 按下<kbd>BytesIO</kbd>，`svg`图片文件将以字节数据的方式载入并发送到前端。
    3. 按下<kbd>Path</kbd>，`svg`图片文件对应的路径将会缓存，图片的数据将会载入并发送到前端。
 2. 按下按钮的时候，数据的类型、缓存数据的地址，以及加载的图片将会展示在页面上。
-3. 对于使用了`background_callbacks`的范例，callback刻意处理成了带有短暂延迟的效果。在运行
-   callback时，亦即准备图片数据时，将会显示进度。
+3. 对于使用了`background_callbacks`的范例，callback刻意处理成了带有短暂延迟的效果。在运行callback时，亦即准备图片数据时，将会显示进度。
 
 ## 定义布局 {#define-the-layout}
 
@@ -87,16 +86,13 @@ html.Div(
 )
 ```
 
-按钮提供了触发callback的功能，最终结果将会由`html.Img(...)`展示。初始化时，图片组件是空的，
-换言之，并无任何图片显示。
+按钮提供了触发callback的功能，最终结果将会由`html.Img(...)`展示。初始化时，图片组件是空的，换言之，并无任何图片显示。
 
 按下按钮的时候，结果会刷新，以便确认按下的是哪一个按钮、以及缓存数据的地址是何状态。
 
 ## 定义callback {#define-the-callbacks}
 
-Callback的触发事件是按下按钮。根据所按按钮的ID，数据会以不同的方式载入。例如，当按下
-`btn-strio`之时，SVG文件将会以文字的形式载入。服务方法`self.service.register(...)`接收
-数据和文件信息作为输入，并返回用来访问图片的地址。
+Callback的触发事件是按下按钮。根据所按按钮的ID，数据会以不同的方式载入。例如，当按下`btn-strio`之时，SVG文件将会以文字的形式载入。服务方法`self.service.register(...)`接收数据和文件信息作为输入，并返回用来访问图片的地址。
 
 ```python showLineNumbers
 @app.callback(
@@ -153,16 +149,13 @@ def update_cache(addr):
     return addr
 ```
 
-这一callback、在地址不为空的情况下，会将地址传递给图片组件的`src`属性。换言之，图片的数据源
-最终会设置为`/cache-data?uid=...`的形式。
+这一callback、在地址不为空的情况下，会将地址传递给图片组件的`src`属性。换言之，图片的数据源最终会设置为`/cache-data?uid=...`的形式。
 
-当图片地址得到更新时，由于浏览器会读取图片、并立刻访问缓存地址，从而触发数据的载入，客户端将以
-`flask.stream_with_context`的方式接收数据。
+当图片地址得到更新时，由于浏览器会读取图片、并立刻访问缓存地址，从而触发数据的载入，客户端将以`flask.stream_with_context`的方式接收数据。
 
 ## 使用背景callback {#use-background-callbacks}
 
-第二和第三个范例展示了如何将文件缓存和运行在子进程中的背景callback整合到一起。要实现这一目标，
-只需要做出轻微的改变。以`tempfile_cache.py`为例。第一处修改位于初始化的部分。
+第二和第三个范例展示了如何将文件缓存和运行在子进程中的背景callback整合到一起。要实现这一目标，只需要做出轻微的改变。以`tempfile_cache.py`为例。第一处修改位于初始化的部分。
 
 ```python showLineNumbers
 class Demo:
@@ -233,5 +226,4 @@ def click_get_image(
     return str(fio.__class__.__name__), addr
 ```
 
-此处唯一修改的部分，纯粹是为了使用背景callback并展示进度。对于`service.register`方法而言，
-即使缓存的类型改为`CacheFile`，其用法仍无任何变化。
+此处唯一修改的部分，纯粹是为了使用背景callback并展示进度。对于`service.register`方法而言，即使缓存的类型改为`CacheFile`，其用法仍无任何变化。
