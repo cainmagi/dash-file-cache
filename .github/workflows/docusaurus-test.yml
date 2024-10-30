@@ -27,6 +27,6 @@ jobs:
           corepack prepare yarn --activate
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
       - name: Test build website
         run: yarn build

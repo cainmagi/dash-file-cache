@@ -14,6 +14,7 @@
 
 1. Fix: Correct some typos in the English documents.
 2. Fix: Fix a typo causing the broken anchor issue.
+3. Fix: Make the action step of `yarn install` synchronized with the newest API.
 
 ### 0.1.2 @ 10/28/2024
 
