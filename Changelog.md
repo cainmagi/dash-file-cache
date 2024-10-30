@@ -4,6 +4,12 @@
 
 ## CHANGELOG
 
+### 0.1.2 @ 10/30/2024
+
+#### :wrench: Fix
+
+1. Fix: Correct some typos in the English documents.
+
 ### 0.1.2 @ 10/28/2024
 
 #### :mega: New

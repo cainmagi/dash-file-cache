@@ -34,9 +34,9 @@ The dictionary powered by the least recently used cache, where `K, T` are generi
 
 Limit size, evicting the least recently looked-up key when full.
 
-This LRUDict is also ensured to be thread-safe.
+This `LRUDict` is also ensured to be thread-safe.
 
-This LRUDict would not allow the implicit releasing of the buffer by default.
+This `LRUDict` would not allow the implicit releasing of the buffer by default.
 Users need to use [`pop()`](#-pop) method and delete the popped object to release the
 buffer explictly.
 
@@ -242,7 +242,7 @@ ldict.update(data=((key, val) for (key, val) in ...), /)
 ldict.update(data=((key, val) for (key, val) in ...), /, **kwargs: T)
 ```
 
-Update the dictionary with the key/value pairs from other, overwriting existing keys.
+Update the dictionary with the key/value pairs from `data`, overwriting existing keys.
 Return `None`.
 
 `update()` accepts either another object with a [`keys()`](#-keys) method (in which
@@ -256,7 +256,7 @@ key/value pairs: `ldict.update(red=1, blue=2)`.
 |  Argument  |         Type         | Required | <center>Description</center>                                                      |
 | :--------: | :------------------: | :------: | --------------------------------------------------------------------------------- |
 |   `data`   | `{K: T} \| [(K, T)]` |          | The data used for updating the dictionary.                                        |
-| `**kwargs` |         `T`          |          | The data specified in the keyword arguments and used for creating the dictionary. |
+| `**kwargs` |         `T`          |          | The data specified in the keyword arguments and used for updating the dictionary. |
 
 ---
 
@@ -409,7 +409,7 @@ ldict.rotate(n: int)
 ```
 
 Rotate the priority order of keys in this `LRUDict` by `n` steps to the lower
-priority direction. If n is negative, rotate to the higher priority direction.
+priority direction. If `n` is negative, rotate to the higher priority direction.
 
 #### Requires
 
@@ -435,7 +435,7 @@ The maximal size of the LRU dictionary cache.
 is_full: bool = ldict.is_full
 ```
 
-Whether the dict is full.
+Whether the `ldict` is full.
 
 ---
 
@@ -456,7 +456,7 @@ key: K = ldict.eldest
 ```
 
 Get the keyword of the eldest item, i.e. the item to be removed if the
-`dict` is full and the new value arrives.
+`ldict` is full and the new value arrives.
 
 ---
 
@@ -477,7 +477,7 @@ value: T = ldict.eldest_val
 ```
 
 Get the value of the eldest item, i.e. the item to be removed if the
-`dict` is full and the new value arrives.
+`ldict` is full and the new value arrives.
 
 ---
 
@@ -498,7 +498,7 @@ key, value = ldict.eldest_item
 ```
 
 Get the eldest `(key, val)` item, i.e. the item to be removed if the
-`dict` is full and the new value arrives.
+`ldict` is full and the new value arrives.
 
 ## Operators
 
@@ -589,7 +589,7 @@ as the recent one.
 del ldict[key]
 ```
 
-Remove `ldict[key]` from `ldict`. Raises a `KeyError` if key is not in the map.
+Remove `ldict[key]` from `ldict`. Raises a `KeyError` if `key` is not in the dictionary.
 
 #### Requires
 
@@ -606,7 +606,8 @@ for key in ldict:
     key: K
 ```
 
-Return an iterator over the keys of the dictionary. This is a shortcut for `iter(ldict.keys())`.
+Return an ordered iterator over the keys of the dictionary. This is a shortcut for
+`iter(ldict.keys())`.
 
 ---
 
@@ -617,7 +618,7 @@ new_ldict: LRUDict[K, T] = ldict | other_dict
 ```
 
 Create a new `LRUDict` with the merged keys and values of this `LRUDict` and
-other, which can be an arbitrary mapping type. The values of other take
+`other_dict`, which can be an arbitrary mapping type. The values of `other_dict` take
 priority when the keys are shared.
 
 #### Requires
@@ -641,7 +642,7 @@ new_ldict: LRUDict[K, T] = other_dict | ldict
 ```
 
 Create a new `LRUDict` with the merged keys and values of this `LRUDict` and
-other, which can be an arbitrary mapping type. The values of this `LRUDict`
+`other_dict`, which can be an arbitrary mapping type. The values of this `LRUDict`
 take priority when the keys are shared.
 
 Note that this method is used only when `other_dict` does not implement the `__or__`
@@ -649,9 +650,9 @@ operator.
 
 #### Requires
 
-|   Argument   |      Type       |             Required              | <center>Description</center>                                          |
-| :----------: | :-------------: | :-------------------------------: | --------------------------------------------------------------------- |
-| `other_dict` | `Mapping[K, T]` | <InlineIcon icon={vsiCheckIcon}/> | The other dictionary that will be overriden by the values in `ldict`. |
+|   Argument   |      Type       |             Required              | <center>Description</center>                                 |
+| :----------: | :-------------: | :-------------------------------: | ------------------------------------------------------------ |
+| `other_dict` | `Mapping[K, T]` | <InlineIcon icon={vsiCheckIcon}/> | The other dictionary that will expand the values in `ldict`. |
 
 #### Returns
 
@@ -667,8 +668,8 @@ operator.
 ldict |= other_dict
 ```
 
-Update this `LRUDict` with keys and values from other, which may be either
-a mapping or an iterable of key/value pairs. The values of other take priority
+Update this `LRUDict` with keys and values from `other_dict`, which may be either
+a mapping or an iterable of key/value pairs. The values of `other_dict` take priority
 when keys are shared.
 
 #### Requires

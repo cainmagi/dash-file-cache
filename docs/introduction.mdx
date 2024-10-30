@@ -25,14 +25,14 @@ The data cache enables the following features:
 
 1. Load a server-side file dynamically and send the file to users (the frontend).
 2. Support in-memory files (like `io.BytesIO()`) or on-disk files (specified by a path).
-3. Support different kinds of cache (single-thread, multi-processing, or file-based).
+3. Support different kinds of cache (single-processing, multi-processing, or file-based).
 4. A customized component helping the dashboard trigger a download event from the server side.
 
 ## The minimal example
 
-The following codes show a minimal example of this package
+The following codes show a minimal example of this package.
 
-```python
+```python python title="example_minimal.py" showLineNumbers
 from typing import Optional
 
 import io
@@ -124,7 +124,7 @@ License of this project:
 <p>
   {
     <DarkButton to={repoURL("blob/main/LICENSE")} icon={octLaw16}>
-      GPL v3 License
+      MIT License
     </DarkButton>
   }
 </p>

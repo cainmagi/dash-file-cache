@@ -2,7 +2,7 @@
 id: download-file
 sidebar_label: Download file
 title: Example of the downloader
-description: An example of downloading a file by the Downloader component
+description: An example of downloading a file by the Downloader component.
 slug: /examples/download-file
 ---
 
@@ -76,7 +76,7 @@ To simulate the process of preparing a large file, we store the data with
 `CacheFile(...)` which is compatible with the background callback.
 
 The `downloader` is initialized with two arguments. The first argument is merely the
-component id. The second argument is a function accepting one `str` and returning one
+component ID. The second argument is a function accepting one `str` and returning one
 `str`. This argument is provided to handle the input from the callback:
 
 1. The `downloader` is fired by letting the `downloader.as_output` fired by the input
@@ -98,7 +98,7 @@ component id. The second argument is a function accepting one `str` and returnin
 
 ## Define the layout
 
-The implementation of the layout contains two buttons and two outputs.
+The implementation of the layout contains one button and two outputs.
 
 ```python showLineNumbers
 html.Div(
@@ -167,7 +167,7 @@ def click_get_image(
     return str(file_path.__class__.__name__), addr
 ```
 
-The second argument is the address of the cached data. This callback has two special
+The second output is the address of the cached data. This callback has two special
 configurations. The first configuration is the `content_type`, where we provide the
 `charset` of the text file. The second configuration is `download=True`. If the file
 is cached for downloading, this argument should be always specified as `True`.
@@ -188,7 +188,8 @@ def trigger_downloading_event(addr):
     return "success-{0}".format(addr)
 ```
 
-This callback simulate the process of validating the address. The results will be
+This callback simulate the process of validating the address. The raw results will be
 combined by the status code and the cached data address. This value can be accessed
 by other callbacks via `self.downloader.as_input`, and the downloading event will
-accept the file address by using `to_addr(...)` to sanitize this callback value.
+accept the file address by using `to_addr(...)` (configured in the initialization of
+the downloader) to sanitize this callback value.

@@ -3,7 +3,7 @@ id: CachedBytesIO
 title: CachedBytesIO
 sidebar_label: CachedBytesIO
 slug: /apis/caches/typehints/CachedBytesIO
-description: The data of one cached BytesIO data.
+description: The format of the cached BytesIO data.
 ---
 
 import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
@@ -19,11 +19,11 @@ CachedBytesIO(
 
 `CachedBytesIO` is a `TypedDict`.
 
-`CachedBytesIO` is the data of one cached `BytesIO` data.
+`CachedBytesIO` is the format of the cached `BytesIO` data.
 
 ## Keywords
 
-| Keywork |    Type     | <center>Description</center>                                                                               |
+| Keyword |    Type     | <center>Description</center>                                                                               |
 | :-----: | :---------: | :--------------------------------------------------------------------------------------------------------- |
-| `type`  |  `"bytes"`  | The type os this cached data.                                                                              |
+| `type`  |  `"bytes"`  | The type of this cached data.                                                                              |
 | `data`  | `IO[bytes]` | The binary data to be cached, the type of the file can be determined by the file name and the `mime_type`. |

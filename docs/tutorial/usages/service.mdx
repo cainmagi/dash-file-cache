@@ -75,17 +75,19 @@ to be ready to get accessed.
 
 There are several arguments of `service.register(...)`.
 
-|      Argument      | <center>Description</center>                                                                                                                                                                        |
-| :----------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|       `fobj`       | The path or the file-like object to be served.                                                                                                                                                      |
-|    `file_name`     | The file name of `fobj`. It is only used when `download` is specified. In this case, this value will be used as the name of the downloaded file.                                                    |
-|   `content_type`   | The content type that will be marked in the HTML response header. If this value is empty, will use `mime_type` as `content_type`. To learn details, see [here<IconExternalLink/>][doc-content-type] |
-|    `mime_type`     | The mime type of the file to be served. Every file will have a mime type, see [here<IconExternalLink/>][doc-mime-type]. A full list can be referred [here<IconExternalLink/>][doc-mtype-list].      |
-| `one_time_service` | A flag. If specified, will try to delete the file once it is sent. Using this flag can save the space of the cache.                                                                                 |
-|     `download`     | A flag. If specified, the returned link will refer to a file to be downloaded. Accessing this link will trigger the downloading rather than open the file by the browser.                           |
+|      Argument      | <center>Description</center>                                                                                                                                                                         |
+| :----------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|       `fobj`       | The path or the file-like object to be served.                                                                                                                                                       |
+|    `file_name`     | The file name of `fobj`. It is only used when `download` is specified. In this case, this value will be used as the name of the downloaded file.                                                     |
+|   `content_type`   | The content type that will be marked in the HTML response header. If this value is empty, will use `mime_type` as `content_type`. To learn details, see [here<IconExternalLink/>][doc-content-type]. |
+|    `mime_type`     | The mime type of the file to be served. Every file will have a mime type, see [here<IconExternalLink/>][doc-mime-type]. A full list can be referred [here<IconExternalLink/>][doc-mtype-list].       |
+| `one_time_service` | A flag. If specified, will try to delete the file once it is sent. Using this flag can save the space of the cache.                                                                                  |
+|     `download`     | A flag. If specified, the returned link will refer to a file to be downloaded. Accessing this link will trigger the downloading rather than open the file by the browser.                            |
 
 :::warning
+
 Note that users should not let `one_time_service=True` when the dashboard is accessed by multiple users or the same cached data may be accessed by multiple times.
+
 :::
 
 ### Work with background callback

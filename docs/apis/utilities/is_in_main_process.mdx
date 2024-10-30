@@ -18,13 +18,11 @@ import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
 flag: bool = is_in_main_process()
 ```
 
-A function used for checking whether the `str` ends with a line break.
+A function used for checking whether the current process is the main process or not.
 
 The checking is implemented by
 
 <IconLink href="https://docs.python.org/3/library/multiprocessing.html#multiprocessing.parent_process" />
-
-We use this function to fix the missing final line break problem of `str.splitlines`.
 
 ## Arguments
 

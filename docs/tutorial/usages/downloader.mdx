@@ -187,17 +187,27 @@ event, and the name of the downloaded file will be specified by `file_name`.
 
 ## Why should we use this downloader?
 
-Until `dash==2.18.x`, the `dcc.Download` still works on the bytes data directly, which means that,
-the data will be encoded as bytes on the server side and sent to the client (browser). In other
-words, `dcc.send_file` is not a wrapper of `flask.send_file`, it cannot handle large-size data.
+Until `dash==2.18.x`, the [`dcc.Download`<IconExternalLink/>][link-dccdownload] still
+works on the bytes data directly, which means that, the data will be encoded as bytes
+on the server side and sent to the client (browser). In other words,
+[`dcc.send_file`<IconExternalLink/>][link-dash-sendfile] is not a wrapper of
+[`flask.send_file`<IconExternalLink/>][link-flask-sendfile], it cannot handle
+large-size data.
 
-In comparison, our solution is based on `flask.stream_with_context`, and the downloader accesses
-the address of the file directly, which is compatible with an arbirary size of the data.
+In comparison, our solution is based on
+[`flask.stream_with_context`<IconExternalLink/>][link-flask-streamwcon],
+and the downloader accesses the address of the file directly, which is compatible with
+an arbirary size of the data.
 
 :::info
 
-In the future version, we will provide a dash component which is totally compatible with the
-interfaces of the `dcc.Download` and our `ServiceData`, thus becoming a final solution for
-downloading files.
+In the future version, we will provide a dash component which is totally compatible
+with the interfaces of the [`dcc.Download`<IconExternalLink/>][link-dccdownload] and
+our `ServiceData`, thus becoming a final solution for downloading files.
 
 :::
+
+[link-dccdownload]:https://dash.plotly.com/dash-core-components/download
+[link-dash-sendfile]:https://github.com/plotly/dash/issues/1874
+[link-flask-sendfile]:https://flask.palletsprojects.com/en/stable/api/#flask.send_file
+[link-flask-streamwcon]:https://flask.palletsprojects.com/en/stable/api/#flask.stream_with_context

@@ -11,6 +11,9 @@ import mdiLanguagePython from "@iconify-icons/mdi/language-python";
 import {demoURL} from "@site/src/envs/variables";
 import DarkButton from "@site/src/components/DarkButton";
 
+import InlineIcon from "@site/src/components/InlineIcon";
+import {biSlashLg} from "@site/src/components/icons/BiSlashLg";
+
 # Example of pure Flask services
 
 Check the following link to review the demo of the pure Flask application.
@@ -25,7 +28,7 @@ This demo provide the following services:
 
 | Service | Method | <center>Input arguments</center> | <center>Returned value</center>                                                              |
 | :-----: | :----: | :------------------------------- | :------------------------------------------------------------------------------------------- |
-|   `/`   | `GET`  | -                                | `{files: ...}`, where `files` is a list of file keys that can be used for accessing `/file`. |
+|   `/`   | `GET`  | <InlineIcon icon={biSlashLg} />  | `{files: ...}`, where `files` is a list of file keys that can be used for accessing `/file`. |
 | `/file` | `GET`  | `?name=...`                      | The metadata of the file to be downloaded.                                                   |
 | `/file` | `POST` | `?name=...`                      | `{addr: ...}`, where `addr` is the address of the cached data.                               |
 

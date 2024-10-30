@@ -63,7 +63,7 @@ These demos implement the following equivalent functionalities.
       to the frontend.
    2. By clicking <kbd>BytesIO</kbd>, the `svg` image will be loaded as raw bytes data
       and sent to the frontend.
-   3. By clicking <kbd>StringIO</kbd>, the path to the `svg` image will be cached and
+   3. By clicking <kbd>Path</kbd>, the path to the `svg` image will be cached and
       the data will be loaded and sent to the frontend.
 2. When the button is clicked, the type of the data source, the address of the cached
    data, and the loaded image will be displayed.
@@ -94,7 +94,7 @@ html.Div(
 ```
 
 The callbacks are fired by buttons, and the results will be finally displayed by
-`html.Image(...)`. Initially, this image component is empty, which means that no image
+`html.Img(...)`. Initially, this image component is empty, which means that no image
 is shown.
 
 When the button is clicked, the results will be updated to let users know which button
@@ -102,9 +102,9 @@ is clicked recently, and the address of the cached data.
 
 ## Define the callbacks
 
-The callback accepts the button clicks as the inputs. According to the id of the clicked
+The callback accepts the button clicks as the inputs. According to the ID of the clicked
 button, the data will be loaded by different ways. For example, when `btn-strio` is
-clicked, the svg file will be loaded as text. The service method
+clicked, the SVG file will be loaded as text. The service method
 `self.service.register(...)` takes the data and the file information as the input, and
 return the address that can be used to access the image.
 

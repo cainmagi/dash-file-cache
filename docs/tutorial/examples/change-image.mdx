@@ -38,7 +38,7 @@ This demo provides the following features:
    2. By clicking <kbd>Image 2</kbd>, the image will be replaced by the second image.
 2. When the button is clicked, the address of the cached data and the loaded image
    will be displayed.
-3. By default (if the image is refreshed), the current image will be reset to the first
+3. By default (if the page is refreshed), the current image will be reset to the first
    image.
 
 ## Define the layout
@@ -72,7 +72,7 @@ That's because the default value of the image component is configured by the cal
 
 ## Define the callbacks
 
-The callback accepts the button clicks as the inputs. According to the id of the clicked
+The callback accepts the button clicks as the inputs. According to the ID of the clicked
 button, the path of the image to be loaded will be different. The service method
 `self.service.register(...)` takes image path and the file information as the input,
 and return the address that can be used to access the image.

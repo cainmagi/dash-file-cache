@@ -29,7 +29,7 @@ downloader = Downloader(
 
 Purely Python-Dash implemented downloader component.
 
-This component is purely implemented by python codes.
+This component is purely implemented by Python codes.
 
 ## Aliases
 
@@ -48,7 +48,7 @@ dfc.components.downloader.Downloader
 
 | Argument  |              Type              |             Required              | <center>Description</center>                                                                                                                                                                                                                                                                                 |
 | :-------: | :----------------------------: | :-------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-|   `id`    |             `str`              | <InlineIcon icon={vsiCheckIcon}/> | The basic id of this component.                                                                                                                                                                                                                                                                              |
+|   `id`    |             `str`              | <InlineIcon icon={vsiCheckIcon}/> | The basic ID of this component.                                                                                                                                                                                                                                                                              |
 | `to_addr` | `Callable[[str], str] \| None` |                                   | <p>An optional pre-processing function which converts the trigger from the callback to the address used for downloading the file.</p><p>If not provided, will use the trigger value directly (equivalent to `lambda x: x`).</p><p>If returning an empty string, the downloading event will be prevented.</p> |
 
 ## Methods

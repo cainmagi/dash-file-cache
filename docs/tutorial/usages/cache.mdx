@@ -12,7 +12,9 @@ import IconLink from "@site/src/components/IconLink";
 
 # How to use caches
 
-All cache instances are the subtype of `CacheAbstract`. Users can use the following method to determine whether an unknown variable is a cache or not.
+All cache instances are the subtype of
+[`CacheAbstract`](../../apis/caches/abstract/CacheAbstract.mdx). Users can use the
+following method to determine whether an unknown variable is a cache or not.
 
 ```python
 is_a_cache: bool = isinstance(value, dash_file_cache.caches.abstract.CacheAbstract)
@@ -28,11 +30,11 @@ service = dfc.ServiceData(dfc.CachePlain(1))
 
 where `dfc.CachePlain` can be replaced by `dfc.CacheQueue` or `dfc.CacheFile`. The usage scenarios for these caches are different:
 
-|    Cache     | Scenarios                                                                                                                                                                                      |
-| :----------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `CachePlain` | The `service` is always accessed by the same process (but can be accessed by different threads). It can be used if the data can be kept in the memory and the background callback is not used. |
-| `CacheQueue` | The `service` needs to be accessed by different processes. When the background callback is used, `CachePlain` will not work but this cache still works. The data is still kept in the memory.  |
-| `CacheFile`  | The `service` needs to be accessed by different processes, and the cached data should be kept in the disk rather than the memory.                                                              |
+|                          Cache                          | <center>Scenarios</center>                                                                                                                                                                     |
+| :-----------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`CachePlain`](../../apis/caches/memory/CachePlain.mdx) | The `service` is always accessed by the same process (but can be accessed by different threads). It can be used if the data can be kept in the memory and the background callback is not used. |
+| [`CacheQueue`](../../apis/caches/memory/CacheQueue.mdx) | The `service` needs to be accessed by different processes. When the background callback is used, `CachePlain` will not work but this cache still works. The data is still kept in the memory.  |
+| [`CacheFile`](../../apis/caches/tempfile/CacheFile.mdx) | The `service` needs to be accessed by different processes, and the cached data should be kept in the disk rather than the memory.                                                              |
 
 :::tip
 
@@ -60,7 +62,7 @@ where the size is the maximum of items that can be kept in the cache. If the cac
 service = dfc.ServiceData(dfc.CacheQueue(cache_size: int, qobj: queue.Queue))
 ```
 
-Different from `CachePlain`, this queue-based cache needs a queue object as the first argument. This queue object should be provided by a [Process Data Manager<IconExternalLink/>][link-manager].
+Different from `CachePlain`, this queue-based cache needs a queue object as the second argument. This queue object should be provided by a [Process Data Manager<IconExternalLink/>][link-manager].
 In many cases, such a manager needs to be initialized guarded by the `if __name__ == "__main__"` check. For example,
 
 ```python title="use_queue_with_manager.py" showLineNumbers
@@ -96,7 +98,7 @@ service = dfc.ServiceData(dfc.CacheFile(cache_dir: str | None = None, chunk_size
 The initialization of `CacheFile` takes two arguments.
 
 The first argument `cache_dir` specifies the directory where the cache data is saved. If it is not specified, will use the system temporary folder.
-When the cache is not used anymore (typically, this case happens when the program exists), the folder will be removed.
+When the cache is not used anymore (typically, this case happens when the program exits), the folder will be removed.
 
 The second argument is the `chunk_size` when saving or loading data from the cache. Its unit is MB. Users do not need to change it in most cases.
 
@@ -214,8 +216,8 @@ After all, the cached values can be accessed in the main process.
 Different from `CachePlain` and `CacheQueue` which accept arbitrary types of data, `CacheFile` can be only used for
 caching the data that can be saved on the disk. In other words, `CacheFile` itself does not provide the file serialization or deserialization.
 When using this value with `ServiceData`, since users can only register a file path or a file-like object to the cache, the usage of `CacheFile`
-has no difference compared with `CachePlain` or `CacheQueue`. However, in most cases, `CacheFile` cannot be used for replacing `CachePlain` or
-`CacheQueue`.
+has no difference compared with `CachePlain` or `CacheQueue`. However, if `CacheFile` is not used with `ServiceData`, in most cases, `CacheFile`
+cannot be used for replacing `CachePlain` or `CacheQueue`.
 
 `CacheFile` has such behaviors:
 
