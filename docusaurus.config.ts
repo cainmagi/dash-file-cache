@@ -63,6 +63,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl: "https://github.com/cainmagi/dash-file-cache/edit/docs/",
+          editLocalizedFiles: true,
         },
         theme: {
           customCss: "./src/css/custom.scss",

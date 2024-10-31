@@ -9,6 +9,7 @@
 #### :wrench: Fix
 
 1. Fix: Complete some missing translations in the `zh-cn` doc.
+2. Fix: Change the edit URLs of the `zh-cn` doc from the original `en` version to the `zh-cn` version.
 
 ### 0.1.2 @ 10/30/2024
 
