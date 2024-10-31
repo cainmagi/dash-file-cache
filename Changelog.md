@@ -6,6 +6,12 @@
 
 ### 0.1.2 @ 10/30/2024
 
+#### :wrench: Fix
+
+1. Fix: Complete some missing translations in the `zh-cn` doc.
+
+### 0.1.2 @ 10/30/2024
+
 #### :mega: New
 
 1. Finalize the `zh-cn` translation of the document version `0.1.2`.
