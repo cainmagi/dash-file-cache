@@ -1,0 +1,83 @@
+{
+  "name": "dash_file_cache",
+  "packageManager": "yarn@4.7.0",
+  "version": "0.2.0",
+  "description": "Utilities for providing convenient methods to serve cached data in Plotly-Dash or Flask.",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/cainmagi/dash-file-cache.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cainmagi/dash-file-cache/issues"
+  },
+  "homepage": "https://pypi.org/project/dash-file-cache",
+  "keywords": [
+    "python",
+    "python3",
+    "python-library",
+    "dash",
+    "plotly-dash",
+    "python-dash",
+    "flask",
+    "service",
+    "cache",
+    "cache-service",
+    "downloader",
+    "file-downloads"
+  ],
+  "main": "build/index.js",
+  "scripts": {
+    "start": "webpack serve --config ./webpack.serve.config.js --open",
+    "validate-init": "python _validate_init.py",
+    "prepublishOnly": "npm run validate-init",
+    "build:js": "webpack --mode production",
+    "build:backends": "dash-generate-components ./src/lib/components dash_file_cache_components -p package-info.json --ignore \\.test\\. && python _dispatch.py -src dash_file_cache_components -dst dash_file_cache/components",
+    "build:backends-activated": "(. venv/bin/activate || venv\\scripts\\activate && npm run build:backends)",
+    "build": "npm run build:js && npm run build:backends",
+    "build:activated": "npm run build:js && npm run build:backends-activated"
+  },
+  "author": "Yuchen Jin (cainmagi) <cainmagi@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "ramda": "^0.28.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.1",
+    "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
+    "@babel/preset-env": "^7.22.2",
+    "@babel/preset-react": "^7.22.3",
+    "@plotly/dash-component-plugins": "^1.2.3",
+    "@plotly/webpack-dash-dynamic-import": "^1.2.0",
+    "@types/node": "^22.7.5",
+    "@types/prop-types": "^15.7.14",
+    "@types/ramda": "^0.28.0",
+    "@types/react": "^17.0.2",
+    "@yarnpkg/types": "^4.0.0",
+    "babel-eslint": "^10.1.0",
+    "babel-loader": "^9.1.2",
+    "clsx": "^2.1.1",
+    "copyfiles": "^2.1.1",
+    "css-loader": "^6.8.1",
+    "eslint": "^6.0.1",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-react": "^7.14.2",
+    "prop-types": "^15.8.1",
+    "react": "^17.0.2",
+    "react-docgen": "^5.4.0",
+    "react-dom": "^17.0.2",
+    "sass": "^1.80.7",
+    "sass-loader": "^16.0.3",
+    "style-loader": "^3.3.3",
+    "styled-jsx": "^4.0.1",
+    "ts-loader": "^9.5.2",
+    "typescript": "~5.8.2",
+    "webpack": "^5.84.1",
+    "webpack-cli": "^5.1.1",
+    "webpack-dev-server": "^4.15.0"
+  },
+  "engines": {
+    "node": ">=8.11.0",
+    "npm": ">=6.1.0"
+  }
+}

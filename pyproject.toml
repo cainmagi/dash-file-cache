@@ -67,7 +67,8 @@ extend-exclude = '''
 # A regex preceded with ^/ will apply only to files and directories
 # in the root of the project.
 (
-  ^/dash_file_cache/_imports_.py
+  ^/dash_file_cache/components/_imports_.py
+  |/dash_file_cache/components/PlainDownloader.py
   |^/_validate_init.py
   |^/docs
 )

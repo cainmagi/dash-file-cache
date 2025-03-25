@@ -4,6 +4,12 @@
 
 ## CHANGELOG
 
+### 0.2.0 @ 03/25/2025
+
+#### :mega: New
+
+1. Add the Dash component project based on TypeScript. The project contains a `PlainDownloader` component.
+
 ### 0.1.2 @ 10/13/2024
 
 #### :wrench: Fix

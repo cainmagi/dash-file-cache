@@ -33,7 +33,17 @@
     "python.languageServer": "Pylance",
     "python.analysis.typeCheckingMode": "standard",
     "prettier.tabWidth": 2,
-    "editor.tabSize": 4
+    "editor.tabSize": 4,
+    "npm.packageManager": "yarn",
+    "search.exclude": {
+      "**/.yarn": true,
+      "**/.pnp.*": true,
+      ".git": true,
+      "node_modules": true,
+      "bower_components": true,
+    },
+    "typescript.tsdk": ".yarn/sdks/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true
   },
   "extensions": {
     "recommendations": [
@@ -61,7 +71,9 @@
       "mohsen1.prettify-json",
       "syler.sass-indented",
       "sibiraj-s.vscode-scss-formatter",
-      "redhat.vscode-yaml"
+      "redhat.vscode-yaml",
+      "arcanis.vscode-zipfs",
+      "dbaeumer.vscode-eslint"
     ]
   }
 }

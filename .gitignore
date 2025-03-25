@@ -3,10 +3,10 @@
 .build_cache
 ### VisualStudioCode template
 .vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+# !.vscode/settings.json
+# !.vscode/tasks.json
+# !.vscode/launch.json
+# !.vscode/extensions.json
 ### JetBrains template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
@@ -47,6 +47,9 @@
 /logs
 /outputs
 /cache
+
+# Ignore temporary files.
+/*_components
 
 # Ignore docs (maintained by another branch)
 /docs
@@ -129,12 +132,14 @@ jspm_packages/
 /Project.toml
 
 # Created by builder
-# /dash_file_cache/_imports_.py
-/dash_file_cache/*.js
-/dash_file_cache/*.LICENSE.txt
-/dash_file_cache/*.js.map
-/dash_file_cache/metadata.json
-/dash_file_cache/package-info.json
+/dash_file_cache/components/*.py
+/dash_file_cache/components/*.js
+/dash_file_cache/components/*.LICENSE.txt
+/dash_file_cache/components/*.js.map
+/dash_file_cache/components/metadata.json
+/dash_file_cache/components/package-info.json
+!/dash_file_cache/components/__init__.py
+!/dash_file_cache/components/__main__.py
 /deps
 /inst
 /man

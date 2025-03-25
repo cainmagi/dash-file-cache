@@ -14,6 +14,7 @@ exclude =
     ./docs
     ./.yarn
     ./node_modules
-    ./dash_file_cache/_imports_.py
+    ./dash_file_cache/components/_imports_.py
+    ./dash_file_cache/components/PlainDownloader.py
     ./_validate_init.py
     ./alpha-*.py

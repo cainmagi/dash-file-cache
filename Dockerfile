@@ -24,6 +24,7 @@ RUN bash /app/install.sh $INSTALL_MODE
 
 # Copy codes
 COPY ./dash_file_cache /app/dash_file_cache
+COPY ./src /app/src
 COPY ./examples /app/examples
 COPY ./tests /app/tests
 COPY ./version /app/version

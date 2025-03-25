@@ -33,7 +33,7 @@ from . import services
 # Import frequently-used classes.
 from .caches import CachePlain, CacheQueue, CacheFile
 from .services import ServiceData
-from .components import Downloader
+from .components import PlainDownloader
 
 __all__ = (
     "__version__",
@@ -46,8 +46,29 @@ __all__ = (
     "CacheQueue",
     "CacheFile",
     "ServiceData",
-    "Downloader",
+    "PlainDownloader",
 )
+
+_js_dist = []
+
+for item in components._js_dist:
+    _item = item.copy()
+    if "relative_package_path" in _item:
+        _item["relative_package_path"] = components._os.path.join(
+            "components", _item["relative_package_path"]
+        )
+    _js_dist.append(_item)
+
+_css_dist = []
+
+for item in components._css_dist:
+    _item = item.copy()
+    if "relative_package_path" in _item:
+        _item["relative_package_path"] = components._os.path.join(
+            "components", _item["relative_package_path"]
+        )
+    _css_dist.append(_item)
+
 
 # Set this local module as the prefered one
 __path__ = extend_path(__path__, __name__)
