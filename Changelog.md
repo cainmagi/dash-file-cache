@@ -10,6 +10,10 @@
 
 1. Add the Dash component project based on TypeScript. The project contains a `PlainDownloader` component.
 
+#### :floppy_disk: Change
+
+1. Drop the legacy `components.downloader` module because it has been replaced by `components.PlainDownloader` now.
+
 ### 0.1.2 @ 10/13/2024
 
 #### :wrench: Fix
