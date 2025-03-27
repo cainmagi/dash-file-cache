@@ -56,13 +56,6 @@ class Demo:
         self.service = ServiceData(CacheFile(None))
         self.root = os.path.dirname(__file__)
 
-        self.downloader = Downloader(
-            id="download",
-            to_addr=(
-                lambda trigger: (trigger[8:] if trigger.startswith("success-") else "")
-            ),
-        )
-
     def layout(self) -> html.Div:
         return html.Div(
             (
@@ -79,13 +72,11 @@ class Demo:
                 html.Div((html.P(("Progress:", html.Span(id="prog"))))),
                 html.Div((html.P("Cache type:"), html.P(id="type"))),
                 html.Div((html.P("Cache address:"), html.P(id="addr"))),
-                self.downloader.layout(),
+                Downloader(id="download"),
             ),
         )
 
     def bind(self, app: dash.Dash):
-        self.downloader.use_callbacks(app)
-
         @app.callback(
             Output("type", "children"),
             Output("addr", "children"),
@@ -119,14 +110,14 @@ class Demo:
             return str(file_path.__class__.__name__), addr
 
         @app.callback(
-            self.downloader.as_output,
+            Output("download", "url"),
             Input("addr", "children"),
             prevent_initial_call=True,
         )
         def trigger_downloading_event(addr):
             if not addr:
                 return dash.no_update
-            return "success-{0}".format(addr)
+            return addr
 
 
 class WrappedApp:
