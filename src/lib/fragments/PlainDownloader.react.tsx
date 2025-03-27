@@ -15,27 +15,7 @@ import LazyComponent, {
   ComponentTypes,
 } from "../components/PlainDownloader.react";
 
-/**
- * Wait until the property of an object is available.
- * @param {object} obj - The object containing the property.
- * @param {object} prop - The name of the property to be accessed.
- * @param {object} interval - The waiting interval. The unit is ms.
- * @returns {Promise<any>} A promise returning the property of `obj`.
- */
-const waitForProperty = (obj: object, prop: string, interval: number = 100) => {
-  return new Promise(
-    (resolve: (value: any) => any, reject: (error: Error) => void) => {
-      const checkProperty = () => {
-        if (obj[prop] !== undefined) {
-          resolve(obj[prop]);
-        } else {
-          setTimeout(checkProperty, interval);
-        }
-      };
-      checkProperty();
-    }
-  );
-};
+import {waitForProperty} from "../utils";
 
 /**
  * PlainDownloader is a plain and native React component.

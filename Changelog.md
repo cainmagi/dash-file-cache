@@ -9,6 +9,7 @@
 #### :mega: New
 
 1. Add the Dash component project based on TypeScript. The project contains a `PlainDownloader` component.
+2. Add the default downloader component `Downloader`. It is implemented by using `StreamSaver.js`.
 
 #### :floppy_disk: Change
 

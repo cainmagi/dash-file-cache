@@ -5,3 +5,7 @@ export const PlainDownloader = React.lazy(() =>
     /* webpackChunkName: "PlainDownloader" */ "./fragments/PlainDownloader.react"
   )
 );
+
+export const Downloader = React.lazy(() =>
+  import(/* webpackChunkName: "Downloader" */ "./fragments/Downloader.react")
+);

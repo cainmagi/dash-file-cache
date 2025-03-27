@@ -11,6 +11,5 @@
  * License: MIT
  */
 
-import PlainDownloader from "./components/PlainDownloader.react";
-
-export {PlainDownloader};
+export {default as PlainDownloader} from "./components/PlainDownloader.react";
+export {default as Downloader} from "./components/Downloader.react";

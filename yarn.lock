@@ -1797,6 +1797,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/streamsaver@npm:^2":
+  version: 2.0.5
+  resolution: "@types/streamsaver@npm:2.0.5"
+  checksum: 10c0/3794ac120fa2e9e1a1067f7402516d44c05bac6b69b4ef101e63d84d03ef73b0a709fcbad2fd6a054bfc4b17f55ba47e913c8e4dc59dcccc6f8ebc982566eab8
+  languageName: node
+  linkType: hard
+
 "@types/ws@npm:^8.5.5":
   version: 8.5.14
   resolution: "@types/ws@npm:8.5.14"
@@ -2986,6 +2993,7 @@ __metadata:
     "@types/prop-types": "npm:^15.7.14"
     "@types/ramda": "npm:^0.28.0"
     "@types/react": "npm:^17.0.2"
+    "@types/streamsaver": "npm:^2"
     "@yarnpkg/types": "npm:^4.0.0"
     babel-eslint: "npm:^10.1.0"
     babel-loader: "npm:^9.1.2"
@@ -2996,6 +3004,7 @@ __metadata:
     eslint-config-prettier: "npm:^6.0.0"
     eslint-plugin-import: "npm:^2.18.0"
     eslint-plugin-react: "npm:^7.14.2"
+    header-case-normalizer: "npm:^1.0.3"
     prop-types: "npm:^15.8.1"
     ramda: "npm:^0.28.0"
     react: "npm:^17.0.2"
@@ -3003,10 +3012,12 @@ __metadata:
     react-dom: "npm:^17.0.2"
     sass: "npm:^1.80.7"
     sass-loader: "npm:^16.0.3"
+    streamsaver: "npm:^2.0.6"
     style-loader: "npm:^3.3.3"
     styled-jsx: "npm:^4.0.1"
     ts-loader: "npm:^9.5.2"
     typescript: "npm:~5.8.2"
+    web-streams-polyfill: "npm:^4.1.0"
     webpack: "npm:^5.84.1"
     webpack-cli: "npm:^5.1.1"
     webpack-dev-server: "npm:^4.15.0"
@@ -4303,6 +4314,13 @@ __metadata:
   dependencies:
     function-bind: "npm:^1.1.2"
   checksum: 10c0/3769d434703b8ac66b209a4cca0737519925bbdb61dd887f93a16372b14694c63ff4e797686d87c90f08168e81082248b9b028bad60d4da9e0d1148766f56eb9
+  languageName: node
+  linkType: hard
+
+"header-case-normalizer@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "header-case-normalizer@npm:1.0.3"
+  checksum: 10c0/a01fda49fabc9c10c23a38ce708cdbf71fcd2abc0af7be24b0632e7a7981f460485fbf74816850cf5fdf9193651463569e1cdcebd54733ca6b7c7ac54c22af65
   languageName: node
   linkType: hard
 
@@ -7118,6 +7136,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"streamsaver@npm:^2.0.6":
+  version: 2.0.6
+  resolution: "streamsaver@npm:2.0.6"
+  checksum: 10c0/824ed3099a1a973f7c9622e2e6dbb760b9e635fd3af333ef75c1097308186c7bba3360be886eff3905972dac6a863d1f95101d23f500f720fd00e863ce4d1073
+  languageName: node
+  linkType: hard
+
 "string-hash@npm:1.1.3":
   version: 1.1.3
   resolution: "string-hash@npm:1.1.3"
@@ -7856,6 +7881,13 @@ __metadata:
   dependencies:
     minimalistic-assert: "npm:^1.0.0"
   checksum: 10c0/56edcc5ef2b3d30913ba8f1f5cccc364d180670b24d5f3f8849c1e6fb514e5c7e3a87548ae61227a82859eba6269c11393ae24ce12a2ea1ecb9b465718ddced7
+  languageName: node
+  linkType: hard
+
+"web-streams-polyfill@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "web-streams-polyfill@npm:4.1.0"
+  checksum: 10c0/1022a7d13f0994002c1fa65f53576d85ea76ec59f8ffb3413f052dfcc0ca656bbcbe2611a35180b14f9bca6f3fe83802028b641ec9d200362797c99fa3e68e4e
   languageName: node
   linkType: hard
 

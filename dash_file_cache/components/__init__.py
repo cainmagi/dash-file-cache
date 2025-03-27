@@ -28,11 +28,11 @@ import json
 import dash as _dash
 
 # noinspection PyUnresolvedReferences
-from ._imports_ import PlainDownloader
+from ._imports_ import PlainDownloader, Downloader
 from ._imports_ import __all__ as __import_all__
 
 
-__all__ = ("PlainDownloader",)
+__all__ = ("PlainDownloader", "Downloader")
 
 if not hasattr(_dash, "__plotly_dash") and not hasattr(_dash, "development"):
     print(
@@ -55,9 +55,7 @@ _current_path = _os.path.dirname(_os.path.abspath(__file__))
 
 _this_module = _sys.modules[__name__]
 
-async_resources = [
-    "PlainDownloader",
-]
+async_resources = ["PlainDownloader", "Downloader"]
 
 _js_dist = []
 
@@ -105,7 +103,6 @@ _css_dist = []
 
 for _component in __import_all__:
     _component_obj = locals()[_component]
-    print(_component_obj.__module__)
     setattr(
         _component_obj,
         "_namespace",
