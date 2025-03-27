@@ -62,6 +62,7 @@ class ServiceData:
         cache: CacheAbstract[CachedFileInfo, CachedData],
         service_name: str = "/cached-data",
         chunk_size: int = 1,
+        allowed_cross_origin: Optional[str] = None,
     ) -> None:
         """Initialization.
 
@@ -75,6 +76,11 @@ class ServiceData:
 
         chunk_size: `int`
             The chunk size when streaming the cached file to users. The unit is `MB`.
+
+        allowed_cross_origin: `str | None`
+            The allowed cross origin when serving the data. The usage should be the
+            same as `"Access-Control-Allow-Origin"`. If this value is empty or `None`,
+            the cross-origin will not be configured.
         """
         if chunk_size < 1:
             raise ValueError('services: The argument "chunk_size" needs to be >=1.')
@@ -85,6 +91,11 @@ class ServiceData:
         self.__cache = cache
         self.__addr: str = service_name.strip()
         self.__chunk_size: int = chunk_size * 1024 * 1024
+        self.__allowed_cross_origin: str = (
+            allowed_cross_origin.strip()
+            if isinstance(allowed_cross_origin, str)
+            else ""
+        )
 
     @property
     def cache(self) -> CacheAbstract[CachedFileInfo, CachedData]:
@@ -100,6 +111,12 @@ class ServiceData:
     def chunk_size(self, val: int) -> None:
         """The chunk size when streaming the cached file to users. The unit is `MB`."""
         self.__chunk_size = int(val) * 1024 * 1024
+
+    @property
+    def allowed_cross_origin(self) -> str:
+        """Property: The allowed cross origin. If this value is an empty string, the
+        cross-origin data delivery will not be used."""
+        return self.__allowed_cross_origin
 
     def register(
         self,
@@ -237,6 +254,32 @@ class ServiceData:
 
         return at_closed
 
+    def _stream_add_headers(
+        self,
+        resp: flask.Response,
+        info: CachedFileInfo,
+        uid: str,
+        download: bool = False,
+    ) -> flask.Response:
+        """Private method of `stream()`
+
+        Add customized headers to the data service response."""
+        resp.headers["Content-Length"] = str(info["data_size"])
+        if self.__allowed_cross_origin:
+            resp.headers["Access-Control-Allow-Origin"] = self.__allowed_cross_origin
+            resp.headers["Access-Control-Allow-Credentials"] = "true"
+        if download:
+            file_name = info["file_name"]
+            file_name = file_name if isinstance(file_name, str) and file_name else uid
+            if self.__allowed_cross_origin:
+                resp.headers["Access-Control-Expose-Headers"] = (
+                    "Content-Type, Content-Length, Content-Disposition"
+                )
+            resp.headers["Content-Disposition"] = "attachment; filename={0}".format(
+                file_name
+            )
+        return resp
+
     def stream(self, uid: str, download: bool = False) -> flask.Response:
         """Wrap a cached data item with streaming data provider.
 
@@ -294,13 +337,8 @@ class ServiceData:
             ),
             mimetype=info["mime_type"],
         )
-        resp.headers["Content-Length"] = str(info["data_size"])
-        if download:
-            file_name = info["file_name"]
-            file_name = file_name if isinstance(file_name, str) and file_name else uid
-            resp.headers["Content-Disposition"] = "attachment; filename={0}".format(
-                file_name
-            )
+        self._stream_add_headers(resp, info=info, uid=uid, download=download)
+        print(resp.headers)
 
         return resp
 

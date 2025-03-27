@@ -10,6 +10,7 @@
 
 1. Add the Dash component project based on TypeScript. The project contains a `PlainDownloader` component.
 2. Add the default downloader component `Downloader`. It is implemented by using `StreamSaver.js`.
+3. Add the cross-origin support when serving the data to clients (e.g. the browser).
 
 #### :floppy_disk: Change
 
