@@ -23,6 +23,7 @@
 1. Drop the legacy `components.downloader` module because it has been replaced by `components.PlainDownloader` now.
 2. Update the `examples/download_file` to match the usage of the new `Downloader` component.
 3. Update the `.flake8` configurations.
+4. Update the `docker` configurations.
 
 ### 0.1.2 @ 10/13/2024
 

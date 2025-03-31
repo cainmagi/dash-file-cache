@@ -47,7 +47,6 @@ do
   case "$KEY" in
     --bash)         BASH=true ;;
     --python)       RUN_PYTHON=true ;;
-    --react)        RUN_REACT=true ;;
     --demo)         RUN_DEMO=true ;;
     --with-dash)    WITH_DASH=true ;;
     demo)           DEMO_NAME="${VALUE}" ;;
@@ -79,6 +78,13 @@ else
   fi
 fi
 
+# Compile the module if it has not been compiled yet.
+# This step ensures dash-json-grid to be available when entering the following modes.
+if [ ! -s "dash_file_cache/components/Downloader.py" ]; then
+    msg "Compile the dash component from the React codes."
+    yarn install || fail
+    yarn build || fail
+fi
 
 if $RUN_PYTHON
 then

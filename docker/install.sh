@@ -99,6 +99,7 @@ fi
 
 # Install Node.js and Yarn.
 mcd /app || fail
+wget -O- https://gist.githubusercontent.com/cainmagi/f028e8ac4b06c3deefaf8ec38d5a7d8f/raw/install-nodejs.sh | bash -s -- --all || fail
 ${PYTHON} -m pip install --compile --no-cache-dir pip wheel setuptools --upgrade || fail
 ${PYTHON} -m pip install --compile --no-cache-dir -r ./requirements-docker.txt || fail
 
