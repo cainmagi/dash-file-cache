@@ -20,6 +20,7 @@
 1. Fix: When using `Downloader`, the file size is not configured in the stream saver. Now, it has been fixed.
 2. Fix: The previous workflow scripts do not work any more. Adjust the scripts for including the required packages.
 3. Fix: Specify the extension version `pytest-flask` because `v1.2.0` does not support the newest `Flask`.
+4. Fix: The workflow script `python-publish.yml` should not contain the dependencies for testing.
 
 #### :floppy_disk: Change
 
