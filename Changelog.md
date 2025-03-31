@@ -4,13 +4,14 @@
 
 ## CHANGELOG
 
-### 0.2.0 @ 03/25/2025
+### 0.2.0 @ 03/31/2025
 
 #### :mega: New
 
 1. Add the Dash component project based on TypeScript. The project contains a `PlainDownloader` component.
 2. Add the default downloader component `Downloader`. It is implemented by using `StreamSaver.js`.
 3. Add the cross-origin support when serving the data to clients (e.g. the browser).
+4. Add the external URL proxy support for fetching the cross-origin resources.
 
 #### :floppy_disk: Change
 

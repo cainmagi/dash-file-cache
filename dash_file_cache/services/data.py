@@ -20,13 +20,14 @@ Service(s) related to the data exchanges.
 import os
 import io
 import uuid
+import urllib.parse
 
 from typing import Union, Optional, IO, AnyStr, Any
 
 try:
-    from typing import Iterator, Callable
+    from typing import Iterator, Callable, Mapping
 except ImportError:
-    from collections.abc import Iterator, Callable
+    from collections.abc import Iterator, Callable, Mapping
 
 from typing_extensions import ClassVar, Literal
 
@@ -40,11 +41,14 @@ from ..caches.typehints import (
     CachedPath,
     CachedStringIO,
     CachedBytesIO,
+    CachedRequest,
 )
 from ..caches.abstract import CacheAbstract
 from ..caches.memory import CacheQueue
 from .utilities import no_cache, get_server
 from ..utilities import StreamFinalizer
+
+from .reqstream import DeferredRequestStream
 
 
 __all__ = ("ServiceData",)
@@ -117,6 +121,69 @@ class ServiceData:
         """Property: The allowed cross origin. If this value is an empty string, the
         cross-origin data delivery will not be used."""
         return self.__allowed_cross_origin
+
+    def register_request(
+        self,
+        url: Union[str, urllib.parse.ParseResult],
+        headers: Optional[Mapping[str, str]] = None,
+        file_name_fallback: str = "",
+        download: bool = True,
+    ) -> str:
+        """Register the a remote request to the cache.
+
+        Arguments
+        ---------
+        url: `str | urllib.parse.ParseResult`
+            The string-form or parsed URL of the remote file.
+
+        headers: `Mapping[str, str] | None`
+            The customized headers for this request. If not specified, will not use
+            any headers.
+
+        file_name_fallback: `str`
+            The fall-back file name. If specified, it will be used as the saved file
+            name when the remote service does not provide the file name.
+
+        download: `bool`
+            If specified, will mark the returned address as a downloadable link.
+
+        Returns
+        -------
+        #1: `str`
+            The URL that would be used for accessing this temporarily cached file.
+        """
+        url_parsed = urllib.parse.urlparse(url) if isinstance(url, str) else url
+        file_name = (
+            url_parsed.path.replace("\\", "/").rsplit("/", maxsplit=1)[-1].strip()
+        )
+        if not file_name:
+            file_name = "Unknown"
+
+        info = CachedFileInfo(
+            type="request",
+            data_size=0,
+            file_name=file_name,
+            content_type="",
+            mime_type="application/octet-stream",
+            one_time_service=False,
+        )
+        data = CachedRequest(
+            type="request",
+            url=url_parsed.geturl(),
+            headers=dict(headers) if headers else dict(),
+            file_name_fallback=file_name_fallback,
+        )
+
+        uid = uuid.uuid4().hex
+
+        if isinstance(self.__cache, CacheQueue):
+            cache = self.__cache.mirror
+        else:
+            cache = self.__cache
+        cache.dump(key=uid, info=info, data=data)
+        return "{0}?uid={1}{2}".format(
+            self.__addr, uid, "&download=true" if download else ""
+        )
 
     def register(
         self,
@@ -229,6 +296,11 @@ class ServiceData:
             _data = data()
             if _data["type"] == "path":
                 fobj = open(_data["path"], "rb")
+            elif _data["type"] == "request":
+                raise TypeError(
+                    "service: Should not use the request data in file-based data "
+                    "loader."
+                )
             else:
                 fobj = _data["data"]
             fobj.seek(0, io.SEEK_SET)
@@ -264,7 +336,9 @@ class ServiceData:
         """Private method of `stream()`
 
         Add customized headers to the data service response."""
-        resp.headers["Content-Length"] = str(info["data_size"])
+        data_size = info["data_size"]
+        if isinstance(data_size, str) or (isinstance(data_size, int) and data_size > 0):
+            resp.headers["Content-Length"] = str(data_size)
         if self.__allowed_cross_origin:
             resp.headers["Access-Control-Allow-Origin"] = self.__allowed_cross_origin
             resp.headers["Access-Control-Allow-Credentials"] = "true"
@@ -305,41 +379,53 @@ class ServiceData:
 
         info, deferred = self.__cache.load(uid)
 
-        if info["data_size"] <= 0:
-            raise FileNotFoundError(
-                "services: The requested file {0} is empty.".format(uid)
-            )
-
         file_type = info["type"]
-        if file_type not in ("path", "str", "bytes"):
+        if file_type not in ("path", "str", "bytes", "request"):
             raise TypeError(
                 "service: Cannot recognize the type of fobj: " "{0}".format(file_type)
             )
 
-        one_time_service = info["one_time_service"]
-        at_closed = self._stream_get_at_closed(cache=self.cache, uid=uid)
+        if file_type != "request" and info["data_size"] <= 0:
+            raise FileNotFoundError(
+                "services: The requested file {0} is empty.".format(uid)
+            )
 
-        def provider(_deferred: Callable[[], IO[AnyStr]]) -> Iterator[AnyStr]:
-            """Streaming data provider."""
+        if info["type"] == "request":
+            val = deferred()
+            if val["type"] != "request":
+                raise TypeError(
+                    "service: The data type ({0}) and the info type ({1}) does not "
+                    "match.".format(info["type"], val["type"])
+                )
+            streamer = DeferredRequestStream(info=info, data=val)
+            stream = streamer.provide(chunk_size=self.__chunk_size)
+            info = streamer.info
+        else:
+            one_time_service = info["one_time_service"]
+            at_closed = self._stream_get_at_closed(cache=self.cache, uid=uid)
 
-            with StreamFinalizer(
-                _deferred(), callback_on_exit=at_closed if one_time_service else None
-            ) as _fobj:
-                data = _fobj.read(self.__chunk_size)
-                while data:
-                    yield data
+            def provider(_deferred: Callable[[], IO[AnyStr]]) -> Iterator[AnyStr]:
+                """Streaming data provider."""
+
+                with StreamFinalizer(
+                    _deferred(),
+                    callback_on_exit=at_closed if one_time_service else None,
+                ) as _fobj:
                     data = _fobj.read(self.__chunk_size)
+                    while data:
+                        yield data
+                        data = _fobj.read(self.__chunk_size)
+
+            stream = provider(self._stream_data_to_loader(deferred))
 
         resp = flask.Response(
-            flask.stream_with_context(provider(self._stream_data_to_loader(deferred))),
+            flask.stream_with_context(stream),
             content_type=(
                 "application/octet-stream" if download else info["content_type"]
             ),
             mimetype=info["mime_type"],
         )
         self._stream_add_headers(resp, info=info, uid=uid, download=download)
-        print(resp.headers)
-
         return resp
 
     def serve(

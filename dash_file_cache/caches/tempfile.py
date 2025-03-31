@@ -193,6 +193,9 @@ class CacheFile(CacheAbstract[th.CachedFileInfo, th.CachedData]):
                 while chunk:
                     fobj.write(chunk)
                     chunk = _data.read(self.__chunk_size)
+        elif data["type"] == "request":
+            with open(path + ".tmp", "w") as fobj:
+                json.dump(data, fobj, ensure_ascii=False)
         else:
             raise TypeError(
                 "cache: The value to be dumped is not recognized: {0}".format(data)
@@ -233,6 +236,10 @@ class CacheFile(CacheAbstract[th.CachedFileInfo, th.CachedData]):
             elif file_type == "bytes":
                 fobj = open(path + ".tmp", "rb")
                 return th.CachedBytesIO(type=file_type, data=fobj)
+            elif file_type == "request":
+                with open(path + ".tmp", "r") as fobj:
+                    _data: th.CachedRequest = json.load(fobj)
+                return _data
             else:
                 raise TypeError(
                     "cache: The type {0} of the key to be loaded is not "

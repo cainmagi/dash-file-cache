@@ -19,12 +19,14 @@ Extra typehints used by this project.
 
 import os
 
-from typing import Union, IO, TypeVar
+from typing import Union, Optional, IO, TypeVar
 
 try:
     from typing import Callable
+    from typing import Dict
 except ImportError:
     from collections.abc import Callable
+    from builtins import dict as Dict
 
 from typing_extensions import Literal, TypedDict
 
@@ -49,7 +51,7 @@ __all__ = (
 class CachedFileInfo(TypedDict):
     """The metadata of the cached file."""
 
-    type: Literal["path", "str", "bytes"]
+    type: Literal["path", "str", "bytes", "request"]
     """The type os this cached data."""
 
     data_size: int
@@ -90,6 +92,31 @@ class CachedPath(TypedDict):
     """The path to the file on the local disk."""
 
 
+class CachedRequest(TypedDict):
+    """The URL and request configuration specifying a remote file. This configuration
+    is mainly used when a cross-domain URL needs to be accessed or an authentication
+    protected file is to be read.
+
+    In this case, the `CachedRequest` will only store the URL and the request
+    configurations. The request stream will be established and forwarded to the
+    users when this cached data item is to be streamed.
+    """
+
+    type: Literal["request"]
+    """The type os this cached data."""
+
+    url: str
+    """The URL referring to the remote file."""
+
+    headers: Dict[str, str]
+    """A collection of headers to be used when accessing the remote file."""
+
+    file_name_fallback: Optional[str]
+    """A fall-back file name. It is used when the response of the request does not
+    provide a file name. If this valus is not specified, will use the URL to guess
+    the file name."""
+
+
 class CachedStringIO(TypedDict):
     """The data of one cached `StringIO` data."""
 
@@ -112,5 +139,5 @@ class CachedBytesIO(TypedDict):
     file name and the `mime_type`."""
 
 
-CachedData = Union[CachedPath, CachedStringIO, CachedBytesIO]
+CachedData = Union[CachedPath, CachedRequest, CachedStringIO, CachedBytesIO]
 """The typehint of the cached data."""
