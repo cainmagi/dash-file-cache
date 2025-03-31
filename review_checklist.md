@@ -18,12 +18,27 @@
 *   Scan your code for expensive operations (large computations, DOM queries, React re-renders). Have you done your possible to limit their impact? If not, it is going to slow your app down.
 *   Can you think of cases where your current code will break? How are you handling errors? Should the user see them as notifications? Should your app try to auto-correct them for them?
 
+## Component API
+
+-   Have you tested your component on the Python side by creating an app in `usage.py` ?
+
+    Do all of your component's props work when set from the back-end?
+
+    Should all of them be settable from the back-end or are some only relevant to user interactions in the front-end?
+
+-   Have you provided some basic documentation about your component? The Dash community uses [react docstrings](https://github.com/plotly/dash-docs/blob/master/tutorial/plugins.py#L45) to provide basic information about dash components. Take a look at this [Checklist component example](https://github.com/plotly/dash-core-components/blob/master/src/components/Checklist.react.js) and others from the dash-core-components repository.
+
+    At a minimum, you should describe what your component does, and describe its props and the features they enable.
+
+    Be careful to use the correct formatting for your docstrings for them to be properly recognized.
+
 ## Tests
 
 -   The Dash team uses integration tests extensively, and we highly encourage you to write tests for the main functionality of your component. In the `tests` folder of the boilerplate, you can see a sample integration test. By launching it, you will run a sample Dash app in a browser. You can run the test with:
     ```
-    python -m pytest
+    python -m tests.test_render
     ```
+    [Browse the Dash component code on GitHub for more examples of testing.](https://github.com/plotly/dash-core-components)
 
 ## Ready to publish? Final scan
 

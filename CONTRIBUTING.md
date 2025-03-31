@@ -13,8 +13,13 @@ This guide shows how to compile and test this project. Anyone who want to contri
 * Review our [code of conduct :memo:](./CODE_OF_CONDUCT.md) before contributing to this project.
 
 * The metadata of the project is defined in `pyproject.toml` and `package.json`. Modifying `package.json` will not automatically update `pyproject.toml`. Therefore, users need to ensure changes for both files if any part of the metadata needs to be changed.
+* The React source files are in the `src/lib/` folder. These codes are formatted by [`pretteir`:hammer:][tool-prettier].
 
-* The Python codes are in the package `dash_file_cache/` folder. These codes are formatted by [`black`:hammer:][tool-black]. Note that the automatically generated files (may be introduced in the future) will not be formatted.
+* The Python codes are in the package `dash_file_cache/` folder. These codes are formatted by [`black`:hammer:][tool-black].
+
+* The Python Compoenent codes are in the sub-package `dash_file_cache/components/` folder. Note that the automatically generated files like `_imports_.py` and `Downloader.py` will not be formatted.
+
+* Currently, we do not provide the React demo application. Therefore, please do not use `yarn start`.
 
 * The Dash demo apps are stored in `examples/`. These demos show the usages this package in different cases.
 
@@ -24,7 +29,11 @@ This guide shows how to compile and test this project. Anyone who want to contri
 
 * The tool configurations for `pytest`, `black`, and `pyright` are defined in `pyproject.toml`. However, the configurations for `flake8`, `pylint`, and `prettier` are still kept in their corresponding configurations files.
 
-* Remember to use [`black`:hammer:][tool-black] to format any modified Python codes. [Review your code :memo:](./review_checklist.md) before sending the pull request.
+* If any custom styles are defined but not imported as a part of the react codes, please add these custom CSS files into the distribution folder (`dash_json_grid`).
+    * Make sure that they are referenced in `MANIFEST.in` so that they get properly included when you're ready to publish your component.
+    * Make sure the stylesheets are added to the `_css_dist` dict in `dash_json_grid/__init__.py` so dash will serve them automatically when the component suite is requested.
+
+* Remember to use [`black`:hammer:][tool-black] and [`pretteir`:hammer:][tool-prettier] to format any modified Python and React codes, respectively. [Review your code :memo:](./review_checklist.md) before sending the pull request.
 
 ### 2. Work with Docker
 
@@ -119,6 +128,13 @@ At the **bottom left** corner, you should be able to see the name of the current
 
 Now you will be able to start the development. You can do the following things to test the codes.
 
+* Build the component
+
+    ``` sh
+    yarn install
+    yarn build
+    ```
+
 * Run the `pytest`:
 
     ``` sh
@@ -188,7 +204,7 @@ The following steps will help you configure the environment with `conda`:
 1. Create the environment
 
     ``` sh
-    conda create -c conda-forge -n dashdev-dfc python=3.12 wheel setuptools
+    conda create -c conda-forge -n dashdev-dfc python=3.12 wheel setuptools nodejs yarn
     ```
 
 2. Enter the environment
@@ -203,6 +219,13 @@ The following steps will help you configure the environment with `conda`:
     pip install -r requirements.txt -r requirements-dev.txt -r tests/requirements.txt
     ```
 
+4. Install the Node.js dependencies and build the first version.
+
+    ``` sh
+    yarn install
+    yarn build
+    ```
+
 #### 3.3. Run the test
 
 To verify whether you have correctly prepared the environment or not, you can run the following command:
@@ -214,6 +237,13 @@ python -m pytest --headless --with-dash
 #### 3.4. Develop the project
 
 You can do the following things to test the codes.
+
+* Build the component
+
+    ``` sh
+    yarn install
+    yarn build
+    ```
 
 * Run the `pytest`:
 

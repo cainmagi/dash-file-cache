@@ -27,6 +27,7 @@
 4. Update the `docker` configurations.
 5. Remove the unused command `yarn start` from the `package.json`.
 6. Update the project configurations to the newest standard.
+7. Update the project descriptions for explaining the usages of the React codes.
 
 ### 0.1.2 @ 10/13/2024
 

@@ -20,7 +20,7 @@ The data cache enables the following features:
 1. Load a server-side file dynamically and send the file to users (the frontend).
 2. Support in-memory files (like `io.BytesIO()`) or on-disk files (specified by a path).
 3. Support different kinds of cache (single-thread, multi-processing, or file-based).
-4. A customized component helping the dashboard trigger a download event from the server side.
+4. Customized components helping the dashboard trigger download events from the server side.
 
 ## 1. Install
 
@@ -30,14 +30,25 @@ Intall the **latest released version** of this package by using the PyPI source:
 python -m pip install dash-file-cache
 ```
 
-Or use the following commands to install **the developing version** from the GitHub Source when you have already installed [Git :hammer:][tool-git]:
+If users want to install the developer's version, they need to ensure that the following packages are installed.
+
+* [Git :hammer:][tool-git]
+* [NodeJS][tool-nodejs]
+* [Yarn][tool-yarn]
+
+Then use the following commands to install it.
 
 ```bash
-git clone https://github.com/cainmagi/dash-file-cache
+git clone --depth 1 --single-branch https://github.com/cainmagi/dash-file-cache
 cd dash-file-cache
 python -m pip install -r requirements.txt -r requirements-dev.txt
-python -m pip install .
+yarn install
+yarn dlx @yarnpkg/sdks vscode
+yarn build
+python -m pip install .[dev]
 ```
+
+For VSCode users, please install the recommended extensions specified in the project workspace file.
 
 ## 2. Usage
 
