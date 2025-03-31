@@ -13,6 +13,10 @@
 3. Add the cross-origin support when serving the data to clients (e.g. the browser).
 4. Add the external URL proxy support for fetching the cross-origin resources.
 
+#### :wrench: Fix
+
+1. Fix: When using `Downloader`, the file size is not configured in the stream saver. Now, it has been fixed.
+
 #### :floppy_disk: Change
 
 1. Drop the legacy `components.downloader` module because it has been replaced by `components.PlainDownloader` now.

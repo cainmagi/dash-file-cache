@@ -65,7 +65,10 @@ const downloadFile = (
             window.WritableStream = streamSaver.WritableStream;
           }
 
-          const fileStream = streamSaver.createWriteStream(fileName);
+          const fileSize = resp.headers.get("Content-Length");
+          const fileStream = streamSaver.createWriteStream(fileName, {
+            size: fileSize ? parseInt(fileSize) || undefined : undefined,
+          });
           const readableStream = resp.body;
           if (!readableStream) {
             try {
