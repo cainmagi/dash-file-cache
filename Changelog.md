@@ -26,6 +26,7 @@
 3. Update the `.flake8` configurations.
 4. Update the `docker` configurations.
 5. Remove the unused command `yarn start` from the `package.json`.
+6. Update the project configurations to the newest standard.
 
 ### 0.1.2 @ 10/13/2024
 

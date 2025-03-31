@@ -141,6 +141,7 @@ jspm_packages/
 /dash_file_cache/components/package-info.json
 !/dash_file_cache/components/__init__.py
 !/dash_file_cache/components/__main__.py
+!/dash_file_cache/components/typehints.py
 /deps
 /inst
 /man

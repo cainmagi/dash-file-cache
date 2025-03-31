@@ -28,7 +28,7 @@ keywords = [
   "downloader",
   "file-downloads",
 ]
-license = { text = "MIT License" }
+license = "MIT"
 requires-python = ">=3.8"
 
 [project.urls]

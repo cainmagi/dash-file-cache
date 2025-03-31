@@ -71,14 +71,14 @@ body:
     attributes:
       label: Python version
       description: >-
-        e.g. 3.12
+        e.g. 3.13
     validations:
       required: true
   - type: input
     attributes:
       label: Dash File Cache version
       description: >-
-        e.g. 0.1.0
+        e.g. 0.2.0
     validations:
       required: true
 

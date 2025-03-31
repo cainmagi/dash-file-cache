@@ -31,28 +31,28 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.x"
-      # - name: Set up Node.js 22.x
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: 22.x
-      #     cache: "npm"
-      # - name: Enable Corepack
-      #   run: |
-      #     npm install -g corepack
-      #     corepack enable
-      #     corepack prepare yarn --activate
-      # - name: Yarn run install
-      #   run: |
-      #     yarn install
+      - name: Set up Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: "npm"
+      - name: Enable Corepack
+        run: |
+          npm install -g corepack
+          corepack enable
+          corepack prepare yarn --activate
+      - name: Yarn run install
+        run: |
+          yarn install
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install build wheel
           if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
           if [ -f requirements-dev.txt ]; then python -m pip install -r requirements-dev.txt; fi
-      # - name: Use Yarn to build component
-      #   run: |
-      #     yarn build
+      - name: Use Yarn to build component
+        run: |
+          yarn build
       - name: Build package
         run: python -m build
       - name: Publish package distributions to PyPI
