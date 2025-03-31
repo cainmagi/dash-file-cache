@@ -83,6 +83,7 @@ fi
 if [ ! -s "dash_file_cache/components/Downloader.py" ]; then
     msg "Compile the dash component from the React codes."
     yarn install || fail
+    yarn dlx @yarnpkg/sdks vscode || fail
     yarn build || fail
 fi
 
