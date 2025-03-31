@@ -18,6 +18,7 @@
 #### :wrench: Fix
 
 1. Fix: When using `Downloader`, the file size is not configured in the stream saver. Now, it has been fixed.
+2. Fix: The previous workflow scripts do not work any more. Adjust the scripts for including the required packages.
 
 #### :floppy_disk: Change
 
