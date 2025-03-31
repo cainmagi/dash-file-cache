@@ -1,5 +1,7 @@
 # Dash File Cache
 
+<p><img alt="Banner" src="https://repository-images.githubusercontent.com/870214543/e95026ea-5059-4083-8f54-6dcb0eaac355"></p>
+
 <p align="center">
   <a href="https://github.com/cainmagi/dash-file-cache/releases/latest"><img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/cainmagi/dash-file-cache?logo=github&sort=semver&style=flat-square"></a>
   <a href="https://github.com/cainmagi/dash-file-cache/releases"><img alt="GitHub all releases" src="https://img.shields.io/github/downloads/cainmagi/dash-file-cache/total?logo=github&style=flat-square"></a>

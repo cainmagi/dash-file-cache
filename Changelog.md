@@ -32,6 +32,7 @@
 6. Update the project configurations to the newest standard.
 7. Update the project descriptions for explaining the usages of the React codes.
 8. Make VSCode extensions installed in the docker image by default.
+9. Add the Git card in the readme file.
 
 ### 0.1.2 @ 10/13/2024
 
