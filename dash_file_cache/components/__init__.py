@@ -31,8 +31,17 @@ import dash as _dash
 from ._imports_ import PlainDownloader, Downloader
 from ._imports_ import __all__ as __import_all__
 
+from . import typehints
+from .typehints import DownloaderURL, DownloaderStatus
 
-__all__ = ("PlainDownloader", "Downloader")
+
+__all__ = (
+    "typehints",
+    "PlainDownloader",
+    "Downloader",
+    "DownloaderURL",
+    "DownloaderStatus",
+)
 
 if not hasattr(_dash, "__plotly_dash") and not hasattr(_dash, "development"):
     print(

@@ -33,7 +33,7 @@ from . import services
 # Import frequently-used classes.
 from .caches import CachePlain, CacheQueue, CacheFile
 from .services import ServiceData, ServiceDownloader
-from .components import PlainDownloader, Downloader
+from .components import PlainDownloader, Downloader, DownloaderURL, DownloaderStatus
 
 __all__ = (
     "__version__",
@@ -49,6 +49,8 @@ __all__ = (
     "ServiceDownloader",
     "PlainDownloader",
     "Downloader",
+    "DownloaderURL",
+    "DownloaderStatus",
 )
 
 _js_dist = []

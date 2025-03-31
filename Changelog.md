@@ -13,6 +13,7 @@
 3. Add the cross-origin support when serving the data to clients (e.g. the browser).
 4. Add the external URL proxy support for fetching the cross-origin resources.
 5. Add a service `ServiceDownloader` which allows the MITM served by the local device.
+6. Add a module `components.typehints` for providing annotations of the component properties.
 
 #### :wrench: Fix
 

@@ -42,7 +42,7 @@ if __name__ == "__main__":
     sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from dash_file_cache import CacheFile
-from dash_file_cache import Downloader
+from dash_file_cache import Downloader, DownloaderStatus
 from dash_file_cache import ServiceData, ServiceDownloader
 
 
@@ -72,6 +72,7 @@ class Demo:
                 html.Div((html.P(("Progress:", html.Span(id="prog"))))),
                 html.Div((html.P("Cache type:"), html.P(id="type"))),
                 html.Div((html.P("Cache address:"), html.P(id="addr"))),
+                html.Div((html.P("Downloader status:"), html.P(id="dlstats"))),
                 Downloader(id="download", mitm="/dfc-downloader"),
             ),
         )
@@ -118,6 +119,16 @@ class Demo:
             if not addr:
                 return dash.no_update
             return addr
+
+        @app.callback(
+            Output("dlstats", "children"),
+            Input("download", "status"),
+            prevent_initial_call=True,
+        )
+        def trigger_downloading_status(status: Optional[DownloaderStatus]):
+            if not status:
+                return ""
+            return str(status)
 
 
 class WrappedApp:

@@ -14,7 +14,7 @@ MIT License
 
 Description
 -----------
-Extra typehints used by this project.
+Extra typehints used by the definition of caches.
 """
 
 import os
