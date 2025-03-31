@@ -438,7 +438,7 @@ class ServiceData:
         rself = self
 
         class ViewCachedData(flask.views.MethodView):
-            """Service for the raw HTML page"""
+            """Service for the cached data."""
 
             init_every_request: ClassVar[bool] = False
 

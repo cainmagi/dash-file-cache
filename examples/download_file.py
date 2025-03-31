@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
 from dash_file_cache import CacheFile
 from dash_file_cache import Downloader
-from dash_file_cache import ServiceData
+from dash_file_cache import ServiceData, ServiceDownloader
 
 
 app = dash.Dash("test-tempfile-cache")
@@ -72,7 +72,7 @@ class Demo:
                 html.Div((html.P(("Progress:", html.Span(id="prog"))))),
                 html.Div((html.P("Cache type:"), html.P(id="type"))),
                 html.Div((html.P("Cache address:"), html.P(id="addr"))),
-                Downloader(id="download"),
+                Downloader(id="download", mitm="/dfc-downloader"),
             ),
         )
 
@@ -131,6 +131,7 @@ class WrappedApp:
         app.layout = demo.layout()
         demo.bind(app)
         demo.service.serve(app)
+        ServiceDownloader("/dfc-downloader").serve(app)
 
 
 wrapped_app = WrappedApp(app)

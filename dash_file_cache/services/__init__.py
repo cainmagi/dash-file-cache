@@ -24,11 +24,20 @@ from pkgutil import extend_path
 # Import sub-modules.
 from . import utilities
 from . import reqstream
+from . import downloader
 from . import data
 
 from .data import ServiceData
+from .downloader import ServiceDownloader
 
-__all__ = ("utilities", "reqstream", "data", "ServiceData")
+__all__ = (
+    "utilities",
+    "reqstream",
+    "downloader",
+    "data",
+    "ServiceData",
+    "ServiceDownloader",
+)
 
 # Set this local module as the prefered one
 __path__ = extend_path(__path__, __name__)

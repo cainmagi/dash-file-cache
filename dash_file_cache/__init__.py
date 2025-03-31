@@ -32,7 +32,7 @@ from . import services
 
 # Import frequently-used classes.
 from .caches import CachePlain, CacheQueue, CacheFile
-from .services import ServiceData
+from .services import ServiceData, ServiceDownloader
 from .components import PlainDownloader, Downloader
 
 __all__ = (
@@ -46,6 +46,7 @@ __all__ = (
     "CacheQueue",
     "CacheFile",
     "ServiceData",
+    "ServiceDownloader",
     "PlainDownloader",
     "Downloader",
 )

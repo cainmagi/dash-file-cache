@@ -20,7 +20,8 @@ import {sanitizeHeaders, fileNameFromURL} from "../utils";
 const downloadFile = (
   url: {url: string; file_name_fallback?: string},
   headers: Record<string, string> | undefined = undefined,
-  allow_cross_origin: boolean = false
+  allow_cross_origin: boolean = false,
+  mitm: string | undefined = undefined
 ) => {
   let _headers = {Accept: "application/octet-stream"};
   if (headers) {
@@ -63,6 +64,10 @@ const downloadFile = (
           }
           if (!window.WritableStream) {
             window.WritableStream = streamSaver.WritableStream;
+          }
+
+          if (typeof mitm === "string" && !isEmpty(mitm)) {
+            streamSaver.mitm = `${mitm}/mitm`;
           }
 
           const fileSize = resp.headers.get("Content-Length");
@@ -158,7 +163,8 @@ const santizeURL = (
  * as the progress of downloading.
  */
 const Downloader = (props: ComponentTypes) => {
-  const {id, url, headers, allow_cross_origin, setProps, loading_state} = props;
+  const {id, url, headers, allow_cross_origin, mitm, setProps, loading_state} =
+    props;
 
   const sanitizedHeaders = sanitizeHeaders(headers);
 
@@ -166,7 +172,7 @@ const Downloader = (props: ComponentTypes) => {
     const sanitizedURL = santizeURL(url);
 
     if (type(sanitizedURL) != "Undefined") {
-      downloadFile(sanitizedURL, sanitizedHeaders, allow_cross_origin)
+      downloadFile(sanitizedURL, sanitizedHeaders, allow_cross_origin, mitm)
         .then((value) => {
           console.log(`Download: ${value.name}`);
           setProps({url: "", status: {code: "success", http_code: value.code}});

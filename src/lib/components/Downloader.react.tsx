@@ -18,6 +18,7 @@ import {Downloader as RealComponent} from "../LazyLoader";
 const defaultProps = {
   url: "",
   allow_cross_origin: false,
+  mitm: undefined,
 };
 
 /**
@@ -95,6 +96,15 @@ const propTypes = {
      */
     http_code: PropTypes.number,
   }),
+
+  /**
+   * The MITM-IFrame used for maintaining the status of the downloader. It prevents
+   * the downloader to be closed when the broswer is idle. See details here:
+   * https://github.com/jimmywarting/StreamSaver.js/blob/master/README.md#best-practice
+   * If not specified, will use the default MITM service of StreamSaver.js, which
+   * needs the internet.
+   */
+  mitm: PropTypes.string,
 
   /**
    * Dash-assigned callback that should be called to report property changes

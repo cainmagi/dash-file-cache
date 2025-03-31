@@ -12,6 +12,7 @@
 2. Add the default downloader component `Downloader`. It is implemented by using `StreamSaver.js`.
 3. Add the cross-origin support when serving the data to clients (e.g. the browser).
 4. Add the external URL proxy support for fetching the cross-origin resources.
+5. Add a service `ServiceDownloader` which allows the MITM served by the local device.
 
 #### :wrench: Fix
 
