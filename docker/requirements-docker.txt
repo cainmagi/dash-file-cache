@@ -9,6 +9,7 @@ typing-extensions
 chromedriver-binary-auto  # Needs to be installed after installing the browser.
 pytest
 pytest-base-url
+pytest-flask>=1.3.0
 pytest-html
 pytest-metadata
 py
