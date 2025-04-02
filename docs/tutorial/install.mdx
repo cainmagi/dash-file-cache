@@ -8,6 +8,7 @@ slug: /install
 
 import DarkButton from "@site/src/components/DarkButton";
 import octInfo16 from "@iconify-icons/octicon/info-16";
+import octLogoGist16 from "@iconify-icons/octicon/logo-gist-16";
 import IconExternalLink from "@theme/Icon/ExternalLink";
 
 import {repoURL} from "@site/src/envs/variables";
@@ -36,12 +37,39 @@ pip install dash-file-cache[option1,option2...]
 ## Install the GitHub version
 
 The GitHub version may be newer than the PyPI version during the development.
-If users want to install the GitHub version, please ensure that [Git<IconExternalLink/>][link-git] has been installed.
+If users want to install the GitHub version, please ensure that
+
+- [Git<IconExternalLink/>][link-git]
+- [NodeJS<IconExternalLink/>][link-nodejs]
+- [Yarn<IconExternalLink/>][link-yarn]
+
+has been installed.
+
+:::tip
+
+If you are using Ubuntu or Debian (Linux), you can use the following script to install `nodejs/yarn` quickly:
+
+<p>
+  <DarkButton
+    href="https://gist.github.com/cainmagi/f028e8ac4b06c3deefaf8ec38d5a7d8f#file-installation-for-nodejs-md"
+    icon={octLogoGist16}
+    iconVspace={0}
+  >
+    {"installation-for-nodejs.sh"}
+  </DarkButton>
+</p>
+
+:::
+
 After that, run the following command to install the developer's version.
 
 ```shell
-git clone https://github.com/cainmagi/dash-file-cache
+git clone --depth 1 --single-branch https://github.com/cainmagi/dash-file-cache
 cd dash-file-cache
+python -m pip install -r requirements.txt -r requirements-dev.txt
+yarn install
+yarn dlx @yarnpkg/sdks vscode
+yarn build
 python -m pip install .[dev]
 ```
 
@@ -54,13 +82,32 @@ will take effects when `dash_file_cache` is imported anywhere.
 
 ## Run the tests
 
-To verify whether the package is compatible with your device, please clone the project and run the tests:
+To verify whether the package is compatible with your device, please ensure that the
+following dependencies are available
+
+- [Git<IconExternalLink/>][link-git]
+- [NodeJS<IconExternalLink/>][link-nodejs]
+- [Yarn<IconExternalLink/>][link-yarn]
+- [Chrome<IconExternalLink/>][link-chrome] or [Chromium<IconExternalLink/>][link-chromium]
+
+:::warning
+
+Note that the browser needs to be Chrome or Chromium. Edge or Opera will not work with
+[`dash_duo`<IconExternalLink/>][link-dash-duo].
+
+:::
+
+After that, clone the project and run the tests:
 
 ```shell
-git clone https://github.com/cainmagi/dash-file-cache
+git clone --depth 1 --single-branch https://github.com/cainmagi/dash-file-cache
 cd dash-file-cache
+python -m pip install -r requirements.txt -r requirements-dev.txt
+yarn install
+yarn dlx @yarnpkg/sdks vscode
+yarn build
 python -m pip install .[test]
-python -m pytest tests
+python -m pytest --with-dash --headless
 ```
 
 The package is only compatible with `python>=3.8`. If you find the package fails to pass the tests, please
@@ -72,3 +119,9 @@ The package is only compatible with `python>=3.8`. If you find the package fails
 </p>
 
 [link-git]: https://git-scm.com/downloads
+[link-nodejs]: https://nodejs.org/en/download/package-manager
+[link-yarn]: https://yarnpkg.com/getting-started/install
+[link-chrome]: https://www.google.com/chrome/dr/download
+[link-chromium]: https://www.chromium.org/getting-involved/download-chromium
+[link-dash-duo]: https://dash.plotly.com/testing
+[link-pytest]: https://docs.pytest.org/

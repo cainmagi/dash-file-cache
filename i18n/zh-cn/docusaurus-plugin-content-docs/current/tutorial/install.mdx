@@ -8,6 +8,7 @@ slug: /install
 
 import DarkButton from "@site/src/components/DarkButton";
 import octInfo16 from "@iconify-icons/octicon/info-16";
+import octLogoGist16 from "@iconify-icons/octicon/logo-gist-16";
 import IconExternalLink from "@theme/Icon/ExternalLink";
 
 import {repoURL} from "@site/src/envs/variables";
@@ -35,11 +36,37 @@ pip install dash-file-cache[option1,option2...]
 
 ## 安装GitHub版本 {#install-the-github-version}
 
-在开发阶段，GitHub上的版本有可能比在PyPI发布的版本新。如果用户需要安装GitHub版本，请确保已经安装了[Git<IconExternalLink/>][link-git]。确保一些需要的软件都准备无虞后，运行下列命令安装开发者版本：
+在开发阶段，GitHub上的版本有可能比在PyPI发布的版本新。如果用户需要安装GitHub版本，请确保已经安装了以下软件：
+
+- [Git<IconExternalLink/>][link-git]
+- [NodeJS<IconExternalLink/>][link-nodejs]
+- [Yarn<IconExternalLink/>][link-yarn]
+
+:::tip
+
+如果你正在使用Ubuntu或者Debian (Linux)，你可以使用以下脚本快速安装`nodejs/yarn`：
+
+<p>
+  <DarkButton
+    href="https://gist.github.com/cainmagi/f028e8ac4b06c3deefaf8ec38d5a7d8f#file-installation-for-nodejs-md"
+    icon={octLogoGist16}
+    iconVspace={0}
+  >
+    {"installation-for-nodejs.sh"}
+  </DarkButton>
+</p>
+
+:::
+
+确保一些需要的软件都准备无虞后，运行下列命令安装开发者版本：
 
 ```shell
-git clone https://github.com/cainmagi/dash-file-cache
+git clone --depth 1 --single-branch https://github.com/cainmagi/dash-file-cache
 cd dash-file-cache
+python -m pip install -r requirements.txt -r requirements-dev.txt
+yarn install
+yarn dlx @yarnpkg/sdks vscode
+yarn build
 python -m pip install .[dev]
 ```
 
@@ -51,13 +78,30 @@ python -m pip install .[dev]
 
 ## 运行测试 {#run-the-tests}
 
-要检查此项目是否兼容当前设备，请确保已经安装了[Git<IconExternalLink/>][link-git]。之后，请按照以下命令clone项目并运行测试：
+要检查此项目是否兼容当前设备，请确保已经安装了以下软件：
+
+- [Git<IconExternalLink/>][link-git]
+- [NodeJS<IconExternalLink/>][link-nodejs]
+- [Yarn<IconExternalLink/>][link-yarn]
+- [Chrome<IconExternalLink/>][link-chrome]或[Chromium<IconExternalLink/>][link-chromium]
+
+:::warning
+
+浏览器必须使用Chrome或者Chromium。Edge或者Opera无法与[`dash_duo`<IconExternalLink/>][link-dash-duo]兼容。
+
+:::
+
+确保一些需要的软件都准备无虞后，请按照以下命令clone项目并运行测试：
 
 ```shell
-git clone https://github.com/cainmagi/dash-file-cache
+git clone --depth 1 --single-branch https://github.com/cainmagi/dash-file-cache
 cd dash-file-cache
+python -m pip install -r requirements.txt -r requirements-dev.txt
+yarn install
+yarn dlx @yarnpkg/sdks vscode
+yarn build
 python -m pip install .[test]
-python -m pytest tests
+python -m pytest --with-dash --headless
 ```
 
 本项目只兼容到`python>=3.8`版本。如果你发现你所使用的版本无法通过单元测试，请提交问题报告：
@@ -69,3 +113,9 @@ python -m pytest tests
 </p>
 
 [link-git]: https://git-scm.com/downloads
+[link-nodejs]: https://nodejs.org/zh-cn/download/package-manager
+[link-yarn]: https://yarnpkg.com/getting-started/install
+[link-chrome]: https://www.google.com/intl/zh-CN/chrome/
+[link-chromium]: https://www.chromium.org/getting-involved/download-chromium
+[link-dash-duo]: https://dash.plotly.com/testing
+[link-pytest]: https://docs.pytest.org/

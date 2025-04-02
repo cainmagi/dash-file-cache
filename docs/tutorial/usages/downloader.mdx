@@ -1,7 +1,7 @@
 ---
 id: downloader
 sidebar_label: Downloader
-title: How to use the Downloader component
+title: How to use the downloader components
 description: The Downloader component provides a convenient solution of using callbacks to trigger a downloading event.
 slug: /usages/downloader
 ---
@@ -9,19 +9,22 @@ slug: /usages/downloader
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import IconExternalLink from "@theme/Icon/ExternalLink";
+import vsiCheckIcon from "@iconify-icons/codicon/check";
 
-import IconLink from "@site/src/components/IconLink";
+import InlineIcon from "@site/src/components/InlineIcon";
+import IconLink, {IconLinkInline} from "@site/src/components/IconLink";
 
-# How to use the Downloader component
+## Use the `PlainDownloader` component
 
-Dash File Cache provides a factory instance for implementing a component that can fire a downloading event by a callback.
+Dash File Cache provides a customized component that can fire a downloading event by a callback.
 
 ```python
-downloader = Downloader(id: str)
+downloader = PlainDownloader(id: str)
 ```
 
-The following codes show a comparison between the implementation with `Downloader` and without `Downloader`.
-They are implementations with the equivalent functionalities.
+The following codes show a comparison between the implementation with `PlainDownloader`
+and without `PlainDownloader`. They are implementations with the equivalent
+functionalities.
 
 <Tabs
   defaultValue="with-downloader"
@@ -33,14 +36,14 @@ They are implementations with the equivalent functionalities.
 
 <TabItem value="with-downloader">
 
-```python title="with_downloader.py" showLineNumbers
+```python title="with_plain_downloader.py" showLineNumbers
 import io
 
 from typing import Optional
 
 import dash
 from dash import html
-from dash import Input
+from dash import Output, Input
 import dash_file_cache as dfc
 
 
@@ -49,20 +52,17 @@ service = dfc.ServiceData(dfc.CachePlain(1))
 # highlight-next-line
 service.serve(app)
 
-downloader = dfc.Downloader("downloader", None)
-
 app.layout = html.Div(
     (
         html.Div(html.Button(id="btn", children="Download")),
-        downloader.layout()
+        # highlight-next-line
+        dfc.PlainDownloader(id="downloader")
     )
 )
 
-downloader.use_callbacks(app)
-
 
 # highlight-next-line
-@app.callback(downloader.as_output, Input("btn", "n_clicks"))
+@app.callback(Output("downloader", "url"), Input("btn", "n_clicks"))
 def a_callback_creating_data(n_clicks: Optional[int]) -> str:
     if not n_clicks:
         return dash.no_update
@@ -100,8 +100,6 @@ app = dash.Dash("demo")
 service = dfc.ServiceData(dfc.CachePlain(1))
 # highlight-next-line
 service.serve(app)
-
-downloader = dfc.Downloader("downloader", None)
 
 app.layout = html.Div(
     (
@@ -168,46 +166,358 @@ if __name__ == "__main__":
 
 </Tabs>
 
-`Downloader(...)` itself is not a dash component, but calling `downloader.layout()` will
-get the dash components related to this instance. `download.use_callbacks(app)` provides
-the callbacks related to using the trigger signal to fire a downloading event.
+`PlainDownloader(...)` is the simplest component providing the downloading features.
+By firing the callback on the property `url`, a downloading event will be triggered
+instantly.
 
-There are three steps of using `Downloader(...)`:
+The implementations behind `PlainDownloader` is totally the same as the the above
+example `without_downloader.py`. When firing the callback on `url`, a temporary and
+invisilbe `<a>` tag will be created and clicked. After the downloading starts, the
+`<a>` tag will be removed. The url can be provided by the cache of the
+`ServiceData(...)`.
 
-1. Use `downloader.layout()` to add the components to the dashboard.
-2. Use `downloader.use_callbacks(app)` to bind the callbacks converting a `dash.Output(...)`
-   signal to the downloading event.
-3. Define a callback, where the output signal should be `downloader.as_output`. This value
-   should be used for providing the address of the file to be downloaded. The address can
-   be provided by the cache of the `ServiceData(...)`.
+:::tip
 
 Remember to specify the `file_name` and mark the `download=True` when registering the file
 to the cache. These options ensure that the dynamic link to the file will trigger the downloading
 event, and the name of the downloaded file will be specified by `file_name`.
 
-## Why should we use this downloader?
+:::
 
-Until `dash==2.18.x`, the [`dcc.Download`<IconExternalLink/>][link-dccdownload] still
+### Why should we use this downloader?
+
+Until `dash==3.0.x`, the [`dcc.Download`<IconExternalLink/>][link-dccdownload] still
 works on the bytes data directly, which means that, the data will be encoded as bytes
 on the server side and sent to the client (browser). In other words,
 [`dcc.send_file`<IconExternalLink/>][link-dash-sendfile] is not a wrapper of
 [`flask.send_file`<IconExternalLink/>][link-flask-sendfile], it cannot handle
 large-size data.
 
+In the meanwhile, [`dcc.Download`<IconExternalLink/>][link-dccdownload] is implemented
+with [`FileSaver.js`<IconExternalLink/>][link-filesaver] which will store all the data
+to be downloaded in a `blob` first. It means that `dcc.Download` does not have the
+ability to handle the large file, either. 
+
 In comparison, our solution is based on
 [`flask.stream_with_context`<IconExternalLink/>][link-flask-streamwcon],
 and the downloader accesses the address of the file directly, which is compatible with
 an arbirary size of the data.
 
-:::info
+`PlainDownloader` is implemented by a temporary link. It totally relies on the native
+functionalities of the browser to download the file. So, it will not meet any issue
+in the following cases:
 
-In the future version, we will provide a dash component which is totally compatible
-with the interfaces of the [`dcc.Download`<IconExternalLink/>][link-dccdownload] and
-our `ServiceData`, thus becoming a final solution for downloading files.
+* Download a large-size file.
+* Access a cross-origin resource (i.e. a file from another site) even if the resource
+  does not provide any cross-origin allowance.
+
+## Use a `Downloader` component with more fine-grained controls
+
+`dfc.PlainDownloader` is useful enough in most cases. However, if users need the following
+features, they may need to use the fine-grained version `dfc.Downloader`.
+
+* Users need to fire a callback after the downloading event is finalized.
+* Users need to catch the errors caused by the downloadnig events, like losing
+  connection or canceled by users.
+
+The cases cannot be handled by `dfc.PlainDownloader` because `PlainDownloader` does not
+have any control of view on the downloading event which is deligated to the browser.
+In comparison, `dfc.Downloader` makes the downloading event fully controled by the
+javascript module [`StreamSaver.js`<IconExternalLink/>][link-streamsaver], thus
+allowing more fine-grained controls.
+
+```python title="with_downloader.py" showLineNumbers
+import io
+
+from typing import Optional
+
+import dash
+from dash import html
+from dash import Output, Input
+import dash_file_cache as dfc
+
+
+app = dash.Dash("demo")
+service = dfc.ServiceData(dfc.CachePlain(1))
+# highlight-next-line
+service_mitm = dfc.ServiceDownloader("/dfc-downloader")
+service.serve(app)
+# highlight-next-line
+service_mitm.serve(app)
+
+app.layout = html.Div(
+    (
+        html.Div(html.Button(id="btn", children="Download")),
+        # highlight-start
+        dfc.Downloader(id="downloader", mitm="/dfc-downloader"),
+        html.Div(id="trigger"),
+        # highlight-end
+    )
+)
+
+
+@app.callback(Output("downloader", "url"), Input("btn", "n_clicks"))
+def a_callback_creating_data(n_clicks: Optional[int]) -> str:
+    if not n_clicks:
+        return dash.no_update
+    address = service.register(
+        fobj=io.StringIO("test file data..."),
+        file_name="test.txt",
+        mime_type="text/plain",
+        one_time_service=True,
+        download=True,
+    )
+    return address
+
+
+@app.callback(
+    Output("trigger", "children"),
+    Input("downloader", "status"),
+    prevent_initial_call=True,
+)
+def trigger_get_status(status: Optional[dfc.DownloaderStatus]):
+    if not status:
+        return dash.no_update
+    return str(status)
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+Compared to the previous example, the usages of `Downloader` have the following
+differences:
+
+* A special `ServiceDownloader` is preconfigured with a service route `/dfc-downloader`.
+* The same route is used as the `mitm` property of `dfc.Downloader(mitm=...)`.
+* The property `status` of the `Downloader` is catched by a `<div>` tag.
+
+The property `mitm` provides a technique for preserving the downloading event active.
+Configuring the `mitm` property is important. If users do not configure it, the default
+`mitm` property will refer to a remote site hosted
+by <IconLinkInline href="https://jimmywarting.github.io" text="jimmywarting's GitHub site"/> which
+will be not accessible if the device is offline. By using `ServiceDownloader()`,
+the files required by the `mitm` property will be hosted by the local device.
+
+:::danger
+
+The `mitem` property of `Downloader` needs to be configured the same as the
+route used for initializing the service `ServiceDownloader`. Otherwise, users may
+find that the download event does not start and no error messages are catched.
 
 :::
+
+The second callback catches the finalizing event triggered by the `Downloader`. The
+status dictionary contains a string code and an HTTP code. If the download event
+finalizes successfully, the string code would be `success`.
+
+## Use a `Downloader` component for fetching a preconfigured cross-origin resource
+
+In some cases, users may need to deploy multiple services on different hosts. Suppose
+that the following scripts are run in two different processes, respectively,
+
+<Tabs
+  defaultValue="download"
+  values={[
+    { label: 'Dashboard: Downloader', value: 'download', },
+    { label: 'Service: File Source', value: 'source', },
+  ]
+}>
+
+<TabItem value="download">
+
+```python title="cross_origin_download.py" showLineNumbers
+import io
+
+from typing import Optional
+
+import dash
+from dash import html
+from dash import Output, Input
+import dash_file_cache as dfc
+
+
+app = dash.Dash("demo")
+service = dfc.ServiceData(dfc.CachePlain(1))
+service_mitm = dfc.ServiceDownloader("/dfc-downloader")
+service.serve(app)
+service_mitm.serve(app)
+
+app.layout = html.Div(
+    (
+        html.Div(html.Button(id="btn", children="Download")),
+        # highlight-start
+        dfc.Downloader(
+            id="downloader", allow_cross_origin=True, mitm="/dfc-downloader"
+        ),
+        # highlight-end
+        html.Div(id="trigger"),
+    )
+)
+
+
+@app.callback(Output("downloader", "url"), Input("btn", "n_clicks"))
+def a_callback_creating_data(n_clicks: Optional[int]) -> str:
+    if not n_clicks:
+        return dash.no_update
+    return "http://127.0.0.1:8081/file"
+
+
+@app.callback(
+    Output("trigger", "children"),
+    Input("downloader", "status"),
+    prevent_initial_call=True,
+)
+def trigger_get_status(status: Optional[dfc.DownloaderStatus]):
+    if not status:
+        return dash.no_update
+    return str(status)
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port="8080")
+```
+
+</TabItem>
+
+<TabItem value="source">
+
+```python title="service_source_file.py" showLineNumbers
+import io
+import flask
+from dash_file_cache import CachePlain, ServiceData
+
+app = flask.Flask("serve")
+
+service = ServiceData(CachePlain(1), allowed_cross_origin="*")
+
+
+@app.route("/file")
+def file():
+    addr = service.register(
+        fobj=io.StringIO("test some files."),
+        file_name="new.txt",
+        mime_type="text/plain",
+        download=True,
+    )
+    resp = flask.redirect(addr, code=302)
+    resp.headers["Access-Control-Allow-Origin"] = "*"
+    return resp
+
+
+if __name__ == "__main__":
+    service.serve(app)
+    app.run(host="0.0.0.0", port=8081)
+```
+
+</TabItem>
+
+</Tabs>
+
+The two scripts need to be run simultaneously. On the dashboard side, the component
+property `allow_cross_origin` is configured as `True`, which means that the downloader
+will try to access the cross-origin resources if possible. In this case, the request
+will work in the [`cors`<IconExternalLink/>][link-cors] mode.
+
+It is not ready enough if the cross-origin configurations are made only on the
+dashboard side. On the server side, the response need to contain several headers
+related to the cross-origin access. Therefore, in the above example, we configure
+the service argument `allowed_cross_origin` to allow the cross-origin access from all
+devices. In this case, every response provided by `ServiceData` will be automatically
+configured with cross-origin headers.
+
+:::warning
+
+The most important thing to access a cross-origin service is that the cross-origin
+headers are configured on the accessed side. If the remote resource is not configured
+as cross-origin, even if the property `allow_cross_origin` is specified on the
+downloader side, the resource is still not accessible.
+
+:::
+
+## Use a `Downloader` component for fetching a fully remote file
+
+In some cases, we may need to access a remote file, but we do not have the access to
+configure the cross-origin services of the remote device. In this case, we have
+provided a proxy-based way to access the cross-site data.
+
+```python title="cross_site_download.py" showLineNumbers
+import io
+
+from typing import Optional
+
+import dash
+from dash import html
+from dash import Output, Input
+import dash_file_cache as dfc
+
+
+app = dash.Dash("demo")
+service = dfc.ServiceData(dfc.CachePlain(1))
+service_mitm = dfc.ServiceDownloader("/dfc-downloader")
+service.serve(app)
+service_mitm.serve(app)
+
+app.layout = html.Div(
+    (
+        html.Div(html.Button(id="btn", children="Download")),
+        # highlight-next-line
+        dfc.Downloader(id="downloader" mitm="/dfc-downloader"),
+        html.Div(id="trigger"),
+    )
+)
+
+
+@app.callback(Output("downloader", "url"), Input("btn", "n_clicks"))
+def a_callback_creating_data(n_clicks: Optional[int]) -> str:
+    if not n_clicks:
+        return dash.no_update
+    return service.register_request("https://testfile.org/1.3GBiconpng", download=True)
+
+
+@app.callback(
+    Output("trigger", "children"),
+    Input("downloader", "status"),
+    prevent_initial_call=True,
+)
+def trigger_get_status(status: Optional[dfc.DownloaderStatus]):
+    if not status:
+        return dash.no_update
+    return str(status)
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port="8080")
+```
+
+The method `service.register_request` allows users to register remote URLs to the cache.
+In this case, the local device will serve as a proxy, or a middleware. Before being
+accessed, the cache only stores the URL of the file. Once the file is accessed, the
+file will be loaded and sent chunk-by-chunk. For each chunk, the data is fetched from
+the remote site to the dashboard host device first. After that, the file data is
+forwarded to the browser. Since the browser get the file from the dashboard host,
+there is no need to make any cross-origin configurations.
+
+## Summary
+
+The following table summarizes, compares and show the usages of different downloaders.
+
+|                                  | Large File                        | Work offline                      | File from another site            | Catch the event status            |
+| -------------------------------- | --------------------------------- | --------------------------------- | --------------------------------- | --------------------------------- |
+| `PlainDownloader()`              | <InlineIcon icon={vsiCheckIcon}/> | <InlineIcon icon={vsiCheckIcon}/> | <InlineIcon icon={vsiCheckIcon}/> |                                   |
+| `Downloader()`                   | <InlineIcon icon={vsiCheckIcon}/> |                                   |                                   | <InlineIcon icon={vsiCheckIcon}/> |
+| `Downloader(mitm=...)`           | <InlineIcon icon={vsiCheckIcon}/> | <InlineIcon icon={vsiCheckIcon}/> |                                   | <InlineIcon icon={vsiCheckIcon}/> |
+| `Downloader(allow_cross_origin)` | <InlineIcon icon={vsiCheckIcon}/> |                                   | Cross-origin only                 | <InlineIcon icon={vsiCheckIcon}/> |
+| `url=service.register_request`   | <InlineIcon icon={vsiCheckIcon}/> |                                   | <InlineIcon icon={vsiCheckIcon}/> | <InlineIcon icon={vsiCheckIcon}/> |
+
+Please configure the downloader properly according to the need. Typically, `mitm`
+should be configured, and users can access any Internet files by using the cached
+address returned by `service.register_request(...)`.
 
 [link-dccdownload]:https://dash.plotly.com/dash-core-components/download
 [link-dash-sendfile]:https://github.com/plotly/dash/issues/1874
 [link-flask-sendfile]:https://flask.palletsprojects.com/en/stable/api/#flask.send_file
 [link-flask-streamwcon]:https://flask.palletsprojects.com/en/stable/api/#flask.stream_with_context
+[link-filesaver]:https://www.npmjs.com/package/file-saver
+[link-streamsaver]:https://github.com/jimmywarting/StreamSaver.js
+[link-cors]:https://developer.mozilla.org/en-US/docs/Web/API/Request/mode
