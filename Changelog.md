@@ -14,6 +14,7 @@
 #### :wrench: Fix
 
 1. Fix: Add the missing version tags for the old version documents.
+2. Fix: Correct a bad import in `zh-cn/docs/usages/downloader`.
 
 #### :floppy_disk: Change
 
