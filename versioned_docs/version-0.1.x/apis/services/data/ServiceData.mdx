@@ -1,0 +1,179 @@
+---
+id: ServiceData
+title: ServiceData
+sidebar_label: ServiceData
+slug: /apis/services/data/ServiceData
+description: Service provider for streaming data.
+---
+
+import useBaseUrl from "@docusaurus/useBaseUrl";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+import vsiTerminalIcon from "@iconify-icons/codicon/terminal";
+
+import DarkButton from "@site/src/components/DarkButton";
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="class" source="services.data.ServiceData" />
+
+```python
+service = ServiceData(
+    cache: CacheAbstract[CachedFileInfo, CachedData],
+    service_name: str = "/cached-data",
+    chunk_size: int = 1,
+)
+```
+
+Service provider for streaming data.
+
+This instance provides a cache for storing temporary data. A temporary data item
+will be accessed by the directly or downloaded.
+
+## Aliases
+
+This class can be acquired by
+
+```python
+import dash_file_cache as dfc
+
+
+dfc.ServiceData
+dfc.services.ServiceData
+dfc.services.data.ServiceData
+```
+
+## Arguments
+
+|    Argument    |                                                                                                Type                                                                                                 |             Required              | <center>Description</center>                                                                                                                                                                                                    |
+| :------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|    `cache`     | <code>[CacheAbstract](../../caches/abstract/CacheAbstract.mdx){`[`}[CachedFileInfo](../../caches/typehints/CachedFileInfo.mdx){`, `}[CachedData](../../caches/typehints/CachedData.mdx){`]`}</code> | <InlineIcon icon={vsiCheckIcon}/> | The cache instance hosting the temporary data. This value can be [`CachePlain`](../../caches/memory/CachePlain.mdx), [`CacheQueue`](../../caches/memory/CacheQueue.mdx), or [`CacheFile`](../../caches/tempfile/CacheFile.mdx). |
+| `service_name` |                                                                                                `str`                                                                                                |                                   | The name of this service.                                                                                                                                                                                                       |
+|  `chunk_size`  |                                                                                                `int`                                                                                                |                                   | The chunk size when streaming the cached file to users. The unit is `MB`.                                                                                                                                                       |
+
+## Methods
+
+### <IconObjType type="method"/> `register`
+
+```python
+addr: str = service.register(
+    fobj: str | os.PathLike | io.StringIO | io.BytesIO,
+    file_name: str = "",
+    content_type: str = "",
+    mime_type: str = "image/jpeg",
+    one_time_service: bool = False,
+    download: bool = False,
+)
+```
+
+Register the a new file (a path or a file-like object) to the cache.
+
+#### Requires
+
+|      Argument      |                       Type                        |             Required              | <center>Description</center>                                                                                                                                                                                                                                              |
+| :----------------: | :-----------------------------------------------: | :-------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|       `fobj`       | `str \| os.PathLike \| io.StringIO \| io.BytesIO` | <InlineIcon icon={vsiCheckIcon}/> | The path or a file-io object of a specific file to be registered.                                                                                                                                                                                                         |
+|    `file_name`     |                       `str`                       |                                   | <p>The file name of `fobj`. If not provided, will attempt to</p><ol><li>solve the name from `fobj` if it is a path.</li><li>randomly generate a dummy file name.</li></ol><p>Note that this value is used only when the file will be streamed as a downloadable file.</p> |
+|   `content_type`   |                       `str`                       |                                   | The content-type in the response. An optional encoding can be provided here. If this value is not specified, will use `mime_type` to fill this value.                                                                                                                     |
+|    `mime_type`     |                       `str`                       |                                   | The mime-type of the response. Typically, it is only determined by the type of the file.                                                                                                                                                                                  |
+| `one_time_service` |                      `bool`                       |                                   | <p>A flag. When it is enabled, will use the on-exit mechanism to remove this cached data once it is served for once.</p><p>This option is recommended if this cached item is used for one-time downloading.</p>                                                           |
+|     `download`     |                      `bool`                       |                                   | If specified, will mark the returned address as a downloadable link.                                                                                                                                                                                                      |
+
+#### Returns
+
+| Argument | Type  | <center>Description</center>                                           |
+| :------: | :---: | :--------------------------------------------------------------------- |
+|  `addr`  | `str` | The URL that would be used for accessing this temporarily cached file. |
+
+---
+
+### <IconObjType type="method"/> `stream`
+
+```python
+resp: flask.Response = service.stream(uid: str, download: bool = False)
+```
+
+Wrap a cached data item with streaming data provider.
+
+:::warning
+
+Note that users do not need to explictly call this method. This method will be
+automatically called when the related service is accessed.
+
+:::
+
+#### Requires
+
+|  Argument  |  Type  |             Required              | <center>Description</center>                                                        |
+| :--------: | :----: | :-------------------------------: | ----------------------------------------------------------------------------------- |
+|   `uid`    | `str`  | <InlineIcon icon={vsiCheckIcon}/> | The UUID used for accessing the cached item. If not hit, raise `FileNotFoundError`. |
+| `download` | `bool` |                                   | A flag. If enabled, will mark the streamed data as the data to be downloaded.       |
+
+#### Returns
+
+| Argument |       Type       | <center>Description</center>                                     |
+| :------: | :--------------: | :--------------------------------------------------------------- |
+|  `resp`  | `flask.Response` | The flask Response used for forwarding the data to the frontend. |
+
+---
+
+### <IconObjType type="method"/> `serve`
+
+```python
+service.serve(app: dash.Dash | flask.Flask, endpoint: str | None = None)
+```
+
+Add the service to the Flask application.
+
+#### Requires
+
+|  Argument  |            Type            |             Required              | <center>Description</center>                                                              |
+| :--------: | :------------------------: | :-------------------------------: | ----------------------------------------------------------------------------------------- |
+|   `app`    | `dash.Dash \| flask.Flask` | <InlineIcon icon={vsiCheckIcon}/> | The application where the services will be bound.                                         |
+| `endpoint` |       `str \| None`        |                                   | The endpoint of this serivce. If not specified, will use the service address to infer it. |
+
+## Properties
+
+### <IconObjType type="param"/> `cache`
+
+```python
+cache: CacheAbstract[CachedFileInfo, CachedData] = service.cache
+```
+
+The cache of this service.
+
+---
+
+### <IconObjType type="param"/> `chunk_size`
+
+```python
+chunk_size: int = cache.chunk_size
+
+new_chunk_size: int
+cache.chunk_size = new_chunk_size
+```
+
+The chunk size when streaming the cached file to users. The unit is `MB`.
+
+## Examples
+
+See
+
+<p>
+  <DarkButton
+    to={useBaseUrl("/docs/examples/change-image")}
+    icon={vsiTerminalIcon}
+  >
+    {"Change image"}
+  </DarkButton>
+</p>
+
+<p>
+  <DarkButton
+    to={useBaseUrl("/docs/examples/flask-services")}
+    icon={vsiTerminalIcon}
+  >
+    {"Flask services"}
+  </DarkButton>
+</p>

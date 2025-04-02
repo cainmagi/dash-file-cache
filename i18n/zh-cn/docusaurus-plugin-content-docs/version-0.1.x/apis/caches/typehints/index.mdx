@@ -1,0 +1,24 @@
+---
+id: index
+title: typehints
+sidebar_label: typehints
+slug: /apis/caches/typehints
+description: 项目中使用的额外类型标记。
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="module" source="caches.typehints" />
+
+项目中使用的额外类型标记。
+
+## 类型标记 {#typehints}
+
+|                                          成员                                           |    类型     | <center>说明</center>                                  |
+| :-------------------------------------------------------------------------------------: | :---------: | :----------------------------------------------------- |
+|       [<IconObjType type="type" hasText={true} text="Deferred"/>](./Deferred.mdx)       | `Callable`  | 延迟值的类型标记。                                     |
+| [<IconObjType type="type" hasText={true} text="CachedFileInfo"/>](./CachedFileInfo.mdx) | `TypedDict` | 缓存文件的元数据。                                     |
+|     [<IconObjType type="type" hasText={true} text="CachedPath"/>](./CachedPath.mdx)     | `TypedDict` | 用来标记硬盘上存在的某文件的字符串路径、或类路径对象。 |
+| [<IconObjType type="type" hasText={true} text="CachedStringIO"/>](./CachedStringIO.mdx) | `TypedDict` | `StringIO`数据的缓存格式。                             |
+|  [<IconObjType type="type" hasText={true} text="CachedBytesIO"/>](./CachedBytesIO.mdx)  | `TypedDict` | `BytesIO`数据的缓存格式。                              |
+|     [<IconObjType type="type" hasText={true} text="CachedData"/>](./CachedData.mdx)     |   `Union`   | 缓存数据的类型提示。                                   |

@@ -1,0 +1,86 @@
+---
+id: no_cache
+title: no_cache
+sidebar_label: no_cache
+slug: /apis/services/utilities/no_cache
+description: 用来向flask服务添加no_cache属性的装饰器。
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar
+  type="func"
+  isPrivate={true}
+  isDecorator={true}
+  source="services.utilities.no_cache"
+/>
+
+```python
+@no_cache
+def func(): ...
+```
+
+用来向`flask`服务添加`no_cache`属性的装饰器。
+
+该装饰器可以将某服务的响应标记为`no_cache`。当相同的服务需要连续多次触发时，这一属性可能会发挥重要作用。例如，在某些情况下，用户可能需要点击按钮下载文件。若`no_cache`未设置，连续第二次点击按钮的时候，就不会触发任何事件。除非提供的文件服务发生变化。
+
+换言之，该装饰器用于在某些特定的服务中，禁用缓存功能。
+
+## 参数 {#arguments}
+
+该装饰器不提供初始化参数。
+
+## 范例 {#examples}
+
+### <IconObjType type="term"/> 装饰文件事件 {#-decorate-a-file-event}
+
+<Tabs
+  defaultValue="codes"
+  values={[
+    { label: '代码', value: 'codes', },
+    { label: '结果', value: 'results', },
+  ]
+}>
+
+<TabItem value="codes">
+
+```python
+import io
+import flask
+from dash_file_cache.utilities import no_cache
+
+
+app = flask.Flask("demo")
+
+
+@no_cache
+@app.route("/")
+def index():
+    return flask.send_file(
+        io.BytesIO("test file".encode()),
+        mimetype="text/plain",
+        as_attachment=True,
+        download_name="test.txt",
+    )
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+</TabItem>
+
+<TabItem value="results">
+
+访问服务会下载名为`text.txt`的文件。文件内容为：
+
+```
+test file
+```
+
+</TabItem>
+
+</Tabs>

@@ -1,0 +1,290 @@
+---
+id: CacheQueue
+title: CacheQueue
+sidebar_label: CacheQueue
+slug: /apis/caches/memory/CacheQueue
+description: The cache implementation based on process-sharable Queue().
+---
+
+import useBaseUrl from "@docusaurus/useBaseUrl";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+import vsiTerminalIcon from "@iconify-icons/codicon/terminal";
+
+import DarkButton from "@site/src/components/DarkButton";
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="class" source="caches.memory.CacheQueue" />
+
+```python
+cache = CacheQueue[Info, Data](
+    cache_size: int,
+    qobj: queue.Queue | Callable[[], queue.Queue] | None = None
+)
+```
+
+基于进程共享队列[`Queue()`<IconExternalLink/>][link-queue]的缓存实现。
+
+虽然此处的队列也可以是一个线程队列，但仍然推荐使用[`multiprocessing.get_context(...).Manager().Queue()`<IconExternalLink/>][link-queue]。
+
+`CacheQueue`实例是为了跨进程捕获数据设计的。该缓存可以在背景 callback 中访问。
+
+该类型的任何实例，都会在主进程中创建一个守护线程，用来监听队列。
+
+对该缓存的操作是线程安全的。
+
+## 别名 {#aliases}
+
+该类可以通过以下方法取得。
+
+```python
+import dash_file_cache as dfc
+
+
+dfc.CacheQueue
+dfc.caches.CacheQueue
+dfc.caches.memory.CacheQueue
+```
+
+## 参数 {#arguments}
+
+|     参数     |                        类型                        |               必选                | <center>说明</center>                                                                                                                                                                                                                                                                                                                                               |
+| :----------: | :------------------------------------------------: | :-------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cache_size` |                       `int`                        | <InlineIcon icon={vsiCheckIcon}/> | 缓存容量，亦即缓存中可保存项目的最大数目。当缓存字典填满时，检查最久未查询过的关键字，并清出该数据。                                                                                                                                                                                                                                                                |
+|    `qobj`    | `queue.Queue \| Callable[[], queue.Queue] \| None` |                                   | 由`queue.Queue()`或`multiprocessing.get_context(...).Manager().Queue()`提供的队列对象。<br/>用来在子进程中、将数据同步给主进程。<br/>若该值为`None`，这表示属性`CacheQueue().qobj`将稍后提供。该属性需要在该缓存第一次被实际使用之前配置好。<br/>若该值为一个返回队列的函数，这表示该函数将用来提供队列的懒加载。换言之，队列将会在第一次需要实际用到的时候初始化。 |
+
+## 方法 {#methods}
+
+### <IconObjType type="method"/> `is_in` {#-is_in}
+
+```python
+flag: bool = cache.is_in(key: str)
+```
+
+检查`key`是否注册在了缓存中。
+
+运算符[`__contains__`](#-__contains__)委托给了该方法。
+
+:::danger
+
+请只在主进程中使用该方法。其在子进程中无效。
+
+:::
+
+#### 输入 {#requires}
+
+| 参数  | 类型  |               必选                | <center>说明</center> |
+| :---: | :---: | :-------------------------------: | --------------------- |
+| `key` | `str` | <InlineIcon icon={vsiCheckIcon}/> | 要验证的关键字。      |
+
+#### 输出 {#returns}
+
+|  参数  |  类型  | <center>说明</center>                           |
+| :----: | :----: | :---------------------------------------------- |
+| `flag` | `bool` | 若取值`True`，则表明`key`给定的值存在于缓存中。 |
+
+---
+
+### <IconObjType type="method"/> `remove` {#-remove}
+
+```python
+info: Info = cache.remove(key: str)
+```
+
+指定某缓存字典项，将其从缓存中移出为信息。
+
+调用该方法、蕴含了数据结束生命周期的断言。调用后，只有缓存数据的信息仍然可用。
+
+#### 输入 {#requires-1}
+
+| 参数  | 类型  |               必选                | <center>说明</center>            |
+| :---: | :---: | :-------------------------------: | -------------------------------- |
+| `key` | `str` | <InlineIcon icon={vsiCheckIcon}/> | 将要从缓存中移除的数据的关键字。 |
+
+#### 输出 {#returns-1}
+
+|  参数  |  类型  | <center>说明</center>                      |
+| :----: | :----: | :----------------------------------------- |
+| `info` | `Info` | 从缓存中所查询到的数据、对应的轻量化信息。 |
+
+---
+
+### <IconObjType type="method"/> `dump` {#-dump}
+
+```python
+cache.dump(key: str, info: Info, data: Data)
+```
+
+向缓存中置入数据。
+
+#### 输入 {#requires-2}
+
+|  参数  |  类型  |               必选                | <center>说明</center>                                       |
+| :----: | :----: | :-------------------------------: | ----------------------------------------------------------- |
+| `key`  | `str`  | <InlineIcon icon={vsiCheckIcon}/> | 新数据的关键字。若该关键字`key`已存在于缓存中，则替换原值。 |
+| `info` | `Info` | <InlineIcon icon={vsiCheckIcon}/> | 要写入缓存中数据的轻量化信息。                              |
+| `data` | `Data` | <InlineIcon icon={vsiCheckIcon}/> | 要写入缓存中的数据。                                        |
+
+---
+
+### <IconObjType type="method"/> `load` {#-load}
+
+```python
+info, data_loader = cache.load(key: str)
+```
+
+透过某关键字，读取对应的元数据。
+
+:::danger
+
+请只在主进程中使用该方法。其在子进程中无效。
+
+:::
+
+#### 输入 {#requires-3}
+
+| 参数  | 类型  |               必选                | <center>说明</center>                                                  |
+| :---: | :---: | :-------------------------------: | ---------------------------------------------------------------------- |
+| `key` | `str` | <InlineIcon icon={vsiCheckIcon}/> | 要更改变数据的关键字。若该关键字`key`未找到，抛出`FileNotFoundError`。 |
+
+#### 输出 {#returns-2}
+
+|     参数      |         类型         | <center>说明</center>                                                                              |
+| :-----------: | :------------------: | :------------------------------------------------------------------------------------------------- |
+|    `info`     |        `Info`        | 从缓存中所查询到的数据、对应的轻量化信息。                                                         |
+| `data_loader` | `Callable[[], Data]` | 缓存数据的懒加载器。该函数实现了一种延迟加载机制，从而允许大体量数据仅在需要使用的时候才实际加载。 |
+
+---
+
+### <IconObjType type="method"/> `load_info` {#-load_info}
+
+```python
+info: Info = cache.load_info(key: str)
+```
+
+透过某关键字，读取对应的元数据。
+
+该方法的实现，基于获取`load(key)[0]`返回的值。
+
+#### 输入 {#requires-4}
+
+| 参数  | 类型  |               必选                | <center>说明</center>                                                |
+| :---: | :---: | :-------------------------------: | -------------------------------------------------------------------- |
+| `key` | `str` | <InlineIcon icon={vsiCheckIcon}/> | 要查询数据的关键字。若该关键字`key`未找到，抛出`FileNotFoundError`。 |
+
+#### 输出 {#returns-3}
+
+|  参数  |  类型  | <center>说明</center>                                                                          |
+| :----: | :----: | :--------------------------------------------------------------------------------------------- |
+| `info` | `Info` | 从缓存中所查询到的数据。由于`data`可能体量较大，该值在大多数情况下，应当定义为一个类文件对象。 |
+
+---
+
+### <IconObjType type="method"/> `load_data` {#-load_data}
+
+```python
+data: Data = cache.load_data(key: str)
+```
+
+透过某关键字，加载对应的缓存数据。
+
+该方法的实现，基于获取`load(key)[1]()`调用的结果。
+
+#### 输入 {#requires-5}
+
+| 参数  | 类型  |               必选                | <center>说明</center>                                                |
+| :---: | :---: | :-------------------------------: | -------------------------------------------------------------------- |
+| `key` | `str` | <InlineIcon icon={vsiCheckIcon}/> | 要查询数据的关键字。若该关键字`key`未找到，抛出`FileNotFoundError`。 |
+
+#### 输出 {#returns-4}
+
+|  参数  |  类型  | <center>说明</center>                                                                          |
+| :----: | :----: | :--------------------------------------------------------------------------------------------- |
+| `data` | `Data` | 从缓存中所查询到的数据。由于`data`可能体量较大，该值在大多数情况下，应当定义为一个类文件对象。 |
+
+## 属性 {#properties}
+
+### <IconObjType type="param"/> `qobj` {#-qobj}
+
+```python
+qobj: queue.Queue = cache.qobj
+
+new_qobj: queue.Queue | None
+cache.qobj = new_qobj
+```
+
+用来跨进程共享数据的队列对象。
+
+将该值社区为`None`也不会触发失败。
+
+---
+
+### <IconObjType type="param"/> `mirror` {#-mirror}
+
+```python
+cache_mirror: CacheQueueMirror[Info, Data] = cache.mirror
+```
+
+队列镜像。该值的类型是[`CacheQueueMirror`](./CacheQueueMirror.mdx)。在子进程中，需要使用
+[`dump()`](#-dump)的场景下，使用该值。
+
+---
+
+### <IconObjType type="param"/> `cache` {#-cache}
+
+```python
+cache_dict: LRUDict[str, Tuple[Info, Data]] = cache.cache
+```
+
+获取该实例底层的低层级 LRU 缓存对象。该值的类型是[`LRUDict`](../lrudict/LRUDict.mdx)。
+
+:::danger
+
+请只在主进程中使用该属性。其在子进程中无效。
+
+:::
+
+## 运算符 {#operators}
+
+### <IconObjType type="op"/> `__contains__`
+
+```python
+flag: bool = key in cache
+```
+
+检查`key`是否注册在了缓存中。
+
+:::danger
+
+请只在主进程中使用该方法。其在子进程中无效。
+
+:::
+
+#### 输入 {#requires-6}
+
+| 参数  | 类型  |               必选                | <center>说明</center> |
+| :---: | :---: | :-------------------------------: | --------------------- |
+| `key` | `str` | <InlineIcon icon={vsiCheckIcon}/> | 要验证的关键字。      |
+
+#### 输出 {#returns-5}
+
+|  参数  |  类型  | <center>说明</center>                           |
+| :----: | :----: | :---------------------------------------------- |
+| `flag` | `bool` | 若取值`True`，则表明`key`给定的值存在于缓存中。 |
+
+## 范例 {#examples}
+
+参见
+
+<p>
+  <DarkButton
+    to={useBaseUrl("/docs/examples/cache-types")}
+    icon={vsiTerminalIcon}
+  >
+    {"各类缓存"}
+  </DarkButton>
+</p>
+
+[link-queue]: https://docs.python.org/zh-cn/3/library/multiprocessing.html#multiprocessing.managers.SyncManager.Queue

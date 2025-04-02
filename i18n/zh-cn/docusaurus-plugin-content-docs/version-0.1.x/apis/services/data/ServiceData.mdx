@@ -1,0 +1,177 @@
+---
+id: ServiceData
+title: ServiceData
+sidebar_label: ServiceData
+slug: /apis/services/data/ServiceData
+description: 提供数据流的服务。
+---
+
+import useBaseUrl from "@docusaurus/useBaseUrl";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+import vsiTerminalIcon from "@iconify-icons/codicon/terminal";
+
+import DarkButton from "@site/src/components/DarkButton";
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="class" source="services.data.ServiceData" />
+
+```python
+service = ServiceData(
+    cache: CacheAbstract[CachedFileInfo, CachedData],
+    service_name: str = "/cached-data",
+    chunk_size: int = 1,
+)
+```
+
+提供数据流的服务。
+
+该实例使用一个缓存来储存临时数据。可以直接访问或下载这种临时数据项。
+
+## 别名 {#aliases}
+
+该类可以通过以下方法取得。
+
+```python
+import dash_file_cache as dfc
+
+
+dfc.ServiceData
+dfc.services.ServiceData
+dfc.services.data.ServiceData
+```
+
+## 参数 {#arguments}
+
+|      参数      |                                                                                                类型                                                                                                 |               必选                | <center>说明</center>                                                                                                                                                                          |
+| :------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|    `cache`     | <code>[CacheAbstract](../../caches/abstract/CacheAbstract.mdx){`[`}[CachedFileInfo](../../caches/typehints/CachedFileInfo.mdx){`, `}[CachedData](../../caches/typehints/CachedData.mdx){`]`}</code> | <InlineIcon icon={vsiCheckIcon}/> | 管理临时数据的缓存实例。该值可以是[`CachePlain`](../../caches/memory/CachePlain.mdx)，[`CacheQueue`](../../caches/memory/CacheQueue.mdx)或[`CacheFile`](../../caches/tempfile/CacheFile.mdx)。 |
+| `service_name` |                                                                                                `str`                                                                                                |                                   | 服务的名称。                                                                                                                                                                                   |
+|  `chunk_size`  |                                                                                                `int`                                                                                                |                                   | 向用户推送数据时使用的块尺寸。单位为`MB`。                                                                                                                                                      |
+
+## 方法 {#methods}
+
+### <IconObjType type="method"/> `register` {#-register}
+
+```python
+addr: str = service.register(
+    fobj: str | os.PathLike | io.StringIO | io.BytesIO,
+    file_name: str = "",
+    content_type: str = "",
+    mime_type: str = "image/jpeg",
+    one_time_service: bool = False,
+    download: bool = False,
+)
+```
+
+向缓存注册一个新文件（可以是路径或类文件对象）。
+
+#### 输入 {#requires}
+
+|        参数        |                       类型                        |               必选                | <center>说明</center>                                                                                                                                                         |
+| :----------------: | :-----------------------------------------------: | :-------------------------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|       `fobj`       | `str \| os.PathLike \| io.StringIO \| io.BytesIO` | <InlineIcon icon={vsiCheckIcon}/> | 要注册的某文件的路径、或文件IO对象。                                                                                                                                        |
+|    `file_name`     |                       `str`                       |                                   | <p>`fobj`的文件名。若未指定，则会试图</p><ol><li>在`fobj`是路径时，从路径获取文件名。</li><li>否则，随机生成一个填充文件名。</li></ol><p>注意，该值只会在下载文件时用到。</p> |
+|   `content_type`   |                       `str`                       |                                   | 响应的内容类型。可以在这里指定可选的编码。若未指定，使用`mime_type`填充该值。                                                                                                 |
+|    `mime_type`     |                       `str`                       |                                   | 响应的媒体类型。一般地，它只由数据的文件类型决定。                                                                                                                            |
+| `one_time_service` |                      `bool`                       |                                   | <p>二值量。启用时，会透过退出机制、在数据下一次推送完毕后移出该缓存数据。</p><p>当数据仅用来完成一次下载时，建议启用该值。</p>                                                |
+|     `download`     |                      `bool`                       |                                   | 二值量。启用时，会将返回的链接标记为专用于下载。                                                                                                                             |
+
+#### 输出 {#returns}
+
+|  参数  | 类型  | <center>说明</center>        |
+| :----: | :---: | :--------------------------- |
+| `addr` | `str` | 用来访问临时缓存文件的URL。 |
+
+---
+
+### <IconObjType type="method"/> `stream` {#-stream}
+
+```python
+resp: flask.Response = service.stream(uid: str, download: bool = False)
+```
+
+使用流数据供应器、封装缓存的数据。
+
+:::warning
+
+用户不应显式地调用该方法。该方法会在访问相关服务时自动被调用。
+
+:::
+
+#### 输入 {#requires-1}
+
+|    参数    |  类型  |               必选                | <center>说明</center>                                      |
+| :--------: | :----: | :-------------------------------: | ---------------------------------------------------------- |
+|   `uid`    | `str`  | <InlineIcon icon={vsiCheckIcon}/> | 用来访问缓存项的UUID。若未找到，抛出`FileNotFoundError`。 |
+| `download` | `bool` |                                   | 二值量。启用时，将数据流标记成下载专用。                   |
+
+#### 输出 {#returns-1}
+
+|  参数  |       类型       | <center>说明</center>               |
+| :----: | :--------------: | :---------------------------------- |
+| `resp` | `flask.Response` | 用来将数据发送给前端的Flask响应。 |
+
+---
+
+### <IconObjType type="method"/> `serve` {#-serve}
+
+```python
+service.serve(app: dash.Dash | flask.Flask, endpoint: str | None = None)
+```
+
+向Flask应用添加服务。
+
+#### 输入 {#requires-2}
+
+|    参数    |            类型            |               必选                | <center>说明</center>                             |
+| :--------: | :------------------------: | :-------------------------------: | ------------------------------------------------- |
+|   `app`    | `dash.Dash \| flask.Flask` | <InlineIcon icon={vsiCheckIcon}/> | 服务将会绑定到的应用。                            |
+| `endpoint` |       `str \| None`        |                                   | 服务的endpoint。若未指定，使用服务地址推测该值。 |
+
+## 属性 {#properties}
+
+### <IconObjType type="param"/> `cache` {#-cache}
+
+```python
+cache: CacheAbstract[CachedFileInfo, CachedData] = service.cache
+```
+
+该服务使用的缓存。
+
+---
+
+### <IconObjType type="param"/> `chunk_size` {#-chunk_size}
+
+```python
+chunk_size: int = cache.chunk_size
+
+new_chunk_size: int
+cache.chunk_size = new_chunk_size
+```
+
+向用户推送数据时使用的块尺寸。单位为`MB`。
+
+## 范例 {#examples}
+
+参见
+
+<p>
+  <DarkButton
+    to={useBaseUrl("/docs/examples/change-image")}
+    icon={vsiTerminalIcon}
+  >
+    {"变更图片"}
+  </DarkButton>
+</p>
+
+<p>
+  <DarkButton
+    to={useBaseUrl("/docs/examples/flask-services")}
+    icon={vsiTerminalIcon}
+  >
+    {"Flask服务"}
+  </DarkButton>
+</p>

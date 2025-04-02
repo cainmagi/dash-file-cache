@@ -1,0 +1,128 @@
+---
+id: StreamFinalizer
+title: StreamFinalizer
+sidebar_label: StreamFinalizer
+slug: /apis/utilities/StreamFinalizer
+description: Finalizer for a stream IO when the stream has been delivered.
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar
+  type="class"
+  isPrivate={true}
+  isContext={true}
+  source="utilities.StreamFinalizer"
+/>
+
+```python
+with StreamFinalizer(
+    fobj: IO[Any]@StreamFinalizer,
+    truncate: bool = False,
+    close: bool = False,
+    callback_on_exit: Callable[[_IO], None] | None = None
+) as _fobj:
+    _fobj: IO[Any]@StreamFinalizer
+```
+
+Finalizer for a stream IO when the stream has been delivered.
+
+This class will be used by `ServiceData` for safely maintain the file object while
+serving the file stream.
+
+## Arguments
+
+|      Argument      |              Type               |             Required              | <center>Description</center>                                                                                                                |
+| :----------------: | :-----------------------------: | :-------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------- |
+|       `fobj`       |            `IO[Any]`            | <InlineIcon icon={vsiCheckIcon}/> | The file-like object to be managed when exiting the finalizer environment.                                                                  |
+|     `truncate`     |             `bool`              |                                   | A flag. If set, will trucate the file when exiting the context. This flag should not be used when the IO is read-only.                      |
+|      `close`       |             `bool`              |                                   | A flag. If set, will close the file handle when exiting the context.                                                                        |
+| `callback_on_exit` | `Callable[[_IO], None] \| None` |                                   | The callback function that will be called when exiting from the context. This method will be called before the file is truncated or closed. |
+
+## Examples
+
+### <IconObjType type="term"/> Automatically close the file when exiting from the context
+
+<Tabs
+  defaultValue="codes"
+  values={[
+    { label: 'Codes', value: 'codes', },
+    { label: 'Results', value: 'results', },
+  ]
+}>
+
+<TabItem value="codes">
+
+```python
+import os
+from dash_file_cache.utilities import StreamFinalizer, TempDir
+
+
+temp_dir = TempDir()
+fobj = open(os.path.join(temp_dir.path, "test.txt"), "w")
+with StreamFinalizer(fobj, close=True) as _fobj:
+    _fobj.write("test")
+
+print(fobj.closed)
+```
+
+</TabItem>
+
+<TabItem value="results">
+
+```
+True
+```
+
+</TabItem>
+
+</Tabs>
+
+### <IconObjType type="term"/> Automatically cut the file to an empty file when exiting from the context
+
+<Tabs
+  defaultValue="codes"
+  values={[
+    { label: 'Codes', value: 'codes', },
+    { label: 'Results', value: 'results', },
+  ]
+}>
+
+<TabItem value="codes">
+
+```python
+import os
+from dash_file_cache.utilities import StreamFinalizer, TempDir
+
+
+temp_dir = TempDir()
+fobj = open(os.path.join(temp_dir.path, "test.txt"), "w")
+with StreamFinalizer(fobj, truncate=True) as _fobj:
+    _fobj.write("test")
+
+print(fobj.closed)
+if not fobj.closed:
+    fobj.seek(0, os.SEEK_END)
+    print(fobj.tell())
+    fobj.close()
+```
+
+</TabItem>
+
+<TabItem value="results">
+
+```
+False
+0
+```
+
+</TabItem>
+
+</Tabs>

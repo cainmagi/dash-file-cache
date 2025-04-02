@@ -1,0 +1,92 @@
+---
+id: is_in_main_process
+title: is_in_main_process
+sidebar_label: is_in_main_process
+slug: /apis/utilities/is_in_main_process
+description: 用来检查当前进程是否是主进程。
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import IconLink from "@site/src/components/IconLink";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="func" isPrivate={true} source="utilities.is_in_main_process" />
+
+```python
+flag: bool = is_in_main_process()
+```
+
+函数，用来检查当前进程是否是主进程。
+
+这一检查透过以下功能实现：
+
+<IconLink href="https://docs.python.org/zh-cn/3/library/multiprocessing.html#multiprocessing.parent_process" />
+
+## 参数 {#arguments}
+
+### 输出 {#returns}
+
+|  参数  |  类型  | <center>说明</center>                                                                |
+| :----: | :----: | :----------------------------------------------------------------------------------- |
+| `flag` | `bool` | 若为`True`，则当前进程是主进程。注意，该函数无法辨认由`subprocess`模块创建的子进程。 |
+
+## 范例 {#examples}
+
+### <IconObjType type="term"/> 检查`multiprocessing`库的效果 {#-test-the-performance-of-multiprocessing}
+
+<Tabs
+  defaultValue="codes"
+  values={[
+    { label: '代码', value: 'codes', },
+    { label: '结果', value: 'results', },
+  ]
+}>
+
+<TabItem value="codes">
+
+```python
+import multiprocessing as mproc
+import subprocess
+from dash_file_cache.utilities import is_in_main_process
+
+
+def test_proc():
+    print("multiprocessing:", is_in_main_process())
+
+
+print("main:", is_in_main_process())
+proc = mproc.Process(target=test_proc)
+proc.start()
+proc.join()
+proc.kill()
+print(
+    "subprocess:",
+    subprocess.check_output(
+        [
+            "python",
+            "-c",
+            (
+                "from dash_file_cache.utilities import is_in_main_process;"
+                "print(is_in_main_process())"
+            ),
+        ],
+        text=True,
+    ),
+)
+```
+
+</TabItem>
+
+<TabItem value="results">
+
+```shell
+main: True
+multiprocessing: False
+subprocess: True
+```
+
+</TabItem>
+
+</Tabs>

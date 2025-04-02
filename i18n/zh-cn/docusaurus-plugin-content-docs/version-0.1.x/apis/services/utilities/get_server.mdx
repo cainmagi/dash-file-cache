@@ -1,0 +1,81 @@
+---
+id: get_server
+title: get_server
+sidebar_label: get_server
+slug: /apis/services/utilities/get_server
+description: 从一个应用获取Flask服务应用。
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar
+  type="func"
+  isPrivate={true}
+  source="services.utilities.get_server"
+/>
+
+```python
+server: flask.Flask = get_server(app: dash.Dash | flask.Flask)
+```
+
+从一个应用获取Flask服务应用的实例。
+
+## 参数 {#arguments}
+
+### 输入 {#requires}
+
+| 参数  |            类型            |               必选                | <center>说明</center>                                                                                 |
+| :---: | :------------------------: | :-------------------------------: | ----------------------------------------------------------------------------------------------------- |
+| `app` | `dash.Dash \| flask.Flask` | <InlineIcon icon={vsiCheckIcon}/> | 可以是一个Dash或Flask应用。若为Dash应用，尝试获取其Flask服务实例。否则，直接返回Flask应用。 |
+
+### 输出 {#returns}
+
+|   参数   |     类型      | <center>说明</center>            |
+| :------: | :-----------: | :------------------------------- |
+| `server` | `flask.Flask` | 给定`app`的Flask服务应用实例。 |
+
+## 范例 {#examples}
+
+### <IconObjType type="term"/> 获取服务应用 {#-get-the-server}
+
+<Tabs
+  defaultValue="codes"
+  values={[
+    { label: '代码', value: 'codes', },
+    { label: '结果', value: 'results', },
+  ]
+}>
+
+<TabItem value="codes">
+
+```python
+import dash
+import flask
+from dash_file_cache.services.utilities import get_server
+
+
+app1 = dash.Dash("demo1")
+app2 = flask.Flask("demo2")
+
+print(get_server(app1))
+print(get_server(app2))
+```
+
+</TabItem>
+
+<TabItem value="results">
+
+```
+<Flask 'demo1'>
+<Flask 'demo2'>
+```
+
+</TabItem>
+
+</Tabs>

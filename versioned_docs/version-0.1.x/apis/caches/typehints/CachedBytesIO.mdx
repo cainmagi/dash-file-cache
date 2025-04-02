@@ -1,0 +1,29 @@
+---
+id: CachedBytesIO
+title: CachedBytesIO
+sidebar_label: CachedBytesIO
+slug: /apis/caches/typehints/CachedBytesIO
+description: The format of the cached BytesIO data.
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="type" source="caches.typehints.CachedBytesIO" />
+
+```python
+CachedBytesIO(
+    type: "bytes",
+    data: IO[bytes]
+)
+```
+
+`CachedBytesIO` is a `TypedDict`.
+
+`CachedBytesIO` is the format of the cached `BytesIO` data.
+
+## Keywords
+
+| Keyword |    Type     | <center>Description</center>                                                                               |
+| :-----: | :---------: | :--------------------------------------------------------------------------------------------------------- |
+| `type`  |  `"bytes"`  | The type of this cached data.                                                                              |
+| `data`  | `IO[bytes]` | The binary data to be cached, the type of the file can be determined by the file name and the `mime_type`. |

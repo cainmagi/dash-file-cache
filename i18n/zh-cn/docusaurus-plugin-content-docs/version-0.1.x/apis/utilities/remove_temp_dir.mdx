@@ -1,0 +1,75 @@
+---
+id: remove_temp_dir
+title: remove_temp_dir
+sidebar_label: remove_temp_dir
+slug: /apis/utilities/remove_temp_dir
+description: 删除临时目录。
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="func" isPrivate={true} source="utilities.remove_temp_dir" />
+
+```python
+remove_temp_dir(path: str | os.PathLike)
+```
+
+删除临时目录。
+
+需要注意的是，调用该函数、只会在主进程中起作用。
+
+会略过抛出由于文件占用导致的异常。
+
+## 参数 {#arguments}
+
+### 输入 {#requires}
+
+|  参数  |         类型         |               必选                | <center>说明</center> |
+| :----: | :------------------: | :-------------------------------: | --------------------- |
+| `path` | `str \| os.PathLike` | <InlineIcon icon={vsiCheckIcon}/> | 要移除的目录的路径。  |
+
+## 范例 {#examples}
+
+### <IconObjType type="term"/> 移除目录 {#-remove-a-folder}
+
+<Tabs
+  defaultValue="codes"
+  values={[
+    { label: '代码', value: 'codes', },
+    { label: '结果', value: 'results', },
+  ]
+}>
+
+<TabItem value="codes">
+
+```python
+import os
+import multiprocessing as mproc
+from dash_file_cache.utilities import remove_temp_dir
+
+os.makedirs("temp-folder1", exists_ok=True)
+os.makedirs("temp-folder2", exists_ok=True)
+
+remove_temp_dir("temp-folder1")
+p = mproc.Process(target=remove_temp_dir, args=("temp_folder2",))
+p.start()
+p.join()
+```
+
+</TabItem>
+
+<TabItem value="results">
+
+- 目录`"temp-folder1"`创建后会被移除，所以不会存在。
+- 目录`"temp-folder2"`不会在子进程中被移除，所以仍然存在。
+
+</TabItem>
+
+</Tabs>

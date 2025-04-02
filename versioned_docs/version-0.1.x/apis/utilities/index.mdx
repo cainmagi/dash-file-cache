@@ -1,0 +1,27 @@
+---
+id: index
+title: utilities
+sidebar_label: utilities
+slug: /apis/utilities
+description: Shared utilities used for handling the files and requests.
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="module" isPrivate={true} source="utilities" />
+
+Shared utilities used for handling the files and requests.
+
+## Classes
+
+|                                           Member                                           | <center>Description</center>                                  |
+| :----------------------------------------------------------------------------------------: | :------------------------------------------------------------ |
+|         [<IconObjType type="class" hasText={true} text="TempDir"/>](./TempDir.mdx)         | A handle of a temporary directory.                            |
+| [<IconObjType type="class" hasText={true} text="StreamFinalizer"/>](./StreamFinalizer.mdx) | Finalizer for a stream IO when the stream has been delivered. |
+
+## Functions
+
+|                                             Member                                              | <center>Description</center>                                                         |
+| :---------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------- |
+| [<IconObjType type="func" hasText={true} text="is_in_main_process"/>](./is_in_main_process.mdx) | A function used for checking whether the current process is the main process or not. |
+|    [<IconObjType type="func" hasText={true} text="remove_temp_dir"/>](./remove_temp_dir.mdx)    | Remove the temporary directory.                                                      |

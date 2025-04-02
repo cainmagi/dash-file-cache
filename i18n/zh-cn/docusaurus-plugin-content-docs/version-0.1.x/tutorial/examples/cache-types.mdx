@@ -1,0 +1,229 @@
+---
+id: cache-types
+sidebar_label: 各类缓存
+title: 范例：各类缓存
+description: 以下范例，展示了比较各类缓存的用法。
+slug: /examples/cache-types
+---
+
+import mdiLanguagePython from "@iconify-icons/mdi/language-python";
+
+import {demoURL} from "@site/src/envs/variables";
+import DarkButton from "@site/src/components/DarkButton";
+
+# 范例：各类缓存
+
+<div className="float-right indark-inv">
+
+|                          范例：各类缓存                           |
+| :---------------------------------------------------------------: |
+| ![Example of cache types](/img/examples/example-cache-types.webp) |
+
+</div>
+
+针对各种类型的缓存，提供了以下三个范例工程：
+
+<p>
+  <DarkButton to={demoURL("single_process.py")} icon={mdiLanguagePython}>
+    {"single_process.py"}
+  </DarkButton>
+</p>
+
+<p>
+  <DarkButton to={demoURL("background_callback.py")} icon={mdiLanguagePython}>
+    {"background_callback.py"}
+  </DarkButton>
+</p>
+
+<p>
+  <DarkButton to={demoURL("tempfile_cache.py")} icon={mdiLanguagePython}>
+    {"tempfile_cache.py"}
+  </DarkButton>
+</p>
+
+<div className="d-flow-root">
+
+:::info
+
+要运行使用背景callback的范例，请安装以下可选依赖项：
+
+```shell
+python -m pip install dash[diskcache]
+```
+
+:::
+
+</div>
+
+这些范例各自实现了以下等价的效果。
+
+1. 三个按钮：<kbd>StringIO</kbd>, <kbd>BytesIO</kbd>和<kbd>Path</kbd>.
+   1. 按下<kbd>StringIO</kbd>，`svg`图片文件将以文字数据的方式载入并发送到前端。
+   2. 按下<kbd>BytesIO</kbd>，`svg`图片文件将以字节数据的方式载入并发送到前端。
+   3. 按下<kbd>Path</kbd>，`svg`图片文件对应的路径将会缓存，图片的数据将会载入并发送到前端。
+2. 按下按钮的时候，数据的类型、缓存数据的地址，以及加载的图片将会展示在页面上。
+3. 对于使用了`background_callbacks`的范例，callback刻意处理成了带有短暂延迟的效果。在运行callback时，亦即准备图片数据时，将会显示进度。
+
+## 定义布局 {#define-the-layout}
+
+以`single_process.py`为例，范例工程使用的布局定义如下：
+
+```python showLineNumbers
+html.Div(
+    (
+        html.Div(
+            (
+                html.P("Get Image by:"),
+                html.Button(id="btn-strio", children="StringIO"),
+                html.Button(id="btn-bytesio", children="BytesIO"),
+                html.Button(id="btn-path", children="Path"),
+            )
+        ),
+        html.Div((html.P("Cache type:"), html.P(id="type"))),
+        html.Div((html.P("Cache address:"), html.P(id="addr"))),
+        html.Div((html.P("Cached Image:"), html.Img(id="cache"))),
+    ),
+)
+```
+
+按钮提供了触发callback的功能，最终结果将会由`html.Img(...)`展示。初始化时，图片组件是空的，换言之，并无任何图片显示。
+
+按下按钮的时候，结果会刷新，以便确认按下的是哪一个按钮、以及缓存数据的地址是何状态。
+
+## 定义callback {#define-the-callbacks}
+
+Callback的触发事件是按下按钮。根据所按按钮的ID，数据会以不同的方式载入。例如，当按下`btn-strio`之时，SVG文件将会以文字的形式载入。服务方法`self.service.register(...)`接收数据和文件信息作为输入，并返回用来访问图片的地址。
+
+```python showLineNumbers
+@app.callback(
+    Output("type", "children"),
+    Output("addr", "children"),
+    Input("btn-strio", "n_clicks"),
+    Input("btn-bytesio", "n_clicks"),
+    Input("btn-path", "n_clicks"),
+    prevent_initial_call=True,
+)
+def click_get_image(
+    n_clicks_strio: Optional[int],
+    n_clicks_bytesio: Optional[int],
+    n_clicks_path: Optional[int],
+):
+    prop_id = str(dash.callback_context.triggered[0]["prop_id"])
+    file_path = os.path.join(self.root, "test_image.svg")
+    if prop_id.startswith("btn-strio") and n_clicks_strio:
+        with open(file_path, "r") as fobj:
+            fio = io.StringIO(fobj.read())
+    elif prop_id.startswith("btn-bytesio") and n_clicks_bytesio:
+        with open(file_path, "rb") as fobj:
+            fio = io.BytesIO(fobj.read())
+    elif prop_id.startswith("btn-path") and n_clicks_path:
+        fio = file_path
+    else:
+        return dash.no_update, dash.no_update
+    addr = self.service.register(
+        fio,
+        content_type="image/svg+xml",
+        mime_type="image/svg+xml",
+        one_time_service=True,
+    )
+    return str(fio.__class__.__name__), addr
+```
+
+运行该callback后，第一个返回值显示了所载入数据的类型。第二个返回值应当是如下形式的地址：
+
+```
+/cache-data?uid=...
+```
+
+该地址会连锁触发另一个callback，其定义如下：
+
+```python showLineNumbers
+@app.callback(
+    Output("cache", "src"),
+    Input("addr", "children"),
+    prevent_initial_call=True,
+)
+def update_cache(addr):
+    if not addr:
+        return dash.no_update
+    return addr
+```
+
+这一callback、在地址不为空的情况下，会将地址传递给图片组件的`src`属性。换言之，图片的数据源最终会设置为`/cache-data?uid=...`的形式。
+
+当图片地址得到更新时，由于浏览器会读取图片、并立刻访问缓存地址，从而触发数据的载入，客户端将以`flask.stream_with_context`的方式接收数据。
+
+## 使用背景callback {#use-background-callbacks}
+
+第二和第三个范例展示了如何将文件缓存和运行在子进程中的背景callback整合到一起。要实现这一目标，只需要做出轻微的改变。以`tempfile_cache.py`为例。第一处修改位于初始化的部分。
+
+```python showLineNumbers
+class Demo:
+    def __init__(self) -> None:
+        # highlight-next-line
+        self.service = ServiceData(CacheFile(None))
+        self.root = os.path.dirname(__file__)
+```
+
+其中，缓存替换成了[`CacheFile`](../usages/cache#cachefile)，以支持不同进程之间的数据I/O。
+
+第二处修改位于layout的定义，需要添加一个组件、以展示callback运行的进度。
+
+```python showLineNumbers
+html.Div(
+    (
+        ...
+        # hightlight-next-line
+        html.Div((html.P(("Progress:", html.Span(id="prog"))))),
+        html.Div((html.P("Cache type:"), html.P(id="type"))),
+        ...
+    ),
+)
+```
+
+最终，callback的修改如下：
+
+```python showLineNumbers
+@app.callback(
+    Output("type", "children"),
+    ...
+    Input("btn-path", "n_clicks"),
+    # highlight-start
+    background=True,
+    running=[
+        (Output("btn-strio", "disabled"), True, False),
+        (Output("btn-bytesio", "disabled"), True, False),
+        (Output("btn-path", "disabled"), True, False),
+    ],
+    progress=[Output("prog", "children")],
+    manager=background_callback_manager,
+    # highlight-end
+    prevent_initial_call=True,
+)
+def click_get_image(
+    # highlight-next-line
+    set_progress: Callable[[Tuple[str]], None],
+    n_clicks_strio: Optional[int],
+    n_clicks_bytesio: Optional[int],
+    n_clicks_path: Optional[int],
+):
+    prop_id = str(dash.callback_context.triggered[0]["prop_id"])
+    file_path = os.path.join(self.root, "test_image.svg")
+    ...
+    # highlight-start
+    n = 10
+    for i in range(n):
+        time.sleep(0.1)
+
+        set_progress(("{0}%".format(int(round((i + 1) / n * 100))),))
+    # highlight-end
+    addr = self.service.register(
+        fio,
+        content_type="image/svg+xml",
+        mime_type="image/svg+xml",
+        one_time_service=True,
+    )
+    return str(fio.__class__.__name__), addr
+```
+
+此处唯一修改的部分，纯粹是为了使用背景callback并展示进度。对于`service.register`方法而言，即使缓存的类型改为`CacheFile`，其用法仍无任何变化。

@@ -6,6 +6,10 @@
 
 ### 0.2.0 @ 04/02/2025
 
+#### :mega: New
+
+1. Bump the document to the new version `0.2.0`.
+
 #### :floppy_disk: Change
 
 1. Bump the `yarn` version from `4.4.1` to `4.7.0`.

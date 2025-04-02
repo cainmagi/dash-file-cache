@@ -1,0 +1,32 @@
+---
+id: CachedPath
+title: CachedPath
+sidebar_label: CachedPath
+slug: /apis/caches/typehints/CachedPath
+description: The string path or the path-like object specifying a file existing on the disk.
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="type" source="caches.typehints.CachedPath" />
+
+```python
+CachedPath(
+    type: "path",
+    path: str | os.PathLike
+)
+```
+
+`CachedPath` is a `TypedDict`.
+
+The string path or the path-like object specifying a file existing on the disk.
+
+In this case, the `CachedPath` will only store the path. The file will be always
+read and streamed as binary file stream.
+
+## Keywords
+
+| Keyword |         Type         | <center>Description</center>            |
+| :-----: | :------------------: | :-------------------------------------- |
+| `type`  |       `"path"`       | The type of this cached data.           |
+| `path`  | `str \| os.PathLike` | The path to the file on the local disk. |

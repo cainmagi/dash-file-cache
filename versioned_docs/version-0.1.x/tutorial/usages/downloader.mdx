@@ -1,0 +1,214 @@
+---
+id: downloader
+sidebar_label: Downloader
+title: How to use the Downloader component
+description: The Downloader component provides a convenient solution of using callbacks to trigger a downloading event.
+slug: /usages/downloader
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import IconLink from "@site/src/components/IconLink";
+
+# How to use the Downloader component
+
+Dash File Cache provides a factory instance for implementing a component that can fire a downloading event by a callback.
+
+```python
+downloader = Downloader(id: str)
+```
+
+The following codes show a comparison between the implementation with `Downloader` and without `Downloader`.
+They are implementations with the equivalent functionalities.
+
+<Tabs
+  defaultValue="with-downloader"
+  values={[
+    { label: 'With Downloader', value: 'with-downloader', },
+    { label: 'Without Downloader', value: 'without-downloader', },
+  ]
+}>
+
+<TabItem value="with-downloader">
+
+```python title="with_downloader.py" showLineNumbers
+import io
+
+from typing import Optional
+
+import dash
+from dash import html
+from dash import Input
+import dash_file_cache as dfc
+
+
+app = dash.Dash("demo")
+service = dfc.ServiceData(dfc.CachePlain(1))
+# highlight-next-line
+service.serve(app)
+
+downloader = dfc.Downloader("downloader", None)
+
+app.layout = html.Div(
+    (
+        html.Div(html.Button(id="btn", children="Download")),
+        downloader.layout()
+    )
+)
+
+downloader.use_callbacks(app)
+
+
+# highlight-next-line
+@app.callback(downloader.as_output, Input("btn", "n_clicks"))
+def a_callback_creating_data(n_clicks: Optional[int]) -> str:
+    if not n_clicks:
+        return dash.no_update
+    address = service.register(
+        fobj=io.StringIO("test file data..."),
+        file_name="test.txt",
+        mime_type="text/plain",
+        one_time_service=True,
+        # highlight-next-line
+        download=True,
+    )
+    return address
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+</TabItem>
+
+<TabItem value="without-downloader">
+
+```python title="without_downloader.py" showLineNumbers
+import io
+
+from typing import Optional
+
+import dash
+from dash import html
+from dash import Output, Input
+import dash_file_cache as dfc
+
+
+app = dash.Dash("demo")
+service = dfc.ServiceData(dfc.CachePlain(1))
+# highlight-next-line
+service.serve(app)
+
+downloader = dfc.Downloader("downloader", None)
+
+app.layout = html.Div(
+    (
+        html.Div(html.Button(id="btn", children="Download")),
+        html.Div(id="downloader-js-finish-trigger", hidden=True),
+        html.Div(id="downloader-js-trigger", hidden=True),
+        html.Div(id="downloader-trigger", hidden=True),
+    )
+)
+
+
+@app.callback(Output("downloader-trigger", "children"), Input("btn", "n_clicks"))
+def a_callback_creating_data(n_clicks: Optional[int]) -> str:
+    if not n_clicks:
+        return dash.no_update
+    address = service.register(
+        fobj=io.StringIO("test file data..."),
+        file_name="test.txt",
+        mime_type="text/plain",
+        one_time_service=True,
+        # highlight-next-line
+        download=True,
+    )
+    return address
+
+
+@app.callback(
+    Output("downloader-js-trigger", "children"),
+    Input("downloader-trigger", "children"),
+    prevent_initial_call=True,
+)
+def download_redirect(trigger: Optional[str]):
+    """Trigger of download link redirection."""
+    if not trigger:
+        return dash.no_update
+    return trigger
+
+
+app.clientside_callback(
+    """
+    function (uri) {
+        var link = document.createElement("a");
+        link.setAttribute("download", "");
+        link.setAttribute("target", "_blank");
+        link.setAttribute("rel", "no-refresh");
+        link.href = uri;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        return "success";
+    }
+    """,
+    Output("downloader-js-finish-trigger", "children"),
+    Input("downloader-js-trigger", "children"),
+    prevent_initial_call=True,
+)
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+</TabItem>
+
+</Tabs>
+
+`Downloader(...)` itself is not a dash component, but calling `downloader.layout()` will
+get the dash components related to this instance. `download.use_callbacks(app)` provides
+the callbacks related to using the trigger signal to fire a downloading event.
+
+There are three steps of using `Downloader(...)`:
+
+1. Use `downloader.layout()` to add the components to the dashboard.
+2. Use `downloader.use_callbacks(app)` to bind the callbacks converting a `dash.Output(...)`
+   signal to the downloading event.
+3. Define a callback, where the output signal should be `downloader.as_output`. This value
+   should be used for providing the address of the file to be downloaded. The address can
+   be provided by the cache of the `ServiceData(...)`.
+
+Remember to specify the `file_name` and mark the `download=True` when registering the file
+to the cache. These options ensure that the dynamic link to the file will trigger the downloading
+event, and the name of the downloaded file will be specified by `file_name`.
+
+## Why should we use this downloader?
+
+Until `dash==2.18.x`, the [`dcc.Download`<IconExternalLink/>][link-dccdownload] still
+works on the bytes data directly, which means that, the data will be encoded as bytes
+on the server side and sent to the client (browser). In other words,
+[`dcc.send_file`<IconExternalLink/>][link-dash-sendfile] is not a wrapper of
+[`flask.send_file`<IconExternalLink/>][link-flask-sendfile], it cannot handle
+large-size data.
+
+In comparison, our solution is based on
+[`flask.stream_with_context`<IconExternalLink/>][link-flask-streamwcon],
+and the downloader accesses the address of the file directly, which is compatible with
+an arbirary size of the data.
+
+:::info
+
+In the future version (granted in `>=0.2.0`), we will provide a dash component which
+is totally compatible with the interfaces of the
+[`dcc.Download`<IconExternalLink/>][link-dccdownload] and our `ServiceData`, thus
+becoming a final solution for downloading files.
+
+:::
+
+[link-dccdownload]:https://dash.plotly.com/dash-core-components/download
+[link-dash-sendfile]:https://github.com/plotly/dash/issues/1874
+[link-flask-sendfile]:https://flask.palletsprojects.com/en/stable/api/#flask.send_file
+[link-flask-streamwcon]:https://flask.palletsprojects.com/en/stable/api/#flask.stream_with_context

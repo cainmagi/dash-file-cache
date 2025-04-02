@@ -1,0 +1,201 @@
+---
+id: service
+sidebar_label: 服务
+title: 使用服务
+description: 简明指南，介绍了在callback中使用服务的方法。
+slug: /usages/service
+---
+
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import IconLink from "@site/src/components/IconLink";
+
+# 使用服务
+
+本章介绍了[`ServiceData`](../../apis/services/data/ServiceData.mdx)的用法：
+
+```python
+service = ServiceData(cache: CacheAbstract, service_name: str = "/cached-data", chunk_size: int = 1)
+```
+
+## 在`dash`中使用`service` {#use-service-with-dash}
+
+`service`主要用来为`dash`提供服务。它实现了一种由callback加载、且由下载链接获取的“动态资源（dynamical assets）”。
+
+`service`的实例应当用作全局变量。换言之，该实例需要：
+
+1. 能被callback访问，这些callback负责存储数据到缓存。
+2. 能被`dash.Dash()`应用、在运行`app.run()`之前访问。
+
+对于服务的基础用法，如下所示：
+
+```python title="use_service_dash.py" showLineNumbers
+import io
+import dash
+from dash import Output, Input
+import dash_file_cache as dfc
+
+app = dash.Dash("demo")
+service = dfc.ServiceData(dfc.CachePlain(1))
+# highlight-next-line
+service.serve(app)
+
+app.layout = ...
+
+
+@app.callback(Output(..., "src"), Input(...))
+def a_callback_creating_data(...):
+    fobj = io.BytesIO()
+    fobj.write(...)  # 于此生成一些数据。
+    # highlight-start
+    address = service.register(
+        fobj=fobj,
+        mime_type="image/svg+xml",
+        one_time_service=True,
+    )
+    # highlight-end
+    return address
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+对`service`的使用可以分成三个步骤：
+
+1. 初始化后，调用`service.serve(app)`以将服务（`flask.views.View`）绑定到应用上。
+2. 在callback中，调用`service.register(...)`，将数据动态地置入缓存中。
+3. `service.register(...)`的返回值是指向缓存数据的地址。该地址可以用作`<img>`的`src`属性或`<object>`的`data`属性。
+
+不同于应用的静态资源（assets），`service.register(...)`所返回的地址`address`，具有严格限定
+在dashboard运行期间的生命周期。能取得返回值`address`，即可确保数据已俟访问。
+
+`service.register(...)`有如下参数：
+
+|      参数      | <center>说明</center>                                                                                                                                                                        |
+| :----------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|       `fobj`       | 所要提供的数据路径、或类文件对象。                                                                                                                                                      |
+|    `file_name`     | `fobj`的文件名。只有`download`参数指定时，才会用到该值。此时，该值将用作所下载文件的文件名。                                              |
+|   `content_type`   | 标记在HTML响应头中的内容类型。若该值留空，则将`mime_type`用作`content_type`。详情参见[此处<IconExternalLink/>][doc-content-type]。 |
+|    `mime_type`     | 所要提供的文件媒体类型。每个文件都对应一种媒体类型，详情参见[此处<IconExternalLink/>][doc-mime-type]。媒体类型总表参见[此处<IconExternalLink/>][doc-mtype-list]。      |
+| `one_time_service` | 二值量。标记有效时，会在文件送出之后，试图将文件清出缓存。设置该值可以节约缓存空间。   |
+|     `download`     | 二值量。标记有效时，返回的地址会被标记为用于下载文件。访问这样的地址会触发下载、而不是触发浏览器访问。 |
+
+:::warning
+
+若dashboard需要支持多用户同时访问、或缓存的数据需要访问多次时，不宜设置`one_time_service=True`。
+
+:::
+
+### 用于背景callbck {#work-with-background-callback}
+
+某些情况下，用户可能需要展示准备文件的进度。[背景callback<IconExternalLink/>][doc-bg-callback]是一个合适的解决方案。在此情况下，callback需要做出略微调整。
+
+```python title="use_service_dash.py" showLineNumbers
+@app.callback(
+    Output(..., "src"),
+    Input(...),
+    background=True,
+    progress=[Output("prog", "children")],
+    manager=background_callback_manager,
+    prevent_initial_call=True,
+)
+def a_callback_creating_data(set_progress, ...):
+    fobj = io.BytesIO()
+    for i in range(...):
+        fobj.write(...)  # 于此生成一些数据。
+        current_progress: int = ...
+        # highlight-next-line
+        set_progress(("{0}%".format(current_progress),))
+    address = service.register(
+        fobj=fobj,
+        mime_type="image/svg+xml",
+        one_time_service=True,
+    )
+    return address
+```
+
+运行背景callback时，callback本身会被[`multiprocess`<IconExternalLink/>][doc-mproc]分发到子进程中。若用户仍选择使用`CachePlain`来初始化`ServiceData`，对缓存的修改则只能在callback内部生效。一旦callback运行结束，在子进程做出的任何修改都会被舍弃。因此，callback会返回一个指向不存在文件的地址。要解决这个问题，需要使用
+
+```python
+ServiceData(dfc.CacheQueue(cache_size: int, qobj: queue.Queue))
+```
+
+抑或是
+
+```python
+ServiceData(dfc.CacheFile(cache_dir: str | None = None, chunk_size: int = 1))
+```
+
+## 在`flask`中使用`service` {#use-service-with-flask}
+
+`ServiceData`与纯`flask`应用兼容，因为`ServiceData`完全由`flask`实现。
+
+与使用`Dash()`相若，`ServiceData`仍需要同时满足被应用本身、以及被用户定义的服务访问。流程可分为两步：
+
+1. 定义一个用于接受数据查询请求的、`POST`方法服务。服务的响应提供的是用来访问缓存的地址。
+2. 使用缓存访问地址、和`GET`方法，来访问缓存数据。
+
+以下展示了一个简单的范例：
+
+```python title="use_service_flask.py" showLineNumbers
+import io
+import flask
+import dash_file_cache as dfc
+
+app = flask.Flask("demo")
+service = dfc.ServiceData(dfc.CachePlain(1))
+# highlight-next-line
+service.serve(app)
+
+
+@app.route("/create-file", methods=["POST"])
+def create_file():
+    # highlight-start
+    address = service.register(
+        fobj=io.StringIO("a simple test"), file_name="test.txt", mime_type="text/plain"
+    )
+    # highlight-end
+    return address
+
+
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=5000)
+```
+
+要检验该应用，可以利用[`urllib`<IconExternalLink/>][doc-urllib]发送一个`POST`请求，以获取缓存地址。`urllib`是Python标准库的一部分。
+
+```shell
+python -c "from urllib import request;print(request.urlopen(request.Request('http://127.0.0.1:5000/create-file', method='POST')).read().decode())"
+```
+
+该命令将会返回形如`/cache-data?uid=...`的地址。用户可按照如下方法，在浏览器中使用该地址：
+
+```
+http://127.0.0.1:5000/cache-data?uid=...
+```
+
+访问该地址后，可以透过浏览器见到如下纯文字：
+
+```
+a simple test
+```
+
+:::info
+
+上例中，可以在访问地址的末尾、简单地添加如下参数
+
+```
+http://127.0.0.1:5000/cache-data?uid=...&download=true
+```
+
+则，浏览器会下载文件、而非访问文件。
+
+:::
+
+[doc-content-type]: https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Content-Type
+[doc-mime-type]: https://developer.mozilla.org/zh-CN/docs/Web/HTTP/MIME_types
+[doc-mtype-list]: https://mimetype.io/all-types
+[doc-bg-callback]: https://dash.plotly.com/background-callbacks
+[doc-mproc]: https://multiprocess.readthedocs.io/en/latest/
+[doc-urllib]: https://docs.python.org/zh-cn/3/library/urllib.request.html#module-urllib.request

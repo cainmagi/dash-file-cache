@@ -1,0 +1,29 @@
+---
+id: CachedStringIO
+title: CachedStringIO
+sidebar_label: CachedStringIO
+slug: /apis/caches/typehints/CachedStringIO
+description: The format of the cached StringIO data.
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="type" source="caches.typehints.CachedStringIO" />
+
+```python
+CachedStringIO(
+    type: "str",
+    data: IO[str]
+)
+```
+
+`CachedStringIO` is a `TypedDict`.
+
+`CachedStringIO` is the format of the cached `StringIO` data.
+
+## Keywords
+
+| Keyword |   Type    | <center>Description</center>                                                                             |
+| :-----: | :-------: | :------------------------------------------------------------------------------------------------------- |
+| `type`  |  `"str"`  | The type of this cached data.                                                                            |
+| `data`  | `IO[str]` | The text data to be cached, the type of the file can be determined by the file name and the `mime_type`. |

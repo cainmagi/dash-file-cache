@@ -1,0 +1,171 @@
+---
+id: flask-services
+sidebar_label: Flask服务
+title: 范例：纯Flask服务
+description: 以下范例，展示了透过文件缓存服务，定义一个纯Flask应用的方法。
+slug: /examples/flask-services
+---
+
+import mdiLanguagePython from "@iconify-icons/mdi/language-python";
+
+import InlineIcon from "@site/src/components/InlineIcon";
+import {biSlashLg} from "@site/src/components/icons/BiSlashLg";
+
+import {demoURL} from "@site/src/envs/variables";
+import DarkButton from "@site/src/components/DarkButton";
+
+# 范例：纯Flask服务
+
+以下链接提供了一个纯Flask应用的范例。
+
+<p>
+  <DarkButton to={demoURL("flask_services.py")} icon={mdiLanguagePython}>
+    {"flask_services.py"}
+  </DarkButton>
+</p>
+
+该范例提供了以下服务：
+
+|  服务   |  方法  | <center>输入参数</center>       | <center>返回值</center>                                                  |
+| :-----: | :----: | :------------------------------ | :----------------------------------------------------------------------- |
+|   `/`   | `GET`  | <InlineIcon icon={biSlashLg} /> | `{files: ...}`，其中`files`是一个列表，值可作为用来访问`/file`的关键字。 |
+| `/file` | `GET`  | `?name=...`                     | 所要下载数据的元数据。                                                   |
+| `/file` | `POST` | `?name=...`                     | `{addr: ...}`，其中`addr`是缓存数据的地址。                              |
+
+因此，使用该范例的过程可分为三步：
+
+1. 使用`/`获取可用的文件列表。选择其中一个文件关键字用作参数`name=...`。
+2. 使用`/file`的`POST`方法，以及上一步中获取的文件关键字，得到缓存文件的地址。
+3. 透过浏览器或任一下载工具，访问缓存文件的地址。
+
+## 获取文件地址的脚本 {#script-for-fetching-the-address-of-the-file}
+
+由于不便于透过浏览器发送`POST`请求，这里提供了一个脚本，用来帮助获取文件列表中、第一个列出的文件的缓存文件地址。该脚本由Python标准库写就。
+
+```python title="get_file_addr.py" showLineNumbers
+from urllib import request
+from urllib import parse
+import json
+
+
+def get_cached_file_addr(base_addr: str, idx: int = 0) -> str:
+    """Get the address of the cached file for the demo `flask_services.py`
+
+    Arguments
+    ---------
+    base_addr: `str`
+        The base address like `http://xx.xx.xx.xx:8080`
+
+    idx: `int`
+        The index of the file to be accessed.
+    """
+
+    file_list = json.loads(
+        request.urlopen(request.Request(parse.urljoin(base_addr, "/"), method="GET"))
+        .read()
+        .decode()
+    )
+
+    file_name = file_list["files"][idx]
+
+    file_addr = json.loads(
+        request.urlopen(
+            request.Request(
+                parse.urljoin(base_addr, "/file")
+                + "?name={0}&download=true".format(file_name),
+                method="POST",
+            )
+        )
+        .read()
+        .decode()
+    )
+
+    return parse.urljoin(base_addr, file_addr["addr"])
+
+
+if __name__ == "__main__":
+    import sys
+
+    base_addr = str(sys.argv[1])
+    idx = int(sys.argv[2]) if len(sys.argv) >= 3 else 0
+
+    print(get_cached_file_addr(base_addr, idx))
+```
+
+获取该脚本后，先运行范例工程：
+
+```shell
+python flask_services.py
+```
+
+<div className="indark-inv">
+
+|                      运行`flask_services`的范例                      |
+| :------------------------------------------------------------------: |
+| ![Run the demo flask_serices](/img/examples/run-flask-services.webp) |
+
+</div>
+
+令应用持续运行，并打开另一个命令行窗口。复制前一个命令行窗口中、展示的应用地址，并将该地址按如下方式传递给脚本：
+
+```shell
+python get_file_addr.py http://172.17.0.2:8080
+```
+
+该脚本将会获取并展示形如以下形式的、第一个文件的缓存地址：
+
+```
+http://172.17.0.2:8080/cached-file?uid=...&download=True
+```
+
+将地址复制到浏览器，并按下<kbd>Enter</kbd>键，则会开始下载文件。
+
+## 范例的实现 {#implementation-of-this-example}
+
+该范例的核心实现，位于定义服务的部分。第一个服务`/`定义如下：
+
+```python showLineNumbers
+@app.route("/", endpoint="index")
+    def index():
+        return flask.jsonify({"files": self.list_files()})
+```
+
+其中`self.list_files()`是可用文件的关键字列表。
+
+第二个服务，包含了`GET`和`POST`方法的实现。
+
+```python showLineNumbers
+@app.route("/file", methods=["GET", "POST"], endpoint="file")
+def file_config():
+    file_name = request.args.get("name", type=str)
+    if file_name is None:
+        raise TypeError(
+            'Needs to specify the argument "name" when accessing this API.'
+        )
+    if file_name not in self.files:
+        raise FileNotFoundError(
+            'The requeste file name "{0}" does not exist in the file '
+            "list.".format(file_name)
+        )
+    if request.method == "GET":
+        return flask.jsonify(self.files[file_name])
+    elif request.method == "POST":
+        file_item = self.files[file_name]
+        use_download = request.args.get("download", type=bool, default=False)
+        addr = self.service.register(
+            file_item["path"],
+            content_type=file_item["content_type"],
+            mime_type=file_item["mime_type"],
+            one_time_service=True,
+            download=use_download,
+        )
+        return flask.jsonify({"addr": addr})
+    else:
+        raise MethodError(
+            "The requested method {0} is not supported.".format(request.method)
+        )
+```
+
+访问`GET`方法时，只返回了文件的元数据。文件不会实际载入缓存。本指南中，没有用到这一功能。
+
+`POST`方法接收一个必选参数`name`和一个可选参数`download`。其中，`name`用来获取文件位于服务器上的路径，`self.serivce.register(...)`方法则用来返回缓存地址。调用这一方法，会令文件实际载入到缓存中。

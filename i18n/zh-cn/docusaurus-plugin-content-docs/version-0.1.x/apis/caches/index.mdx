@@ -1,0 +1,31 @@
+---
+id: index
+title: caches
+sidebar_label: caches
+slug: /apis/caches
+description: 缓存的实现。
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="package" source="caches" />
+
+缓存的实现。缓存用于保存临时文件，以透过服务推送到前端。不同场合下，可以使用不同类型的缓存。
+
+## 模块 {#modules}
+
+|                                         成员                                          | <center>说明</center>        |
+| :-----------------------------------------------------------------------------------: | :--------------------------- |
+|  [<IconObjType type="module" hasText={true} text="abstract"/>](./abstract/index.mdx)  | 缓存的抽象类型定义。         |
+|   [<IconObjType type="module" hasText={true} text="lrudict"/>](./lrudict/index.mdx)   | 最久未使用字典的实现。       |
+|    [<IconObjType type="module" hasText={true} text="memory"/>](./memory/index.mdx)    | 透过内存数据交换实现的缓存。 |
+|  [<IconObjType type="module" hasText={true} text="tempfile"/>](./tempfile/index.mdx)  | 由临时目录实现的缓存。       |
+| [<IconObjType type="module" hasText={true} text="typehints"/>](./typehints/index.mdx) | 项目中使用的额外类型标记。   |
+
+## 别名 {#aliases}
+
+|                             成员                             | <center>别名取自</center>                                   |
+| :----------------------------------------------------------: | :---------------------------------------------------------- |
+| <IconObjType type="class" hasText={true} text="CachePlain"/> | [`dfc.caches.memory.CachePlain`](./memory/CachePlain.mdx)   |
+| <IconObjType type="class" hasText={true} text="CacheQueue"/> | [`dfc.caches.memory.CacheQueue`](./memory/CacheQueue.mdx)   |
+| <IconObjType type="class" hasText={true} text="CacheFile"/>  | [`dfc.caches.tempfile.CacheFile`](./tempfile/CacheFile.mdx) |

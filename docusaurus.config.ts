@@ -64,6 +64,13 @@ const config: Config = {
           // Remove this to remove the "edit this page" links.
           editUrl: "https://github.com/cainmagi/dash-file-cache/edit/docs/",
           editLocalizedFiles: true,
+          // versions
+          lastVersion: "current",
+          versions: {
+            current: {
+              label: "0.2.0",
+            },
+          },
         },
         theme: {
           customCss: "./src/css/custom.scss",
@@ -93,6 +100,17 @@ const config: Config = {
           sidebarId: "apis",
           position: "left",
           label: "APIs",
+        },
+        {
+          type: "docsVersionDropdown",
+          position: "right",
+          dropdownActiveClassDisabled: true,
+          dropdownItemsAfter: [
+            {
+              to: "/versions",
+              label: "All versions",
+            },
+          ],
         },
         {
           type: "localeDropdown",

@@ -1,0 +1,20 @@
+---
+id: index
+title: utilities
+sidebar_label: utilities
+slug: /apis/services/utilities
+description: 与Flask服务有关的工具。
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="module" isPrivate={true} source="services.utilities" />
+
+与Flask服务有关的工具。
+
+## 函数 {#functions}
+
+|                                      成员                                       | <center>说明</center>                         |
+| :-----------------------------------------------------------------------------: | :-------------------------------------------- |
+|   [<IconObjType type="func" hasText={true} text="no_cache"/>](./no_cache.mdx)   | 用来向`flask`服务添加`no_cache`属性的装饰器。 |
+| [<IconObjType type="func" hasText={true} text="get_server"/>](./get_server.mdx) | 从一个应用获取Flask服务应用。               |

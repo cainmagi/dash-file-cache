@@ -1,0 +1,196 @@
+---
+id: Downloader
+title: Downloader
+sidebar_label: Downloader
+slug: /apis/components/downloader/Downloader
+description: 纯Python-Dash实现的下载组件。
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import useBaseUrl from "@docusaurus/useBaseUrl";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+import vsiTerminalIcon from "@iconify-icons/codicon/terminal";
+
+import DarkButton from "@site/src/components/DarkButton";
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="class" source="components.downloader.Downloader" />
+
+```python
+downloader = Downloader(
+    id: str
+    to_addr: Callable[[str], str] | None
+)
+```
+
+纯 Python-Dash 实现的下载组件。
+
+该组件纯粹由 Python 代码实现。
+
+## 别名 {#aliases}
+
+该类可以通过以下方法取得。
+
+```python
+import dash_file_cache as dfc
+
+
+dfc.Downloader
+dfc.components.Downloader
+dfc.components.downloader.Downloader
+```
+
+## 参数 {#arguments}
+
+|   参数    |              类型              |               必选                | <center>说明</center>                                                                                                                                                                          |
+| :-------: | :----------------------------: | :-------------------------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|   `id`    |             `str`              | <InlineIcon icon={vsiCheckIcon}/> | 该组件的基本 ID。                                                                                                                                                                              |
+| `to_addr` | `Callable[[str], str] \| None` |                                   | <p>可选预处理函数。用来将 callback 触发的输入值转换成可以用来下载的地址。</p><p>若该值留空，则会直接使用触发输入值（等价于使用`lambda x: x`）。</p><p>若返回空字符串，下载事件则不会触发。</p> |
+
+## 方法 {#methods}
+
+### <IconObjType type="method"/> `layout` {#-layout}
+
+```python
+layout: html.Div = downloader.layout()
+```
+
+获取该组件的布局。
+
+#### 输出 {#returns}
+
+|   参数   |    类型    | <center>说明</center>          |
+| :------: | :--------: | :----------------------------- |
+| `layout` | `html.Div` | 该下载器的布局。 |
+
+---
+
+### <IconObjType type="method"/> `use_callbacks` {#-use_callbacks}
+
+```python
+downloader.use_callbacks(app: dash.Dash)
+```
+
+使用callback。
+
+将本组件自动生成的callback绑定到指定的`app`上。
+
+#### 输入 {#requires}
+
+| 参数  |  类型  |               必选                | <center>说明</center> |
+| :---: | :----: | :-------------------------------: | --------------------- |
+| `app` | `Dash` | <InlineIcon icon={vsiCheckIcon}/> | Dash应用。 |
+
+## 属性 {#properties}
+
+### <IconObjType type="param"/> `as_input` {#-as_input}
+
+```python
+cbk_input: dash.Input = downloader.as_input
+```
+
+将“本组件被触发”提供为callback的输入。该输入会在可下载文件的地址就绪时被触发。
+
+---
+
+### <IconObjType type="param"/> `as_output` {#-as_output}
+
+```python
+cbk_output: dash.Output = downloader.as_output
+```
+
+将“触发本组件”提供为callback的输出。
+
+---
+
+### <IconObjType type="param"/> `as_state` {#-as_state}
+
+```python
+cbk_state: dash.State = downloader.as_state
+```
+
+将“本组件被触发”提供为callback的状态量。该状态量对应的输入会在可下载文件的地址就绪时被触发。
+
+## 范例 {#examples}
+
+### <IconObjType type="term"/> 最小范例 {#-minimal-example}
+
+<Tabs
+  defaultValue="codes"
+  values={[
+    { label: '代码', value: 'codes', },
+    { label: '结果', value: 'results', },
+  ]
+}>
+
+<TabItem value="codes">
+
+```python title="minimal_example_downloader.py" showLineNumbers
+from typing import Optional
+import dash
+import flask
+from dash import html, Input
+from dash_file_cache.services.utilities import get_server
+from dash_file_cache.components.downloader import Downloader
+
+
+app = dash.Dash("demo")
+server = get_server(app)
+
+downloader = Downloader(id="downloader", to_addr=None)
+
+app.layout = html.Div((html.Button(id="btn", children="Download"), downloader.layout()))
+
+downloader.use_callbacks(app)
+
+
+@server.route("/file")
+def file():
+    resp = flask.Response("test file content", status=200, mimetype="text/plain")
+    resp.headers["Content-Disposition"] = "attachment; filename=test.txt"
+    return resp
+
+
+@app.callback(downloader.as_output, Input("btn", "n_clicks"))
+def trigger_get_file(n_clicks: Optional[int]):
+    if not n_clicks:
+        return dash.no_update
+    return "/file"
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+</TabItem>
+
+<TabItem value="results">
+
+渲染包含一个下载按钮的应用。
+
+按下按钮时，会下载名为`text.txt`的文件。文件内容为
+
+```
+test file content
+```
+
+</TabItem>
+
+</Tabs>
+
+### <IconObjType type="term"/> 使用背景callback下载文件 {#-download-a-file-with-a-background-callback}
+
+参见
+
+<p>
+  <DarkButton
+    to={useBaseUrl("/docs/examples/download-file")}
+    icon={vsiTerminalIcon}
+  >
+    {"下载文件"}
+  </DarkButton>
+</p>

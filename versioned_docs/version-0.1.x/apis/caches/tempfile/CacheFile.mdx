@@ -1,0 +1,279 @@
+---
+id: CacheFile
+title: CacheFile
+sidebar_label: CacheFile
+slug: /apis/caches/tempfile/CacheFile
+description: The cache implementation based on a temporary folder.
+---
+
+import useBaseUrl from "@docusaurus/useBaseUrl";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+import vsiTerminalIcon from "@iconify-icons/codicon/terminal";
+
+import DarkButton from "@site/src/components/DarkButton";
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="class" source="caches.tempfile.CacheFile" />
+
+```python
+cache = CacheFile(
+    cache_dir: str | os.PathLike | TempDir | None,
+    chunk_size: int = 1,
+)
+```
+
+The cache implementation based on a temporary folder.
+
+Different from a memory-based cache like [`CachePlain`](../memory/CachePlain.mdx) and
+[`CacheQueue`](../memory/CacheQueue.mdx), this `CacheFile` is purely implemented by
+file I/O. Therefore, it will not automatically delete expired file. Users need to take
+responsibility of managing the files by themselves.
+
+However, when the quit of the running program is catched by
+[`atexit`<IconExternalLink/>][link-atexit], the entire temporary folder should be
+removed.
+
+## Aliases
+
+This class can be acquired by
+
+```python
+import dash_file_cache as dfc
+
+
+dfc.CacheFile
+dfc.caches.CacheFile
+dfc.caches.memory.CacheFile
+```
+
+## Arguments
+
+|   Argument   |                                           Type                                            |             Required              | <center>Description</center>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| :----------: | :---------------------------------------------------------------------------------------: | :-------------------------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cache_dir`  | <code>{`str \| os.PathLike \| `}[TempDir](../../utilities/TempDir.mdx){` \| None`}</code> | <InlineIcon icon={vsiCheckIcon}/> | The path of the temporary directory used by this cache.<br/> If a `str` or `PathLike` is used, `cache_dir` is the path to the folder. It means that this folder will be managed by this `CacheFile`. The path will be converted to `TempDir`.<br/> If a `TempDir` is used, it means that this cache is sharing a temporary folder with other caches. The folder will be managed by the given `cache_dir`.<br/> If `None` is used, a temporary folder will be created by `tempfile.mkdtemp` and the folder will be managed by a `TempDir` created by this `CacheFile`. |
+| `chunk_size` |                                           `int`                                           |                                   | The chunk size when saving a large file. The unit is `MB`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+
+## Methods
+
+### <IconObjType type="method"/> `key_to_path`
+
+```python
+path: str = cache.key_to_path(key: str)
+```
+
+Given the key of the file, return the file path without extensions.
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center>  |
+| :------: | :---: | :-------------------------------: | ----------------------------- |
+|  `key`   | `str` | <InlineIcon icon={vsiCheckIcon}/> | The keyword of a cached item. |
+
+#### Returns
+
+| Argument | Type  | <center>Description</center>                       |
+| :------: | :---: | :------------------------------------------------- |
+|  `path`  | `str` | The base path to the cached item queried by `key`. |
+
+---
+
+### <IconObjType type="method"/> `is_in`
+
+```python
+flag: bool = cache.is_in(key: str)
+```
+
+Check whether `key` is registered in the cache.
+
+The [`__contains__`](#-__contains__) operator is delegated to this method.
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center> |
+| :------: | :---: | :-------------------------------: | ---------------------------- |
+|  `key`   | `str` | <InlineIcon icon={vsiCheckIcon}/> | The keyword to be validated. |
+
+#### Returns
+
+| Argument |  Type  | <center>Description</center>                          |
+| :------: | :----: | :---------------------------------------------------- |
+|  `flag`  | `bool` | If `True`, the given `key` value exists in the cache. |
+
+---
+
+### <IconObjType type="method"/> `remove`
+
+```python
+info: CachedFileInfo = cache.remove(key: str)
+```
+
+Remove the info of one cached item from this cache.
+
+Using this method implies that the data in the cache reaches its end of life.
+Only the cache item information will still be usable.
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center>           |
+| :------: | :---: | :-------------------------------: | -------------------------------------- |
+|  `key`   | `str` | <InlineIcon icon={vsiCheckIcon}/> | The keyword of the data to be removed. |
+
+#### Returns
+
+| Argument |                        Type                         | <center>Description</center>                      |
+| :------: | :-------------------------------------------------: | :------------------------------------------------ |
+|  `info`  | [`CachedFileInfo`](../typehints/CachedFileInfo.mdx) | The light-weighted metadata queried in the cache. |
+
+---
+
+### <IconObjType type="method"/> `dump`
+
+```python
+cache.dump(key: str, info: CachedFileInfo, data: CachedData)
+```
+
+Dump data to the cache.
+
+#### Requires
+
+| Argument |                        Type                         |             Required              | <center>Description</center>                                                                       |
+| :------: | :-------------------------------------------------: | :-------------------------------: | -------------------------------------------------------------------------------------------------- |
+|  `key`   |                        `str`                        | <InlineIcon icon={vsiCheckIcon}/> | The key value of this new data. If the `key` exists in the cache, will replace the original value. |
+|  `info`  | [`CachedFileInfo`](../typehints/CachedFileInfo.mdx) | <InlineIcon icon={vsiCheckIcon}/> | The light-weighted metadata to be dumped into the cache.                                           |
+|  `data`  |     [`CachedData`](../typehints/CachedData.mdx)     | <InlineIcon icon={vsiCheckIcon}/> | The data to be dumped into the cache.                                                              |
+
+---
+
+### <IconObjType type="method"/> `load`
+
+```python
+info, data_loader = cache.load(key: str)
+```
+
+Load the data by a specific keyword.
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center>                                                                            |
+| :------: | :---: | :-------------------------------: | ------------------------------------------------------------------------------------------------------- |
+|  `key`   | `str` | <InlineIcon icon={vsiCheckIcon}/> | The key value of to be queried. If `key` does not exist in the cache, will raise a `FileNotFoundError`. |
+
+#### Returns
+
+|   Argument    |                                     Type                                     | <center>Description</center>                                                                                                                                            |
+| :-----------: | :--------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|    `info`     |             [`CachedFileInfo`](../typehints/CachedFileInfo.mdx)              | The light-weighted metadata queried in the cache.                                                                                                                       |
+| `data_loader` | <code>{`Callable[[], `}[CachedData](../typehints/CachedData.mdx){`]`}</code> | The lazy loader for the data. This function implements a deferred loading mechanism allowing that the large-size data to be actually loaded when this method is called. |
+
+---
+
+### <IconObjType type="method"/> `load_info`
+
+```python
+info: CachedFileInfo = cache.load_info(key: str)
+```
+
+Load the metadata by a specific keyword.
+
+This method is implemented by fetching the returned value `load(key)[0]`.
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center>                                                                            |
+| :------: | :---: | :-------------------------------: | ------------------------------------------------------------------------------------------------------- |
+|  `key`   | `str` | <InlineIcon icon={vsiCheckIcon}/> | The key value of to be queried. If `key` does not exist in the cache, will raise a `FileNotFoundError`. |
+
+#### Returns
+
+| Argument |                        Type                         | <center>Description</center>                      |
+| :------: | :-------------------------------------------------: | :------------------------------------------------ |
+|  `info`  | [`CachedFileInfo`](../typehints/CachedFileInfo.mdx) | The light-weighted metadata queried in the cache. |
+
+---
+
+### <IconObjType type="method"/> `load_data`
+
+```python
+data: CachedData = cache.load_data(key: str)
+```
+
+Load the data by a specific keyword.
+
+This method is implemented by fetching and calling `load(key)[1]()`.
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center>                                                                            |
+| :------: | :---: | :-------------------------------: | ------------------------------------------------------------------------------------------------------- |
+|  `key`   | `str` | <InlineIcon icon={vsiCheckIcon}/> | The key value of to be queried. If `key` does not exist in the cache, will raise a `FileNotFoundError`. |
+
+#### Returns
+
+| Argument |                    Type                     | <center>Description</center>                                                                                            |
+| :------: | :-----------------------------------------: | :---------------------------------------------------------------------------------------------------------------------- |
+|  `data`  | [`CachedData`](../typehints/CachedData.mdx) | The data object queried in the cache. Since `data` may be large, this value should be a file-like object in most cases. |
+
+## Properties
+
+### <IconObjType type="param"/> `chunk_size`
+
+```python
+chunk_size: int = cache.chunk_size
+
+new_chunk_size: int
+cache.chunk_size = new_chunk_size
+```
+
+The chunk size when saving a large file. The unit is `MB`.
+
+---
+
+### <IconObjType type="param"/> `dir`
+
+```python
+cache_dir: TempDir = cache.dir
+```
+
+Get the temporary dir (see [`TempDir`](../../utilities/TempDir.mdx)) of this cache.
+Exporting this value to other `CacheFile` instances can make the temporary directory
+shared.
+
+## Operators
+
+### <IconObjType type="op"/> `__contains__`
+
+```python
+flag: bool = key in cache
+```
+
+Check whether `key` is registered in the cache.
+
+#### Requires
+
+| Argument | Type  |             Required              | <center>Description</center> |
+| :------: | :---: | :-------------------------------: | ---------------------------- |
+|  `key`   | `str` | <InlineIcon icon={vsiCheckIcon}/> | The keyword to be validated. |
+
+#### Returns
+
+| Argument |  Type  | <center>Description</center>                          |
+| :------: | :----: | :---------------------------------------------------- |
+|  `flag`  | `bool` | If `True`, the given `key` value exists in the cache. |
+
+## Examples
+
+See
+
+<p>
+  <DarkButton
+    to={useBaseUrl("/docs/examples/cache-types#use-background-callbacks")}
+    icon={vsiTerminalIcon}
+  >
+    {"Cache types"}
+  </DarkButton>
+</p>
+
+[link-atexit]: https://docs.python.org/3/library/atexit.html

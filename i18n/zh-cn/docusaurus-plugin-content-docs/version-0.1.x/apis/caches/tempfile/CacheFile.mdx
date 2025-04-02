@@ -1,0 +1,271 @@
+---
+id: CacheFile
+title: CacheFile
+sidebar_label: CacheFile
+slug: /apis/caches/tempfile/CacheFile
+description: 基于临时目录的缓存实现。
+---
+
+import useBaseUrl from "@docusaurus/useBaseUrl";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+import vsiTerminalIcon from "@iconify-icons/codicon/terminal";
+
+import DarkButton from "@site/src/components/DarkButton";
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="class" source="caches.tempfile.CacheFile" />
+
+```python
+cache = CacheFile(
+    cache_dir: str | os.PathLike | TempDir | None,
+    chunk_size: int = 1,
+)
+```
+
+基于临时目录的缓存实现。
+
+不同于形如[`CachePlain`](../memory/CachePlain.mdx)和[`CacheQueue`](../memory/CacheQueue.mdx)的、基于内存的缓存，该缓存`CacheFile`纯粹是通过文件I/O实现的。故此，该缓存无法自动删除过期的文件。用户需要自行处理对这些临时文件的维护。
+
+不过，当程序的退出事件被[`atexit`<IconExternalLink/>][link-atexit]捕获到时，整个临时文件夹都会被删除。
+
+## 别名 {#aliases}
+
+该类可以通过以下方法取得。
+
+```python
+import dash_file_cache as dfc
+
+
+dfc.CacheFile
+dfc.caches.CacheFile
+dfc.caches.memory.CacheFile
+```
+
+## 参数 {#arguments}
+
+|     参数     |                                           类型                                            |               必选                | <center>说明</center>                                                                                                                                                                                                                                                                                                                                                     |
+| :----------: | :---------------------------------------------------------------------------------------: | :-------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cache_dir`  | <code>{`str \| os.PathLike \| `}[TempDir](../../utilities/TempDir.mdx){` \| None`}</code> | <InlineIcon icon={vsiCheckIcon}/> | 该缓存使用的临时目录的路径。<br/>若该值的类型为`str`或`PathLike`，则`cache_dir`直接作为临时目录的路径。这表明该目录由`CacheFile`维护，路径则会被转化为`TempDir`。<br/>若该值的类型为`TempDir`，这表明该缓存正在与其他缓存共享临时目录。<br/>若该值为`None`，则会透过`tempfile.mkdtemp`创建一个临时目录，且`CacheFile`会为该目录创建`TempDir`，由`TempDir`维护该临时目录。 |
+| `chunk_size` |                                           `int`                                           |                                   | 保存大体量文件时，所用的文件块尺寸。数值单位为`MB`。                                                                                                                                                                                                                                                                                                                      |
+
+## 方法 {#methods}
+
+### <IconObjType type="method"/> `key_to_path` {#-key_to_path}
+
+```python
+path: str = cache.key_to_path(key: str)
+```
+
+给定文件在缓存中的关键字，返回不带扩展名的文件路径。
+
+#### 输入 {#requires}
+
+| 参数  | 类型  |               必选                | <center>说明</center> |
+| :---: | :---: | :-------------------------------: | --------------------- |
+| `key` | `str` | <InlineIcon icon={vsiCheckIcon}/> | 缓存字典项的关键字。  |
+
+#### 输出 {#returns}
+
+|  参数  | 类型  | <center>说明</center>                       |
+| :----: | :---: | :------------------------------------------ |
+| `path` | `str` | `key`查询所得的、缓存字典项对应的基本路径。 |
+
+---
+
+### <IconObjType type="method"/> `is_in` {#-is_in}
+
+```python
+flag: bool = cache.is_in(key: str)
+```
+
+检查`key`是否注册在了缓存中。
+
+运算符[`__contains__`](#-__contains__)委托给了该方法。
+
+#### 输入 {#requires-1}
+
+| 参数  | 类型  |               必选                | <center>说明</center> |
+| :---: | :---: | :-------------------------------: | --------------------- |
+| `key` | `str` | <InlineIcon icon={vsiCheckIcon}/> | 要验证的关键字。      |
+
+#### 输出 {#returns-1}
+
+|  参数  |  类型  | <center>说明</center>                           |
+| :----: | :----: | :---------------------------------------------- |
+| `flag` | `bool` | 若取值`True`，则表明`key`给定的值存在于缓存中。 |
+
+---
+
+### <IconObjType type="method"/> `remove` {#-remove}
+
+```python
+info: CachedFileInfo = cache.remove(key: str)
+```
+
+指定某缓存字典项，将其从缓存中移出为信息。
+
+调用该方法、蕴含了数据结束生命周期的断言。调用后，只有缓存数据的信息仍然可用。
+
+#### 输入 {#requires-2}
+
+| 参数  | 类型  |               必选                | <center>说明</center>            |
+| :---: | :---: | :-------------------------------: | -------------------------------- |
+| `key` | `str` | <InlineIcon icon={vsiCheckIcon}/> | 将要从缓存中移除的数据的关键字。 |
+
+#### 输出 {#returns-2}
+
+|  参数  |                        类型                         | <center>说明</center>                      |
+| :----: | :-------------------------------------------------: | :----------------------------------------- |
+| `info` | [`CachedFileInfo`](../typehints/CachedFileInfo.mdx) | 从缓存中所查询到的数据、对应的轻量化信息。 |
+
+---
+
+### <IconObjType type="method"/> `dump` {#-dump}
+
+```python
+cache.dump(key: str, info: CachedFileInfo, data: CachedData)
+```
+
+向缓存中置入数据。
+
+#### 输入 {#requires-3}
+
+|  参数  |                        类型                         |               必选                | <center>说明</center>                                       |
+| :----: | :-------------------------------------------------: | :-------------------------------: | ----------------------------------------------------------- |
+| `key`  |                        `str`                        | <InlineIcon icon={vsiCheckIcon}/> | 新数据的关键字。若该关键字`key`已存在于缓存中，则替换原值。 |
+| `info` | [`CachedFileInfo`](../typehints/CachedFileInfo.mdx) | <InlineIcon icon={vsiCheckIcon}/> | 要写入缓存中数据的轻量化信息。                              |
+| `data` |     [`CachedData`](../typehints/CachedData.mdx)     | <InlineIcon icon={vsiCheckIcon}/> | 要写入缓存中的数据。                                        |
+
+---
+
+### <IconObjType type="method"/> `load` {#-load}
+
+```python
+info, data_loader = cache.load(key: str)
+```
+
+透过某关键字，读取对应的元数据。
+
+#### 输入 {#requires-4}
+
+| 参数  | 类型  |               必选                | <center>说明</center>                                                  |
+| :---: | :---: | :-------------------------------: | ---------------------------------------------------------------------- |
+| `key` | `str` | <InlineIcon icon={vsiCheckIcon}/> | 要更改变数据的关键字。若该关键字`key`未找到，抛出`FileNotFoundError`。 |
+
+#### 输出 {#returns-3}
+
+|     参数      |                                     类型                                     | <center>说明</center>                                                                              |
+| :-----------: | :--------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------- |
+|    `info`     |             [`CachedFileInfo`](../typehints/CachedFileInfo.mdx)              | 从缓存中所查询到的数据、对应的轻量化信息。                                                         |
+| `data_loader` | <code>{`Callable[[], `}[CachedData](../typehints/CachedData.mdx){`]`}</code> | 缓存数据的懒加载器。该函数实现了一种延迟加载机制，从而允许大体量数据仅在需要使用的时候才实际加载。 |
+
+---
+
+### <IconObjType type="method"/> `load_info` {#-load_info}
+
+```python
+info: CachedFileInfo = cache.load_info(key: str)
+```
+
+透过某关键字，读取对应的元数据。
+
+该方法的实现，基于获取`load(key)[0]`返回的值。
+
+#### 输入 {#requires-5}
+
+| 参数  | 类型  |               必选                | <center>说明</center>                                                |
+| :---: | :---: | :-------------------------------: | -------------------------------------------------------------------- |
+| `key` | `str` | <InlineIcon icon={vsiCheckIcon}/> | 要查询数据的关键字。若该关键字`key`未找到，抛出`FileNotFoundError`。 |
+
+#### 输出 {#returns-4}
+
+|  参数  |                        类型                         | <center>说明</center>            |
+| :----: | :-------------------------------------------------: | :------------------------------- |
+| `info` | [`CachedFileInfo`](../typehints/CachedFileInfo.mdx) | 从缓存中查询到的、轻量的元数据。 |
+
+---
+
+### <IconObjType type="method"/> `load_data` {#-load_data}
+
+```python
+data: CachedData = cache.load_data(key: str)
+```
+
+透过某关键字，加载对应的缓存数据。
+
+该方法的实现，基于获取`load(key)[1]()`调用的结果。
+
+#### 输入 {#requires-6}
+
+| 参数  | 类型  |               必选                | <center>说明</center>                                                |
+| :---: | :---: | :-------------------------------: | -------------------------------------------------------------------- |
+| `key` | `str` | <InlineIcon icon={vsiCheckIcon}/> | 要查询数据的关键字。若该关键字`key`未找到，抛出`FileNotFoundError`。 |
+
+#### 输出 {#returns-5}
+
+|  参数  |                    类型                     | <center>说明</center>                                                                          |
+| :----: | :-----------------------------------------: | :--------------------------------------------------------------------------------------------- |
+| `data` | [`CachedData`](../typehints/CachedData.mdx) | 从缓存中所查询到的数据。由于`data`可能体量较大，该值在大多数情况下，应当定义为一个类文件对象。 |
+
+## 属性 {#properties}
+
+### <IconObjType type="param"/> `chunk_size` {#-chunk_size}
+
+```python
+chunk_size: int = cache.chunk_size
+
+new_chunk_size: int
+cache.chunk_size = new_chunk_size
+```
+
+保存大体量文件时，所用的文件块尺寸。数值单位为`MB`。
+
+---
+
+### <IconObjType type="param"/> `dir` {#-dir}
+
+```python
+cache_dir: TempDir = cache.dir
+```
+
+获取该缓存的临时目录（参见[`TempDir`](../../utilities/TempDir.mdx)）。将该值导出到其他`CacheFile`的实例，将会使得该目录被共享。
+
+## 运算符 {#operators}
+
+### <IconObjType type="op"/> `__contains__`
+
+```python
+flag: bool = key in cache
+```
+
+检查`key`是否注册在了缓存中。
+
+#### 输入 {#requires-7}
+
+| 参数  | 类型  |               必选                | <center>说明</center> |
+| :---: | :---: | :-------------------------------: | --------------------- |
+| `key` | `str` | <InlineIcon icon={vsiCheckIcon}/> | 要验证的关键字。      |
+
+#### 输出 {#returns-6}
+
+|  参数  |  类型  | <center>说明</center>                           |
+| :----: | :----: | :---------------------------------------------- |
+| `flag` | `bool` | 若取值`True`，则表明`key`给定的值存在于缓存中。 |
+
+## 范例 {#examples}
+
+参见
+
+<p>
+  <DarkButton
+    to={useBaseUrl("/docs/examples/cache-types#use-background-callbacks")}
+    icon={vsiTerminalIcon}
+  >
+    {"各类缓存"}
+  </DarkButton>
+</p>
+
+[link-atexit]: https://docs.python.org/zh-cn/3/library/atexit.html

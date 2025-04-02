@@ -1,0 +1,75 @@
+---
+id: remove_temp_dir
+title: remove_temp_dir
+sidebar_label: remove_temp_dir
+slug: /apis/utilities/remove_temp_dir
+description: Remove the temporary directory.
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="func" isPrivate={true} source="utilities.remove_temp_dir" />
+
+```python
+remove_temp_dir(path: str | os.PathLike)
+```
+
+Remove the temporary directory.
+
+Note that this method only works if it is called by the main process.
+
+The exception caused by file occupation is suppressed.
+
+## Arguments
+
+### Requires
+
+| Argument |         Type         |             Required              | <center>Description</center>             |
+| :------: | :------------------: | :-------------------------------: | ---------------------------------------- |
+|  `path`  | `str \| os.PathLike` | <InlineIcon icon={vsiCheckIcon}/> | The path of the directory to be removed. |
+
+## Examples
+
+### <IconObjType type="term"/> Remove a folder
+
+<Tabs
+  defaultValue="codes"
+  values={[
+    { label: 'Codes', value: 'codes', },
+    { label: 'Results', value: 'results', },
+  ]
+}>
+
+<TabItem value="codes">
+
+```python
+import os
+import multiprocessing as mproc
+from dash_file_cache.utilities import remove_temp_dir
+
+os.makedirs("temp-folder1", exists_ok=True)
+os.makedirs("temp-folder2", exists_ok=True)
+
+remove_temp_dir("temp-folder1")
+p = mproc.Process(target=remove_temp_dir, args=("temp_folder2",))
+p.start()
+p.join()
+```
+
+</TabItem>
+
+<TabItem value="results">
+
+- The folder `"temp-folder1"` is created but removed, so it will not exist.
+- The folder `"temp-folder2"` is not removed in the sub-process, so it will exist.
+
+</TabItem>
+
+</Tabs>

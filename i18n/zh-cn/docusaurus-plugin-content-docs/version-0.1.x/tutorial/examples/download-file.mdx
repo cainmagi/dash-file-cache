@@ -1,0 +1,172 @@
+---
+id: download-file
+sidebar_label: 下载文件
+title: 范例：使用下载组件
+description: 以下范例，展示了使用下载组件下载文件的方法。
+slug: /examples/download-file
+---
+
+import mdiLanguagePython from "@iconify-icons/mdi/language-python";
+
+import {demoURL} from "@site/src/envs/variables";
+import DarkButton from "@site/src/components/DarkButton";
+
+# 范例：使用下载组件
+
+<div className="float-right indark-inv">
+
+|                           范例：使用下载组件                           |
+| :--------------------------------------------------------------------: |
+| ![Example of the downloader](/img/examples/example-download-file.webp) |
+
+</div>
+
+以下链接提供了一个下载文件的范例。
+
+<p>
+  <DarkButton to={demoURL("download_file.py")} icon={mdiLanguagePython}>
+    {"download_file.py"}
+  </DarkButton>
+</p>
+
+<div className="d-flow-root">
+
+:::info
+
+要运行使用背景callback的范例，请安装以下可选依赖项：
+
+```shell
+python -m pip install dash[diskcache]
+```
+
+:::
+
+</div>
+
+这一小型范例只提供了一个<kbd>Start</kbd>按钮。
+
+1. 按下按钮时，会模拟一小段等待时间，在此期间进度会更新。
+2. Callback结束时，会展示缓存类型、和将要下载的文件的地址。下载文件事件会自动触发。
+
+## 定义缓存和下载器 {#define-the-cache-and-the-downloader}
+
+在初始化方法中，提供了`ServiceData(...)`和下载组件。
+
+```python showLineNumbers
+class Demo:
+    def __init__(self) -> None:
+        # highlight-next-line
+        self.service = ServiceData(CacheFile(None))
+        self.root = os.path.dirname(__file__)
+
+        # highlight-start
+        self.downloader = Downloader(
+            id="download",
+            to_addr=(
+                lambda trigger: (trigger[8:] if trigger.startswith("success-") else "")
+            ),
+        )
+        # highlight-end
+```
+
+为了模拟准备一个大体量文件的过程，使用`CacheFile(...)`缓存数据，其支持背景callback。
+
+`downloader`的初始化接收两个参数。第一个参数只是组件ID。第二个参数需要是一个“接收一个`str`，又返回一个`str`”的函数。该参数用来处理callback的输入。：
+
+1. `downloader`会透过另一callback定义的`downloader.as_output`信号触发。
+2. 然而，`downloader.as_output`所接收的值可能并非直接是用来访问缓存的地址。在这一例子中，`downloader.as_output`所接收的输入形式为：
+
+   ```
+   success-/cache-data?uid=...
+   ```
+
+   其中`success-`代表了状态码。该状态码可以用来检查数据是否正常地准备好了。
+
+3. 因此，需要提供`to_addr`参数。当`downloader.as_output`更新时，新的值会被`to_addr(value)`预处理，从而保证预处理的结果是一个能直接用来访问缓存的地址、或是一个空字符串。透过这一设计，下载事件的输入值可以得到保障。
+
+## 定义布局 {#define-the-layout}
+
+所实现的布局中，包含一个按钮和两个输出。
+
+```python showLineNumbers
+html.Div(
+    (
+        html.Div(
+            html.P(
+                (
+                    html.Span(
+                        "Download a image:", style={"paddingRight": "0.5rem"}
+                    ),
+                    html.Button(id="btn", children="Start"),
+                )
+            )
+        ),
+        html.Div((html.P(("Progress:", html.Span(id="prog"))))),
+        html.Div((html.P("Cache type:"), html.P(id="type"))),
+        html.Div((html.P("Cache address:"), html.P(id="addr"))),
+        self.downloader.layout(),
+    ),
+)
+```
+
+与其他范例相若，此处只有`id=btn`的按钮能触发callback。Callback的返回值由布局中的下载器（`self.downloader.layout()`）处理。
+
+## 定义callback {#define-the-callbacks}
+
+该例中，使用了背景callback展示进度。透过刻意的一小段延迟、模拟准备大体量数据所消耗的时间。
+
+```python showLineNumbers
+@app.callback(
+    Output("type", "children"),
+    Output("addr", "children"),
+    Input("btn", "n_clicks"),
+    background=True,
+    running=[
+        (Output("btn", "disabled"), True, False),
+    ],
+    progress=[Output("prog", "children")],
+    manager=background_callback_manager,
+    prevent_initial_call=True,
+)
+def click_get_image(
+    set_progress: Callable[[Tuple[str]], None], n_clicks: Optional[int]
+):
+    if not n_clicks:
+        return dash.no_update, dash.no_update
+    file_path = os.path.join(self.root, "test_image.svg")
+    n = 10
+    for i in range(n):
+        time.sleep(0.1)
+
+        set_progress(("{0}%".format(int(round((i + 1) / n * 100))),))
+    addr = self.service.register(
+        file_path,
+        # highlight-next-line
+        content_type="image/svg+xml; charset=utf-8",
+        mime_type="image/svg+xml",
+        one_time_service=True,
+        # highlight-next-line
+        download=True,
+    )
+    return str(file_path.__class__.__name__), addr
+```
+
+第二个输出值为缓存数据的地址。此callback含有两个特殊设置。其一是`content_type`的配置，包含了文字文件的`charset`。其二是`download=True`这一配置。若所缓存的文件是用来下载的，这一参数总是要设置为`True`。
+
+
+所返回的地址会连锁触发另一个callback，其定义如下：
+
+```python showLineNumbers
+@app.callback(
+    self.downloader.as_output,
+    Input("addr", "children"),
+    prevent_initial_call=True,
+)
+def trigger_downloading_event(addr):
+    if not addr:
+        return dash.no_update
+    # highlight-next-line
+    return "success-{0}".format(addr)
+```
+
+这一callback模拟了验证地址的过程。原始结果通常需要包含状态码和缓存数据地址。该值会透过输入信号`self.downloader.as_input`传递给另外的callback。下载事件透过`to_addr(...)`参数（由下载器的初始化设置）预处理callback的返回值，并接收处理后的地址。

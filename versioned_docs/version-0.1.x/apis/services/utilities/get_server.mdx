@@ -1,0 +1,81 @@
+---
+id: get_server
+title: get_server
+sidebar_label: get_server
+slug: /apis/services/utilities/get_server
+description: Get the Flask server instance from the app.
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar
+  type="func"
+  isPrivate={true}
+  source="services.utilities.get_server"
+/>
+
+```python
+server: flask.Flask = get_server(app: dash.Dash | flask.Flask)
+```
+
+Get the Flask server instance from the application.
+
+## Arguments
+
+### Requires
+
+| Argument |            Type            |             Required              | <center>Description</center>                                                                                                                |
+| :------: | :------------------------: | :-------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------- |
+|  `app`   | `dash.Dash \| flask.Flask` | <InlineIcon icon={vsiCheckIcon}/> | Can be either a dash or a flask app. If it is a dash app, try to fetch the flask server instance. Otherwise, return the flask app directly. |
+
+### Returns
+
+| Argument |     Type      | <center>Description</center>                  |
+| :------: | :-----------: | :-------------------------------------------- |
+| `server` | `flask.Flask` | The Flask server instance of the given `app`. |
+
+## Examples
+
+### <IconObjType type="term"/> Get the server
+
+<Tabs
+  defaultValue="codes"
+  values={[
+    { label: 'Codes', value: 'codes', },
+    { label: 'Results', value: 'results', },
+  ]
+}>
+
+<TabItem value="codes">
+
+```python
+import dash
+import flask
+from dash_file_cache.services.utilities import get_server
+
+
+app1 = dash.Dash("demo1")
+app2 = flask.Flask("demo2")
+
+print(get_server(app1))
+print(get_server(app2))
+```
+
+</TabItem>
+
+<TabItem value="results">
+
+```
+<Flask 'demo1'>
+<Flask 'demo2'>
+```
+
+</TabItem>
+
+</Tabs>

@@ -1,0 +1,26 @@
+---
+id: index
+title: tempfile
+sidebar_label: tempfile
+slug: /apis/caches/tempfile
+description: 由临时目录实现的缓存。
+---
+
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="module" source="caches.tempfile" />
+
+透过临时目录实现的缓存。由于数据以文件的形式维护，目前，该模块只能用来缓存类文件对象。所缓存的文件将会保存在临时目录中。直到生命周期结束前，这些文件允许任何程序的访问。
+
+该模块全然由Python标准库（Python Standard Library，PySTL）实现，且存在一些限制，例如：
+
+1. 若程序没有退出，则所有缓存的文件都不会被删除。只在主进程退出的场合，触发临时目录的删除事件。
+2. 运行程序的过程中，即使某些文件已经被手动标记为生命周期结束了，它们也不会被删除、而只会被截断为空文件。
+
+## 类 {#classes}
+
+|                                      成员                                      | <center>说明</center>    |
+| :----------------------------------------------------------------------------: | :----------------------- |
+| [<IconObjType type="class" hasText={true} text="CacheFile"/>](./CacheFile.mdx) | 基于临时目录的缓存实现。 |

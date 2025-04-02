@@ -1,0 +1,32 @@
+---
+id: index
+title: caches
+sidebar_label: caches
+slug: /apis/caches
+description: The implementation of caches.
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="package" source="caches" />
+
+The implementation of caches. The caches are used for storing the temporary files that
+are served to the frontend. Different kinds of caches can be used in different cases.
+
+## Modules
+
+|                                        Member                                         | <center>Description</center>                                |
+| :-----------------------------------------------------------------------------------: | :---------------------------------------------------------- |
+|  [<IconObjType type="module" hasText={true} text="abstract"/>](./abstract/index.mdx)  | The abstract class definition of caches.                    |
+|   [<IconObjType type="module" hasText={true} text="lrudict"/>](./lrudict/index.mdx)   | Implemation of the least recently used (LRU) dictionary.    |
+|    [<IconObjType type="module" hasText={true} text="memory"/>](./memory/index.mdx)    | The caches implemented by the data exchanges in the memory. |
+|  [<IconObjType type="module" hasText={true} text="tempfile"/>](./tempfile/index.mdx)  | The cache implemented by temporary directories.             |
+| [<IconObjType type="module" hasText={true} text="typehints"/>](./typehints/index.mdx) | Extra typehints used by this project.                       |
+
+## Aliases
+
+|                            Member                            | <center>Alias of</center>                                   |
+| :----------------------------------------------------------: | :---------------------------------------------------------- |
+| <IconObjType type="class" hasText={true} text="CachePlain"/> | [`dfc.caches.memory.CachePlain`](./memory/CachePlain.mdx)   |
+| <IconObjType type="class" hasText={true} text="CacheQueue"/> | [`dfc.caches.memory.CacheQueue`](./memory/CacheQueue.mdx)   |
+| <IconObjType type="class" hasText={true} text="CacheFile"/>  | [`dfc.caches.tempfile.CacheFile`](./tempfile/CacheFile.mdx) |

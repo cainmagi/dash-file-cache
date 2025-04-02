@@ -1,0 +1,231 @@
+---
+id: CachePlain
+title: CachePlain
+sidebar_label: CachePlain
+slug: /apis/caches/memory/CachePlain
+description: 缓存的简单实现。
+---
+
+import useBaseUrl from "@docusaurus/useBaseUrl";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+import vsiTerminalIcon from "@iconify-icons/codicon/terminal";
+
+import DarkButton from "@site/src/components/DarkButton";
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="class" source="caches.memory.CachePlain" />
+
+```python
+cache = CachePlain[Info, Data](cache_size: int)
+```
+
+缓存的简单实现，其中`Info`和`Data`是泛型。
+
+本项目中，`Info`和`Data`分别设置为[`CachedFileInfo`](../typehints/CachedFileInfo.mdx)和[`CachedData`](../typehints/CachedData.mdx)。
+
+`CachePlain`的实例仅能在线程间共享缓存数据。它可以用在普通的callback中。然而，对于背景callback而言，子进程内任何对`CachePlain`修改都将在callback结束时被舍弃。
+
+对该缓存的操作是线程安全的。
+
+## 别名 {#aliases}
+
+该类可以通过以下方法取得。
+
+```python
+import dash_file_cache as dfc
+
+
+dfc.CachePlain
+dfc.caches.CachePlain
+dfc.caches.memory.CachePlain
+```
+
+## 参数 {#arguments}
+
+|     参数     | 类型  |               必选                | <center>说明</center>                                                                                |
+| :----------: | :---: | :-------------------------------: | ---------------------------------------------------------------------------------------------------- |
+| `cache_size` | `int` | <InlineIcon icon={vsiCheckIcon}/> | 缓存容量，亦即缓存中可保存项目的最大数目。当缓存字典填满时，检查最久未查询过的关键字，并清出该数据。 |
+
+## 方法 {#methods}
+
+### <IconObjType type="method"/> `is_in` {#-is_in}
+
+```python
+flag: bool = cache.is_in(key: str)
+```
+
+检查`key`是否注册在了缓存中。
+
+运算符[`__contains__`](#-__contains__)委托给了该方法。
+
+#### 输入 {#requires}
+
+| 参数  | 类型  |               必选                | <center>说明</center> |
+| :---: | :---: | :-------------------------------: | --------------------- |
+| `key` | `str` | <InlineIcon icon={vsiCheckIcon}/> | 要验证的关键字。      |
+
+#### 输出 {#returns}
+
+|  参数  |  类型  | <center>说明</center>                           |
+| :----: | :----: | :---------------------------------------------- |
+| `flag` | `bool` | 若取值`True`，则表明`key`给定的值存在于缓存中。 |
+
+---
+
+### <IconObjType type="method"/> `remove` {#-remove}
+
+```python
+info: Info = cache.remove(key: str)
+```
+
+指定某缓存字典项，将其从缓存中移出为信息。
+
+调用该方法、蕴含了数据结束生命周期的断言。调用后，只有缓存数据的信息仍然可用。
+
+#### 输入 {#requires-1}
+
+| 参数  | 类型  |               必选                | <center>说明</center>            |
+| :---: | :---: | :-------------------------------: | -------------------------------- |
+| `key` | `str` | <InlineIcon icon={vsiCheckIcon}/> | 将要从缓存中移除的数据的关键字。 |
+
+#### 输出 {#returns-1}
+
+|  参数  |  类型  | <center>说明</center>                      |
+| :----: | :----: | :----------------------------------------- |
+| `info` | `Info` | 从缓存中所查询到的数据、对应的轻量化信息。 |
+
+---
+
+### <IconObjType type="method"/> `dump` {#-dump}
+
+```python
+cache.dump(key: str, info: Info, data: Data)
+```
+
+向缓存中置入数据。
+
+#### 输入 {#requires-2}
+
+|  参数  |  类型  |               必选                | <center>说明</center>                                       |
+| :----: | :----: | :-------------------------------: | ----------------------------------------------------------- |
+| `key`  | `str`  | <InlineIcon icon={vsiCheckIcon}/> | 新数据的关键字。若该关键字`key`已存在于缓存中，则替换原值。 |
+| `info` | `Info` | <InlineIcon icon={vsiCheckIcon}/> | 要写入缓存中数据的轻量化信息。                              |
+| `data` | `Data` | <InlineIcon icon={vsiCheckIcon}/> | 要写入缓存中的数据。                                        |
+
+---
+
+### <IconObjType type="method"/> `load` {#-load}
+
+```python
+info, data_loader = cache.load(key: str)
+```
+
+透过某关键字，从缓存中载入数据。
+
+#### 输入 {#requires-3}
+
+| 参数  | 类型  |               必选                | <center>说明</center>                                                |
+| :---: | :---: | :-------------------------------: | -------------------------------------------------------------------- |
+| `key` | `str` | <InlineIcon icon={vsiCheckIcon}/> | 要查询数据的关键字。若该关键字`key`未找到，抛出`FileNotFoundError`。 |
+
+#### 输出 {#returns-2}
+
+|     参数      |         类型         | <center>说明</center>                                                                              |
+| :-----------: | :------------------: | :------------------------------------------------------------------------------------------------- |
+|    `info`     |        `Info`        | 从缓存中所查询到的数据、对应的轻量化信息。                                                         |
+| `data_loader` | `Callable[[], Data]` | 缓存数据的懒加载器。该函数实现了一种延迟加载机制，从而允许大体量数据仅在需要使用的时候才实际加载。 |
+
+---
+
+### <IconObjType type="method"/> `load_info` {#-load_info}
+
+```python
+info: Info = cache.load_info(key: str)
+```
+
+透过某关键字，读取对应的元数据。
+
+该方法的实现，基于获取`load(key)[0]`返回的值。
+
+#### 输入 {#requires-4}
+
+| 参数  | 类型  |               必选                | <center>说明</center>                                                |
+| :---: | :---: | :-------------------------------: | -------------------------------------------------------------------- |
+| `key` | `str` | <InlineIcon icon={vsiCheckIcon}/> | 要查询数据的关键字。若该关键字`key`未找到，抛出`FileNotFoundError`。 |
+
+#### 输出 {#returns-3}
+
+|  参数  |  类型  | <center>说明</center>                      |
+| :----: | :----: | :----------------------------------------- |
+| `info` | `Info` | 从缓存中所查询到的数据、对应的轻量化信息。 |
+
+---
+
+### <IconObjType type="method"/> `load_data` {#-load_data}
+
+```python
+data: Data = cache.load_data(key: str)
+```
+
+透过某关键字，加载对应的缓存数据。
+
+该方法的实现，基于获取`load(key)[1]()`调用的结果。
+
+#### 输入 {#requires-5}
+
+| 参数  | 类型  |               必选                | <center>说明</center>                                                |
+| :---: | :---: | :-------------------------------: | -------------------------------------------------------------------- |
+| `key` | `str` | <InlineIcon icon={vsiCheckIcon}/> | 要查询数据的关键字。若该关键字`key`未找到，抛出`FileNotFoundError`。 |
+
+#### 输出 {#returns-4}
+
+|  参数  |  类型  | <center>说明</center>                                                                          |
+| :----: | :----: | :--------------------------------------------------------------------------------------------- |
+| `data` | `Data` | 从缓存中所查询到的数据。由于`data`可能体量较大，该值在大多数情况下，应当定义为一个类文件对象。 |
+
+## 属性 {#properties}
+
+### <IconObjType type="param"/> `cache` {#-cache}
+
+```python
+cache_dict: LRUDict[str, Tuple[Info, Data]] = cache.cache
+```
+
+获取该实例底层的低层级 LRU 缓存对象。该值的类型是[`LRUDict`](../lrudict/LRUDict.mdx)。
+
+## 运算符 {#operators}
+
+### <IconObjType type="op"/> `__contains__`
+
+```python
+flag: bool = key in cache
+```
+
+检查`key`是否注册在了缓存中。
+
+#### 输入 {#requires-6}
+
+| 参数  | 类型  |               必选                | <center>说明</center> |
+| :---: | :---: | :-------------------------------: | --------------------- |
+| `key` | `str` | <InlineIcon icon={vsiCheckIcon}/> | 要验证的关键字。      |
+
+#### 输出 {#returns-5}
+
+|  参数  |  类型  | <center>说明</center>                           |
+| :----: | :----: | :---------------------------------------------- |
+| `flag` | `bool` | 若取值`True`，则表明`key`给定的值存在于缓存中。 |
+
+## 范例 {#examples}
+
+参见
+
+<p>
+  <DarkButton
+    to={useBaseUrl("/docs/examples/cache-types")}
+    icon={vsiTerminalIcon}
+  >
+    {"各类缓存"}
+  </DarkButton>
+</p>

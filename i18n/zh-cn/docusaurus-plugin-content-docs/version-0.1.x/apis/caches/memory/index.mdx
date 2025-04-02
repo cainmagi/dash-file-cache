@@ -1,0 +1,33 @@
+---
+id: index
+title: memory
+sidebar_label: memory
+slug: /apis/caches/memory
+description: 透过内存数据交换实现的缓存。
+---
+
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="module" source="caches.memory" />
+
+透过内存数据交换实现的缓存。由于这些缓存是在数据中维护的，大体量数据（for example（例如，超过规定尺寸）可能会导致缓存失效。
+
+该模块的一大好处是，所有的缓存类型都可以携带任意类型的数据。另，要跨进程共享数据，需要使用[CacheQueue](./CacheQueue.mdx)、、且`data`需要支持[`pickle`<IconExternalLink/>][link-pickle]。
+
+该模块提供了两种实现：
+
+1. [CachePlain](./CachePlain.mdx): 同进程内共享数据。使用背景callback时，该缓存失效。
+2. [CacheQueue](./CacheQueue.mdx): 跨进程共享数据。可以使用任意线程、进程访问该缓存。换言之，该缓存与背景callback兼容。
+
+## 类 {#classes}
+
+|                                             成员                                             | <center>说明</center>                                                  |
+| :------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------- |
+|       [<IconObjType type="class" hasText={true} text="CachePlain"/>](./CachePlain.mdx)       | 缓存的简单实现。                                                       |
+|       [<IconObjType type="class" hasText={true} text="CacheQueue"/>](./CacheQueue.mdx)       | 基于进程共享队列[`Queue()`<IconExternalLink/>][link-queue]的缓存实现。 |
+| [<IconObjType type="class" hasText={true} text="CacheQueueMirror"/>](./CacheQueueMirror.mdx) | [`CacheQueue`](./CacheQueue.mdx)的进程兼容实例。                       |
+
+[link-pickle]: https://docs.python.org/zh-cn/3/library/pickle.html
+[link-queue]: https://docs.python.org/zh-cn/3/library/multiprocessing.html#multiprocessing.managers.SyncManager.Queue

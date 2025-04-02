@@ -1,0 +1,207 @@
+---
+id: service
+sidebar_label: Service
+title: How to use services
+description: A simple guide of using the service in the callback.
+slug: /usages/service
+---
+
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import IconLink from "@site/src/components/IconLink";
+
+# How to use services
+
+This section introduces the usage of [`ServiceData`](../../apis/services/data/ServiceData.mdx):
+
+```python
+service = ServiceData(cache: CacheAbstract, service_name: str = "/cached-data", chunk_size: int = 1)
+```
+
+## Use `service` with `dash`
+
+`service` is mainly designed to work with `dash`. It is used for providing "dynamical assets" that are created
+by the callbacks and can be accessed or downloaded by links.
+
+The instance `service` should be maintained as a global variable. In other words, it should be able to
+
+1. get accessed by the callbacks that would save the data to the cache.
+2. get accessed by `dash.Dash()` app before running `app.run()`.
+
+The basic usage of the service should be like this:
+
+```python title="use_service_dash.py" showLineNumbers
+import io
+import dash
+from dash import Output, Input
+import dash_file_cache as dfc
+
+app = dash.Dash("demo")
+service = dfc.ServiceData(dfc.CachePlain(1))
+# highlight-next-line
+service.serve(app)
+
+app.layout = ...
+
+
+@app.callback(Output(..., "src"), Input(...))
+def a_callback_creating_data(...):
+    fobj = io.BytesIO()
+    fobj.write(...)  # Do something to create data
+    # highlight-start
+    address = service.register(
+        fobj=fobj,
+        mime_type="image/svg+xml",
+        one_time_service=True,
+    )
+    # highlight-end
+    return address
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+The usage of `service` can be viewed as three steps:
+
+1. After the initialization, call `service.serve(app)` to bind the service (`flask.views.View`) to the application.
+2. In the callback, use `service.register(...)` to put the dynamically generated data to the cache.
+3. The returned value of `service.register(...)` is an address to the cached data.
+   This address can be used as the `src` or `data` property of some components like `<img>` or `<object>`.
+
+Different from the assets of the application, the life cycle of the `address` returned by `service.register(...)`
+is strictly limited in the time when the dashboard is online. Once the `address` is returned, the data is guaranteed
+to be ready to get accessed.
+
+There are several arguments of `service.register(...)`.
+
+|      Argument      | <center>Description</center>                                                                                                                                                                         |
+| :----------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|       `fobj`       | The path or the file-like object to be served.                                                                                                                                                       |
+|    `file_name`     | The file name of `fobj`. It is only used when `download` is specified. In this case, this value will be used as the name of the downloaded file.                                                     |
+|   `content_type`   | The content type that will be marked in the HTML response header. If this value is empty, will use `mime_type` as `content_type`. To learn details, see [here<IconExternalLink/>][doc-content-type]. |
+|    `mime_type`     | The mime type of the file to be served. Every file will have a mime type, see [here<IconExternalLink/>][doc-mime-type]. A full list can be referred [here<IconExternalLink/>][doc-mtype-list].       |
+| `one_time_service` | A flag. If specified, will try to delete the file once it is sent. Using this flag can save the space of the cache.                                                                                  |
+|     `download`     | A flag. If specified, the returned link will refer to a file to be downloaded. Accessing this link will trigger the downloading rather than open the file by the browser.                            |
+
+:::warning
+
+Note that users should not let `one_time_service=True` when the dashboard is accessed by multiple users or the same cached data may be accessed by multiple times.
+
+:::
+
+### Work with background callback
+
+In some cases, users may want to show the progress of preparing the file. A useful way to implement this feature is the [background callback<IconExternalLink/>][doc-bg-callback]. In this case, the callback will be changed a little bit.
+
+```python title="use_service_dash.py" showLineNumbers
+@app.callback(
+    Output(..., "src"),
+    Input(...),
+    background=True,
+    progress=[Output("prog", "children")],
+    manager=background_callback_manager,
+    prevent_initial_call=True,
+)
+def a_callback_creating_data(set_progress, ...):
+    fobj = io.BytesIO()
+    for i in range(...):
+        fobj.write(...)  # Write a part of data.
+        current_progress: int = ...
+        # highlight-next-line
+        set_progress(("{0}%".format(current_progress),))
+    address = service.register(
+        fobj=fobj,
+        mime_type="image/svg+xml",
+        one_time_service=True,
+    )
+    return address
+```
+
+When background callback is running, it will be dispatched to a sub-process managed by [`multiprocess`<IconExternalLink/>][doc-mproc]. If users still use `CachePlain` to initialize `ServiceData`, the modification to the cache will only take effect inside the callback. Once the callback finishes, the modification in the sub-process will be aborted. Therefore, the callback will return an address referring to a non-existing file. To fix this issue, it is recommended to use
+
+```python
+ServiceData(dfc.CacheQueue(cache_size: int, qobj: queue.Queue))
+```
+
+or
+
+```python
+ServiceData(dfc.CacheFile(cache_dir: str | None = None, chunk_size: int = 1))
+```
+
+## Use `service` with `flask`
+
+`ServiceData` is compatible with a pure flask application because `ServiceData` is fully implemented by `flask`.
+
+Similar to using `Dash()`, `ServiceData` still needs to be accessed by both the application and the user-defined services. The workflow contains two steps:
+
+1. Define a service accepting a data query request by the `POST` method. The response of the method provides the cache address.
+2. Use the cache address to access the file by `GET` method.
+
+A small example is as follows:
+
+```python title="use_service_flask.py" showLineNumbers
+import io
+import flask
+import dash_file_cache as dfc
+
+app = flask.Flask("demo")
+service = dfc.ServiceData(dfc.CachePlain(1))
+# highlight-next-line
+service.serve(app)
+
+
+@app.route("/create-file", methods=["POST"])
+def create_file():
+    # highlight-start
+    address = service.register(
+        fobj=io.StringIO("a simple test"), file_name="test.txt", mime_type="text/plain"
+    )
+    # highlight-end
+    return address
+
+
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=5000)
+```
+
+To test the application, users can use [`urllib`<IconExternalLink/>][doc-urllib] to send the `POST` request and get the address.
+`urllib` is a part of Python Standard Library.
+
+```shell
+python -c "from urllib import request;print(request.urlopen(request.Request('http://127.0.0.1:5000/create-file', method='POST')).read().decode())"
+```
+
+The command will return an address like `/cache-data?uid=...`. Users can access this address by the browser:
+
+```
+http://127.0.0.1:5000/cache-data?uid=...
+```
+
+By accessing this address, users should be able to see the plain text
+
+```
+a simple test
+```
+
+by the browser.
+
+:::info
+
+In the above example, users can simply add an argument in the address like
+
+```
+http://127.0.0.1:5000/cache-data?uid=...&download=true
+```
+
+Then the file will be downloaded instead of accessed.
+
+:::
+
+[doc-content-type]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type
+[doc-mime-type]: https://developer.mozilla.org/en-US/docs/Web/HTTP/MIME_types
+[doc-mtype-list]: https://mimetype.io/all-types
+[doc-bg-callback]: https://dash.plotly.com/background-callbacks
+[doc-mproc]: https://multiprocess.readthedocs.io/en/latest/
+[doc-urllib]: https://docs.python.org/3/library/urllib.request.html#module-urllib.request

@@ -1,0 +1,162 @@
+---
+id: TempDir
+title: TempDir
+sidebar_label: TempDir
+slug: /apis/utilities/TempDir
+description: 管理临时目录的句柄。
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import IconLink from "@site/src/components/IconLink";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="class" source="utilities.TempDir" />
+
+```python
+tempdir = TempDir(path: str | os.PathLike | None = None)
+```
+
+管理临时目录的句柄。
+
+该实例析构时，会删除其管理的整个目录。
+
+原型代码来自：
+
+<IconLink href="https://docs.python.org/zh-cn/3/library/weakref.html#comparing-finalizers-with-del-methods" />
+
+## 参数 {#arguments}
+
+|  参数  |             类型             | 必选 | <center>说明</center>                                                                                                   |
+| :----: | :--------------------------: | :--: | ----------------------------------------------------------------------------------------------------------------------- |
+| `path` | `str \| os.PathLike \| None` |      | 指向临时目录的路径。若未提供，使用[`tempfile.mkdtemp()`<IconExternalLink/>][link-mkdtemp]在系统临时目录下生成一个目录。 |
+
+## 方法 {#methods}
+
+### <IconObjType type="method"/> `remove` {#-remove}
+
+```python
+tempdir.remove()
+```
+
+显式地删除该目录。若其已经被删除，则该方法不会产生任何效果。
+
+注意，该方法只会在主进程中起作用。
+
+## 属性 {#properties}
+
+### <IconObjType type="param"/> `path` {#-path}
+
+```python
+path: str = tempdir.path
+```
+
+该临时目录的路径。
+
+---
+
+### <IconObjType type="param"/> `is_removed` {#-is_removed}
+
+```python
+is_removed: bool = tempdir.is_removed
+```
+
+检查该临时目录是否已经被移除。
+
+## 范例 {#examples}
+
+### <IconObjType type="term"/> 在系统的临时目录里创建一个临时目录 {#-create-a-temporary-directory-in-the-systems-temporary-folder}
+
+<Tabs
+  defaultValue="codes"
+  values={[
+    { label: '代码', value: 'codes', },
+    { label: '结果', value: 'results', },
+  ]
+}>
+
+<TabItem value="codes">
+
+```python
+import os
+from dash_file_cache.utilities import TempDir
+
+tmp_dir = TempDir()
+file_path = os.path.join(tmp_dir.path, "test.txt")
+with open(file_path, "w") as fobj:
+    fobj.write("test")
+
+print(file_path)
+```
+
+</TabItem>
+
+<TabItem value="results">
+
+假设该脚本返回的是
+
+```
+/tmp/tmp6xikuxe7/test.txt
+```
+
+由于该临时目录会被删除，程序运行结束后，使用以下命令
+
+```shell
+ls /tmp/tmp6xikuxe7/test.txt
+```
+
+会提示文件丢失。
+
+</TabItem>
+
+</Tabs>
+
+### <IconObjType type="term"/> 在特定路径创建临时目录 {#-create-a-temporary-directory-with-a-specific-path}
+
+<Tabs
+  defaultValue="codes"
+  values={[
+    { label: '代码', value: 'codes', },
+    { label: '结果', value: 'results', },
+  ]
+}>
+
+<TabItem value="codes">
+
+```python
+import os
+from dash_file_cache.utilities import TempDir
+
+tmp_dir = TempDir("./temp")
+file_path = os.path.join(tmp_dir.path, "test.txt")
+with open(file_path, "w") as fobj:
+    fobj.write("test")
+
+print(file_path)
+```
+
+</TabItem>
+
+<TabItem value="results">
+
+假设该脚本返回的是
+
+```
+./temp/test.txt
+```
+
+由于该临时目录会被删除，程序运行结束后，使用以下命令
+
+```shell
+ls ./temp/test.txt
+```
+
+会提示文件丢失。
+
+</TabItem>
+
+</Tabs>
+
+[link-mkdtemp]: https://docs.python.org/zh-cn/3/library/tempfile.html#tempfile.mkdtemp
