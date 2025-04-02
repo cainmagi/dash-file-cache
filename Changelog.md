@@ -10,6 +10,10 @@
 
 1. Bump the document to the new version `0.2.0`.
 
+#### :wrench: Fix
+
+1. Fix: Add the missing version tags for the old version documents.
+
 #### :floppy_disk: Change
 
 1. Bump the `yarn` version from `4.4.1` to `4.7.0`.
