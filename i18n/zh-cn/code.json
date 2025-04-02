@@ -382,6 +382,10 @@
     "message": "查看所有作者",
     "description": "The label of the link targeting the blog authors page"
   },
+  "theme.blog.author.noPosts": {
+    "message": "该作者尚未发布任何内容。",
+    "description": "The text for authors with 0 blog post"
+  },
   "theme.contentVisibility.unlistedBanner.title": {
     "message": "未列出页",
     "description": "The unlisted content banner title"
@@ -397,34 +401,6 @@
   "theme.contentVisibility.draftBanner.message": {
     "message": "本页尚待完稿。其仅对开发者可见，并从发布版中自动排除。",
     "description": "The draft content banner message"
-  },
-  "demo.app.search": {
-    "message": "搜索：",
-    "description": "Text of the search input, demo: App."
-  },
-  "demo.app.selhighlight": {
-    "message": "选取高亮：",
-    "description": "Text of the selectable toggle box, demo: App."
-  },
-  "demo.app.selected": {
-    "message": "当前选中：",
-    "description": "Text of the selected value, demo: App."
-  },
-  "demo.interactive.searchonly.search": {
-    "message": "搜索：",
-    "description": "Text of the search input, demo: SearchOnlyApp."
-  },
-  "demo.interactive.selectableonly.selhighlight": {
-    "message": "选取高亮：",
-    "description": "Text of the selectable toggle box, demo: SelectableOnlyApp."
-  },
-  "demo.interactive.onselectapp.selected": {
-    "message": "当前选中：",
-    "description": "Text of the selected value, demo: OnSelectApp."
-  },
-  "demo.viewonly.theme.text": {
-    "message": "主题：",
-    "description": "Text of the theme selection box, demo: ThemedApp."
   },
   "versions.title": {
     "message": "{title}文档版本",

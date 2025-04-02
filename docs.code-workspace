@@ -6,16 +6,12 @@
   ],
   "settings": {
     "git.autofetch": true,
-    "[python]": {
-      "editor.defaultFormatter": "ms-python.black-formatter",
-      "editor.tabSize": 4
-    },
     "[json]": {
-      "editor.defaultFormatter": "vscode.json-language-features",
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.tabSize": 2
     },
     "[jsonc]": {
-      "editor.defaultFormatter": "vscode.json-language-features",
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.tabSize": 2
     },
     "[html]": {
@@ -42,8 +38,6 @@
       "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.tabSize": 2
     },
-    "python.languageServer": "Pylance",
-    "python.analysis.typeCheckingMode": "standard",
     "prettier.tabWidth": 2,
     "editor.tabSize": 4,
     "npm.packageManager": "yarn",
@@ -65,6 +59,7 @@
       "codezombiech.gitignore",
       "dutchigor.json-viewer",
       "ecmel.vscode-html-css",
+      "esbenp.prettier-vscode",
       "mhutchie.git-graph",
       "tamasfe.even-better-toml",
       "yzhang.markdown-all-in-one",

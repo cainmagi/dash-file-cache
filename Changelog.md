@@ -12,6 +12,7 @@
 2. Bump the `docusaurus` version from `3.5.2` to `3.7.0`.
 3. Bump the `typescript` version from `5.5.2` to `5.8.2`.
 4. Bump the dependencies versions to handle the vulnerabilities.
+5. Clean up the workspace and formatter configurations.
 
 ### 0.1.2 @ 10/30/2024
 
