@@ -4,6 +4,15 @@
 
 ## CHANGELOG
 
+### 0.2.0 @ 04/02/2025
+
+#### :floppy_disk: Change
+
+1. Bump the `yarn` version from `4.4.1` to `4.7.0`.
+2. Bump the `docusaurus` version from `3.5.2` to `3.7.0`.
+3. Bump the `typescript` version from `5.5.2` to `5.8.2`.
+4. Bump the dependencies versions to handle the vulnerabilities.
+
 ### 0.1.2 @ 10/30/2024
 
 #### :wrench: Fix
