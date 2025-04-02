@@ -13,6 +13,7 @@
 3. Bump the `typescript` version from `5.5.2` to `5.8.2`.
 4. Bump the dependencies versions to handle the vulnerabilities.
 5. Clean up the workspace and formatter configurations.
+6. Bump the website source codes to the newest status.
 
 ### 0.1.2 @ 10/30/2024
 

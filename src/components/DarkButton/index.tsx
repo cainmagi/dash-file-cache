@@ -24,7 +24,8 @@ const useButtonTheme = () => {
 
 type DarkButtonProps = {
   index?: boolean;
-  to: string;
+  to?: string;
+  href?: string;
   icon?: IconifyIcon | string;
   iconVspace?: number;
   children: React.ReactNode;
@@ -58,7 +59,12 @@ const DarkButton = (props: DarkButtonProps): JSX.Element => {
       : "0";
 
   return (
-    <Link key={String(mounted)} className={className} to={props.to}>
+    <Link
+      key={String(mounted)}
+      className={className}
+      to={props.to}
+      href={props.href}
+    >
       {props.icon && (
         <InlineIcon
           icon={props.icon}

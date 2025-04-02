@@ -11,12 +11,12 @@ export type IconLinkProps = {
 };
 
 /**
- * Render a link with an Icon.
+ * Render a link with an Icon (inline version).
  * @param props - text, href, and icon of the link. If the icon is not specified, will
  *   use the external link icon to render it.
  * @returns The <link/> component with `href` configured.
  */
-const IconLink = (props: IconLinkProps): JSX.Element => {
+export const IconLinkInline = (props: IconLinkProps): JSX.Element => {
   const text = props.text || props.href;
   const icon = props.icon ? (
     <InlineIcon icon={props.icon} />
@@ -25,11 +25,23 @@ const IconLink = (props: IconLinkProps): JSX.Element => {
   );
 
   return (
+    <Link href={props.href}>
+      <span>{text}</span>
+      {icon}
+    </Link>
+  );
+};
+
+/**
+ * Render a link with an Icon.
+ * @param props - text, href, and icon of the link. If the icon is not specified, will
+ *   use the external link icon to render it.
+ * @returns The <link/> component with `href` configured.
+ */
+const IconLink = (props: IconLinkProps): JSX.Element => {
+  return (
     <p>
-      <Link href={props.href}>
-        <span>{text}</span>
-        {icon}
-      </Link>
+      <IconLinkInline {...props} />
     </p>
   );
 };

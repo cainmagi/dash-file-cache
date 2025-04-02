@@ -47,6 +47,16 @@ img {
       filter: invert(88.1%) hue-rotate(180deg);
     }
   }
+  &.ondark-bg {
+    html[data-theme="dark"] & {
+      background-color: #ffffff33;
+    }
+  }
+  .indark-bg & {
+    html[data-theme="dark"] & {
+      background-color: #ffffff33;
+    }
+  }
 }
 
 .float-right {
@@ -97,4 +107,26 @@ img {
 
 .button > svg:first-child {
   margin-left: -1ex;
+}
+
+table {
+  thead,
+  tbody {
+    th,
+    td {
+      p:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+.insize-50 {
+  & > table,
+  & > img {
+    width: 50%;
+    min-width: min(500px, 100%);
+    margin-left: auto;
+    margin-right: auto;
+  }
 }

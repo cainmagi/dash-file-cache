@@ -5,7 +5,7 @@
 
 import React from "react";
 import Link from "@docusaurus/Link";
-import {useDocsPreferredVersion} from "@docusaurus/theme-common";
+import {useDocsVersion} from "@docusaurus/plugin-content-docs/client";
 import IconExternalLink from "@theme/Icon/ExternalLink";
 
 import InlineIcon from "../components/InlineIcon";
@@ -20,7 +20,9 @@ const variables = {
   sourceVersion: {
     main: "90214d58c0610976d7af1c583a35f83784c0c80c",
   },
-  dependencyVersion: {},
+  dependencyVersion: {
+    main: "2.0.6",
+  },
   sourceURIs: {
     main: {
       ".": "__init__.py",
@@ -61,8 +63,8 @@ const variables = {
 };
 
 const useCurrentSourceVersion = (): string => {
-  const versionHook: any = useDocsPreferredVersion(docsPluginId);
-  const versionLabel = versionHook?.preferredVersion?.label;
+  const versionHook = useDocsVersion();
+  const versionLabel = versionHook?.label;
   return (
     variables.sourceVersion[versionLabel] || variables.sourceVersion["main"]
   );
@@ -79,9 +81,9 @@ export const DependencyTag = ({
   const versionDeps = variables.dependencyVersion[_ver];
   return versionDeps ? (
     <Link
-      href={`https://github.com/RedHeadphone/react-json-grid/tree/v${versionDeps}`}
+      href={`https://github.com/jimmywarting/StreamSaver.js/tree/${versionDeps}`}
     >
-      <code>{`react-json-grid@${versionDeps}`}</code>
+      <code>{`streamsaver@${versionDeps}`}</code>
       <IconExternalLink />
     </Link>
   ) : (
