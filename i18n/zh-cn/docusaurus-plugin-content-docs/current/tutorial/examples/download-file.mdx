@@ -47,10 +47,11 @@ python -m pip install dash[diskcache]
 
 1. 按下按钮时，会模拟一小段等待时间，在此期间进度会更新。
 2. Callback结束时，会展示缓存类型、和将要下载的文件的地址。下载文件事件会自动触发。
+3. 下载事件结束时，无论成功与否，都将展示下载状态。
 
 ## 定义缓存和下载器 {#define-the-cache-and-the-downloader}
 
-在初始化方法中，提供了`ServiceData(...)`和下载组件。
+在初始化方法中，提供了`ServiceData(...)`句柄。
 
 ```python showLineNumbers
 class Demo:
@@ -58,31 +59,9 @@ class Demo:
         # highlight-next-line
         self.service = ServiceData(CacheFile(None))
         self.root = os.path.dirname(__file__)
-
-        # highlight-start
-        self.downloader = Downloader(
-            id="download",
-            to_addr=(
-                lambda trigger: (trigger[8:] if trigger.startswith("success-") else "")
-            ),
-        )
-        # highlight-end
 ```
 
 为了模拟准备一个大体量文件的过程，使用`CacheFile(...)`缓存数据，其支持背景callback。
-
-`downloader`的初始化接收两个参数。第一个参数只是组件ID。第二个参数需要是一个“接收一个`str`，又返回一个`str`”的函数。该参数用来处理callback的输入。：
-
-1. `downloader`会透过另一callback定义的`downloader.as_output`信号触发。
-2. 然而，`downloader.as_output`所接收的值可能并非直接是用来访问缓存的地址。在这一例子中，`downloader.as_output`所接收的输入形式为：
-
-   ```
-   success-/cache-data?uid=...
-   ```
-
-   其中`success-`代表了状态码。该状态码可以用来检查数据是否正常地准备好了。
-
-3. 因此，需要提供`to_addr`参数。当`downloader.as_output`更新时，新的值会被`to_addr(value)`预处理，从而保证预处理的结果是一个能直接用来访问缓存的地址、或是一个空字符串。透过这一设计，下载事件的输入值可以得到保障。
 
 ## 定义布局 {#define-the-layout}
 
@@ -104,12 +83,16 @@ html.Div(
         html.Div((html.P(("Progress:", html.Span(id="prog"))))),
         html.Div((html.P("Cache type:"), html.P(id="type"))),
         html.Div((html.P("Cache address:"), html.P(id="addr"))),
-        self.downloader.layout(),
+        html.Div((html.P("Downloader status:"), html.P(id="dlstats"))),
+        # highlight-next-line
+        Downloader(id="download", mitm="/dfc-downloader"),
     ),
 )
 ```
 
-与其他范例相若，此处只有`id=btn`的按钮能触发callback。Callback的返回值由布局中的下载器（`self.downloader.layout()`）处理。
+此处设置了下载器，其为一个Dash组件。属性`mitm`用来维持下载事件的激活状态。其服务对应的路由需要和接下来将要用到的`ServiceDownloader`保持一致。
+
+与其他范例相若，此处只有`id=btn`的按钮能触发callback。Callback的返回值由布局中的`Downloader`组件处理。
 
 ## 定义callback {#define-the-callbacks}
 
@@ -153,20 +136,73 @@ def click_get_image(
 
 第二个输出值为缓存数据的地址。此callback含有两个特殊设置。其一是`content_type`的配置，包含了文字文件的`charset`。其二是`download=True`这一配置。若所缓存的文件是用来下载的，这一参数总是要设置为`True`。
 
-
 所返回的地址会连锁触发另一个callback，其定义如下：
 
 ```python showLineNumbers
 @app.callback(
-    self.downloader.as_output,
+    Output("download", "url"),
     Input("addr", "children"),
     prevent_initial_call=True,
 )
 def trigger_downloading_event(addr):
     if not addr:
         return dash.no_update
-    # highlight-next-line
-    return "success-{0}".format(addr)
+    return addr
 ```
 
-这一callback模拟了验证地址的过程。原始结果通常需要包含状态码和缓存数据地址。该值会透过输入信号`self.downloader.as_input`传递给另外的callback。下载事件透过`to_addr(...)`参数（由下载器的初始化设置）预处理callback的返回值，并接收处理后的地址。
+这一callback触发了下载事件。当地址有效时，该值会用于更新下载器的属性`url`。须知每当`url`更新时，一个新的下载事件就会触发。
+
+:::note
+
+即使向组件输入了空的地址，也是没问题的。因为空的`url`并不会触发下载事件。
+
+:::
+
+```python showLineNumbers
+@app.callback(
+    Output("dlstats", "children"),
+    Input("download", "status"),
+    prevent_initial_call=True,
+)
+def trigger_downloading_status(status: Optional[DownloaderStatus]):
+    if not status:
+        return ""
+    return str(status)
+```
+
+最后的callback用来展示下载器的状态。只要状态更新过一次，无论下载成功与否，属性`status`都会更新为一个字典。
+
+:::note
+
+属性`status`由下载器自身维护。透过某个callback主动修改它是没有任何意义的。
+
+:::
+
+## 加载服务 {#load-the-services}
+
+对于某个服务句柄，它的设置在初始化后就已经确定。因此，可以在任何位置调用`service.serve(...)`方法。本例中，所有的服务都在调用`WrappedApp`的`load()`方法时一并加载。
+
+```python showLineNumbers
+class WrappedApp:
+    """A wrapped app. This wrapped app is accessed by the tests."""
+
+    def __init__(self, app: dash.Dash) -> None:
+        self.app = app
+
+    def load(self) -> None:
+        demo = Demo()
+        app.layout = demo.layout()
+        demo.bind(app)
+        # highlight-start
+        demo.service.serve(app)
+        ServiceDownloader("/dfc-downloader").serve(app)
+        # highlight-end
+```
+
+此处`ServiceDownloader`的路由需要和下载器的属性`mitm`保持一致。
+
+:::warning
+
+设置这一特性，能使`mitm`由本地脚本提供。若不做这些设置，则`mitm`会托管到GitHub上的脚本。换言之，若用户令属性`mitm`留空、且不配置`ServiceDownloader`的话，下载器将只能在互联网可用的前提下工作。
+
+:::

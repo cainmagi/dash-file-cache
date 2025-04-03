@@ -49,11 +49,12 @@ This small demo only provides one <kbd>Start</kbd> button.
    callback will be displayed.
 2. When the callback gets finalized, the cache type and the address of the file to be
    downloaded will be displayed and the downloading event will automatically start.
+3. When the downloading event is finalized successfully or canceled by users, a status
+   will be displayed.
 
 ## Define the cache and the downloader
 
-In the initialization method, we provide both the `ServiceData(...)` and the downloader
-component.
+In the initialization method, we provide the `ServiceData(...)` handle.
 
 ```python showLineNumbers
 class Demo:
@@ -61,40 +62,10 @@ class Demo:
         # highlight-next-line
         self.service = ServiceData(CacheFile(None))
         self.root = os.path.dirname(__file__)
-
-        # highlight-start
-        self.downloader = Downloader(
-            id="download",
-            to_addr=(
-                lambda trigger: (trigger[8:] if trigger.startswith("success-") else "")
-            ),
-        )
-        # highlight-end
 ```
 
 To simulate the process of preparing a large file, we store the data with
 `CacheFile(...)` which is compatible with the background callback.
-
-The `downloader` is initialized with two arguments. The first argument is merely the
-component ID. The second argument is a function accepting one `str` and returning one
-`str`. This argument is provided to handle the input from the callback:
-
-1. The `downloader` is fired by letting the `downloader.as_output` fired by the input
-   of another component.
-2. However, `downloader.as_output` may not be the address used for accessing the cache.
-   In this example, the `downloader.as_output` accepts an input like
-
-   ```
-   success-/cache-data?uid=...
-   ```
-
-   where the `success-` represents the status code. This status code may be used for
-   checking whether the data is correctly prepared.
-
-3. Therefore, we provide `to_addr`. When the `downloader.as_output` is updated, the
-   new value will be pre-processed by `to_addr(value)` and the result is guaranteed
-   to be the address of the cached file or an empty string. By this way, the input
-   value of the downloading event will be sanitized.
 
 ## Define the layout
 
@@ -116,14 +87,20 @@ html.Div(
         html.Div((html.P(("Progress:", html.Span(id="prog"))))),
         html.Div((html.P("Cache type:"), html.P(id="type"))),
         html.Div((html.P("Cache address:"), html.P(id="addr"))),
-        self.downloader.layout(),
+        html.Div((html.P("Downloader status:"), html.P(id="dlstats"))),
+        # highlight-next-line
+        Downloader(id="download", mitm="/dfc-downloader"),
     ),
 )
 ```
 
+The downloader is specified here. It is a Dash component. The property `mitm` is a
+monitor preserving the active status of the downloading event. Its service route
+need to be the same as the configuration of `ServiceDownloader` which is used later.
+
 Similar to the other examples, here we only use one button with `id=btn` to start the
-callback. The returned value of the callback will be handled by the layout provided by
-the downloader (`self.downloader.layout()`).
+callback. The returned value of the callback will be handled by the `Downloader`
+component.
 
 ## Define the callbacks
 
@@ -177,19 +154,81 @@ of the next callback is:
 
 ```python showLineNumbers
 @app.callback(
-    self.downloader.as_output,
+    Output("download", "url"),
     Input("addr", "children"),
     prevent_initial_call=True,
 )
 def trigger_downloading_event(addr):
     if not addr:
         return dash.no_update
-    # highlight-next-line
-    return "success-{0}".format(addr)
+    return addr
 ```
 
-This callback simulate the process of validating the address. The raw results will be
-combined by the status code and the cached data address. This value can be accessed
-by other callbacks via `self.downloader.as_input`, and the downloading event will
-accept the file address by using `to_addr(...)` (configured in the initialization of
-the downloader) to sanitize this callback value.
+This callback triggers the downloading event. When the address is valid, it will be
+used for updating the property `url` of the downloader. Note that every time when
+`url` is updated, a downloading event will start.
+
+:::note
+
+Even if the empty address is input to the component, it is still OK because an empty
+`url` will not trigger a downloading event.
+
+:::
+
+```python showLineNumbers
+@app.callback(
+    Output("dlstats", "children"),
+    Input("download", "status"),
+    prevent_initial_call=True,
+)
+def trigger_downloading_status(status: Optional[DownloaderStatus]):
+    if not status:
+        return ""
+    return str(status)
+```
+
+The last callback is used for showing the status of the downloader. As long as the
+status is updated by once, no matter whether the downloading is successful or not,
+the `status` property will be updated as a dictionary.
+
+:::note
+
+The property `status` is maintained by the downloader itself. Modifying this property
+by a callback is meaningless.
+
+:::
+
+## Load the services
+
+For a service handle, its configurations are determined after the initialization.
+Therefore, it is OK to call `service.serve(...)` method anywhere. In this example, we
+make the services loaded when calling the `load()` method of the `WrappedApp`.
+
+```python showLineNumbers
+class WrappedApp:
+    """A wrapped app. This wrapped app is accessed by the tests."""
+
+    def __init__(self, app: dash.Dash) -> None:
+        self.app = app
+
+    def load(self) -> None:
+        demo = Demo()
+        app.layout = demo.layout()
+        demo.bind(app)
+        # highlight-start
+        demo.service.serve(app)
+        ServiceDownloader("/dfc-downloader").serve(app)
+        # highlight-end
+```
+
+The route of `ServiceDownloader` needs to be consistent with the `mitm` property of
+the downloader.
+
+:::warning
+
+Configuring this feature will make the `mitm` served by the local script. If not
+make these configurations, the `mitm` will be hosted by a script on GitHub. In other
+words, if users let `mitm` be empty and do not configure `ServiceDownloader`,
+the downloader will work only when the Internet is accessible.
+
+:::
