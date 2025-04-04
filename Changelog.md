@@ -16,6 +16,7 @@
 
 1. Fix: Add the missing version tags for the old version documents.
 2. Fix: Correct a bad import in `zh-cn/docs/usages/downloader`.
+3. Fix: Correct typos in the legacy version `v0.1.x`, `/apis/services/data/ServiceData`.
 
 #### :floppy_disk: Change
 

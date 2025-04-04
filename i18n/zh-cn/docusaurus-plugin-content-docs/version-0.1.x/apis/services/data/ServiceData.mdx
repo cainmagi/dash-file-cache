@@ -146,10 +146,10 @@ cache: CacheAbstract[CachedFileInfo, CachedData] = service.cache
 ### <IconObjType type="param"/> `chunk_size` {#-chunk_size}
 
 ```python
-chunk_size: int = cache.chunk_size
+chunk_size: int = service.chunk_size
 
 new_chunk_size: int
-cache.chunk_size = new_chunk_size
+service.chunk_size = new_chunk_size
 ```
 
 向用户推送数据时使用的块尺寸。单位为`MB`。

@@ -148,10 +148,10 @@ The cache of this service.
 ### <IconObjType type="param"/> `chunk_size`
 
 ```python
-chunk_size: int = cache.chunk_size
+chunk_size: int = service.chunk_size
 
 new_chunk_size: int
-cache.chunk_size = new_chunk_size
+service.chunk_size = new_chunk_size
 ```
 
 The chunk size when streaming the cached file to users. The unit is `MB`.
