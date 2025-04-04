@@ -75,6 +75,10 @@ const config: Config = {
         theme: {
           customCss: "./src/css/custom.scss",
         },
+        gtag: {
+          trackingID: "G-55X12MPFL7",
+          anonymizeIP: true,
+        },
       } satisfies Preset.Options,
     ],
   ],
@@ -183,6 +187,16 @@ const config: Config = {
         },
       ],
       copyright: `Copyright © ${new Date().getFullYear()} Dash File Cache, Yuchen Jin. Built with Docusaurus.`,
+    },
+    algolia: {
+      apiKey: "182ee57d42f4d42013a9061271326593",
+      indexName: "cainmagiio",
+      // APP id
+      appId: "D0JIJY0Y1T",
+      // Optional: make the search sensitive to sub-routing.
+      contextualSearch: true,
+      // Optional: Algolia search parameters
+      searchParameters: {facetFilters: ["type:content"]},
     },
     prism: {
       theme: prismThemes.github,

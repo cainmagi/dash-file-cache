@@ -12,6 +12,7 @@
 2. Update the tutorials for introducing the newly implemented downloader components.
 3. Update the example script explanation `/examples/download-file`.
 4. Update the API documents to the newest version (`v0.2.0`).
+5. Configure DocSearch and GTag.
 
 #### :wrench: Fix
 
