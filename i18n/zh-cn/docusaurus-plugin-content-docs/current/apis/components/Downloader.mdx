@@ -1,0 +1,183 @@
+---
+id: Downloader
+title: Downloader
+sidebar_label: Downloader
+slug: /apis/components/Downloader
+description: Downloader是基于StreamSaver的组件。
+---
+
+import useBaseUrl from "@docusaurus/useBaseUrl";
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+import vsiTerminalIcon from "@iconify-icons/codicon/terminal";
+import {biSlashLg} from "@site/src/components/icons/BiSlashLg";
+
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+import DarkButton from "@site/src/components/DarkButton";
+
+<APITopBar type="class" isComponent={true} source="components.Downloader" />
+
+```python
+comp = Downloader(
+    id: str | Mapping[str, Any],
+    url: str | DownloaderURL,
+    headers: Mapping[str, str],
+    allow_cross_origin: bool,
+    status: DownloaderStatus,
+    mitm: str | None,
+    loading_state: LoadingState
+)
+```
+
+`Downloader`是基于[`StreamSaver`<IconExternalLink/>][link-streamsaver]的组件。
+
+[`StreamSaver.js`<IconExternalLink/>][link-streamsaver]项目提供了用来定制下载在线流过程的方法。在实际应用中，推荐使用这种下载实现。在触发多个下载事件的场景下，其亦性能亦有优化。
+
+## 别名 {#aliases}
+
+该类可以按以下方式之一获取
+
+```python
+import dash_file_cache as dfc
+
+
+dfc.Downloader
+dfc.components.Downloader
+```
+
+## 组件属性 {#component-properties}
+
+<Tabs
+  defaultValue="descriptions"
+  values={[
+    { label: '描述', value: 'descriptions', },
+    { label: '参数', value: 'properties', },
+  ]
+}>
+
+<TabItem value="descriptions">
+
+|         名称         |                                  类型                                  | <center>说明</center>                                                                                                                                                                                    |
+| :------------------: | :--------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|         `id`         |                       `str \| Mapping[str, Any]`                       | 组件ID。若设置为字典，则该ID用于[模式匹配 callback<IconExternalLink/>][dash-pmcallback]。                                                                                                             |
+|        `url`         | <code>{`str \| `}[DownloaderURL](./typehints/DownloaderURL.mdx)</code> | <p>用来访问要下载数据的URL。</p><p>每当设置该值时，就会触发一次下载事件。触发事件后，该值会重置为空字符串。</p>                                                                                         |
+|      `headers`       |                          `Mapping[str, str]`                           | <p>提交下载事件请求时，附加的额外请求头。</p><p>在需要提供验证信息时，可以配置该属性。</p>                                                                                                               |
+| `allow_cross_origin` |                                 `bool`                                 | <p>二值量，用来决定是否使用跨域下载链接的。</p><p>若要下载的数据来自跨域站点，需要将该值配置为`True`，且远端站点需要提供响应头[`Access-Control-Allow-Origin`<IconExternalLink/>][link-crossorigin]。</p> |
+|       `status`       |         [`DownloaderStatus`](./typehints/DownloaderStatus.mdx)         | <p>下载事件结束时设置的状态码。</p><p>若同一下载器触发了多次下载事件，后触发的事件将会覆写先触发的事件设置的状态。</p>                                                                                   |
+|        `mitm`        |                             `str \| None`                              | 用来维护下载器状态的MITM-IFrame。在浏览器处于闲置状态时，它能用于阻止下载器停用。详情参见[此处<IconExternalLink/>][link-mitm]。若未配置，则会使用`StreamSaver.js`提供的默认MITM服务，且需要互联网。   |
+|   `loading_state`    |          [`LoadingState`<IconExternalLink/>][link-loadstate]           | Dash的加载状态字典。用户不应手动设置该值。                                                                                                                                                              |
+
+</TabItem>
+
+<TabItem value="properties">
+
+|         名称         |                                  类型                                  |              可交互               |              可设置               | 必选 |  默认值   |
+| :------------------: | :--------------------------------------------------------------------: | :-------------------------------: | :-------------------------------: | :--: | :-------: |
+|         `id`         |                       `str \| Mapping[str, Any]`                       |                                   |                                   |      | undefined |
+|        `url`         | <code>{`str \| `}[DownloaderURL](./typehints/DownloaderURL.mdx)</code> |                                   | <InlineIcon icon={vsiCheckIcon}/> |      |   `""`    |
+|      `headers`       |                          `Mapping[str, str]`                           |                                   | <InlineIcon icon={vsiCheckIcon}/> |      | undefined |
+| `allow_cross_origin` |                                 `bool`                                 |                                   | <InlineIcon icon={vsiCheckIcon}/> |      |  `False`  |
+|       `status`       |         [`DownloaderStatus`](./typehints/DownloaderStatus.mdx)         | <InlineIcon icon={vsiCheckIcon}/> |                                   |      | undefined |
+|        `mitm`        |                             `str \| None`                              |                                   | <InlineIcon icon={vsiCheckIcon}/> |      | undefined |
+|   `loading_state`    |          [`LoadingState`<IconExternalLink/>][link-loadstate]           |                                   | <InlineIcon icon={vsiCheckIcon}/> |      | undefined |
+
+- “可交互”指的是，用户交互可以改变该属性、并触发callback。
+- “可设置”指的是，透过callback的`Output(...)`修改该值会产生实际效果。
+- “必选”指的是，初始化组件时，必须向组件传递值，否则组件无法初始化。
+
+</TabItem>
+
+</Tabs>
+
+## 范例 {#examples}
+
+### <IconObjType type="term"/> 最小范例 {#-minimal-example}
+
+<Tabs
+  defaultValue="codes"
+  values={[
+    { label: '代码', value: 'codes', },
+    { label: '结果', value: 'results', },
+  ]
+}>
+
+<TabItem value="codes">
+
+```python title="minimal_example_downloader.py" showLineNumbers
+from typing import Optional
+import dash
+import flask
+from dash import html, Output, Input
+from dash_file_cache.services.utilities import get_server
+from dash_file_cache.components import Downloader
+from dash_file_cache.services import ServiceDownloader
+
+
+app = dash.Dash("demo")
+ServiceDownloader("/dfc-downloader").serve(app)
+server = get_server(app)
+
+app.layout = html.Div(
+    (
+        html.Button(id="btn", children="Download"),
+        Downloader(id="downloader", mitm="/dfc-downloader"),
+    )
+)
+
+
+@server.route("/file")
+def file():
+    resp = flask.Response("test file content", status=200, mimetype="text/plain")
+    resp.headers["Content-Disposition"] = "attachment; filename=test.txt"
+    return resp
+
+
+@app.callback(Output("downloader", "url"), Input("btn", "n_clicks"))
+def trigger_get_file(n_clicks: Optional[int]):
+    if not n_clicks:
+        return dash.no_update
+    return "/file"
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+</TabItem>
+
+<TabItem value="results">
+
+渲染包含一个下载按钮的应用。
+
+按下按钮时，会下载名为`text.txt`的文件。文件内容为
+
+```
+test file content
+```
+
+</TabItem>
+
+</Tabs>
+
+### <IconObjType type="term"/> 使用背景callback下载文件 {#-download-a-file-with-a-background-callback}
+
+参见
+
+<p>
+  <DarkButton
+    to={useBaseUrl("/docs/examples/download-file")}
+    icon={vsiTerminalIcon}
+  >
+    {"下载文件"}
+  </DarkButton>
+</p>
+
+[link-streamsaver]: https://github.com/jimmywarting/StreamSaver.js
+[link-loadstate]: https://dash.plotly.com/loading-states
+[dash-pmcallback]: https://dash.plotly.com/pattern-matching-callbacks
+[link-crossorigin]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Origin

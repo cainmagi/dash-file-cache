@@ -1,0 +1,92 @@
+---
+id: ServiceDownloader
+title: ServiceDownloader
+sidebar_label: ServiceDownloader
+slug: /apis/services/downloader/ServiceDownloader
+description: 提供下载器的可选特性的服务。
+---
+
+import useBaseUrl from "@docusaurus/useBaseUrl";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+import vsiTerminalIcon from "@iconify-icons/codicon/terminal";
+
+import DarkButton from "@site/src/components/DarkButton";
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="class" source="services.downloader.ServiceDownloader" />
+
+```python
+service = ServiceDownloader(
+    service_name: str = "/dfc-downloader",
+    allowed_cross_origin: str | None = None,
+)
+```
+
+提供下载器的可选特性的服务。
+
+该类型的实例提供了下载器实现的一些可选特性。不过，此服务不处理任何与下载相关的数据。
+
+## 别名 {#aliases}
+
+该类可以通过以下方法取得。
+
+```python
+import dash_file_cache as dfc
+
+
+dfc.ServiceDownloader
+dfc.services.ServiceDownloader
+dfc.services.downloader.ServiceDownloader
+```
+
+## 参数 {#arguments}
+
+|          参数          |     类型      | 必选 | <center>说明</center>                                                                                                                                |
+| :--------------------: | :-----------: | :--: | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     `service_name`     |     `str`     |      | 服务的名称。                                                                                                                                         |
+| `allowed_cross_origin` | `str \| None` |      | 提供数据时允许接入的跨域请求域。用法和[`"Access-Control-Allow-Origin"`<IconExternalLink/>][link-crossorigin]相同。若该值为空或`None`，则不设置跨域。 |
+
+## 方法 {#methods}
+
+### <IconObjType type="method"/> `serve`
+
+```python
+service.serve(app: dash.Dash | flask.Flask, endpoint: str | None = None)
+```
+
+向Flask应用添加服务。
+
+#### 输入 {#requires}
+
+|    参数    |            类型            |               必选                | <center>说明</center>                             |
+| :--------: | :------------------------: | :-------------------------------: | ------------------------------------------------- |
+|   `app`    | `dash.Dash \| flask.Flask` | <InlineIcon icon={vsiCheckIcon}/> | 服务将会绑定到的应用。                            |
+| `endpoint` |       `str \| None`        |                                   | 服务的endpoint。若未指定，使用服务地址推测该值。 |
+
+## 属性 {#properties}
+
+### <IconObjType type="param"/> `allowed_cross_origin`
+
+```python
+allowed_cross_origin: str = service.allowed_cross_origin
+```
+
+提供数据时允许接入的跨域请求域。若该值为空或`None`，则不设置跨域。
+
+## 范例 {#examples}
+
+参见
+
+<p>
+  <DarkButton
+    to={useBaseUrl("/docs/examples/download-file")}
+    icon={vsiTerminalIcon}
+  >
+    {"下载文件"}
+  </DarkButton>
+</p>
+
+[link-crossorigin]: https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Origin

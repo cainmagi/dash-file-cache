@@ -1,0 +1,149 @@
+---
+id: PlainDownloader
+title: PlainDownloader
+sidebar_label: PlainDownloader
+slug: /apis/components/PlainDownloader
+description: PlainDownloader是用来下载文件的简单、原生的React组件。
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+import {biSlashLg} from "@site/src/components/icons/BiSlashLg";
+
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="class" isComponent={true} source="components.PlainDownloader" />
+
+```python
+comp = PlainDownloader(
+    id: str | Mapping[str, Any],
+    url: str,
+    loading_state: LoadingState
+)
+```
+
+`PlainDownloader`是简单、原生的React组件。
+
+该组件基于一个临时创建的、指向指定URL的魔术链接实现。
+
+由于`PlainDownloader`的实现简单地基于HTML标签`<a>`，故而无法为其配置请求头或者验证信息。
+
+## 别名 {#aliases}
+
+该类可以按以下方式之一获取
+
+```python
+import dash_file_cache as dfc
+
+
+dfc.PlainDownloader
+dfc.components.PlainDownloader
+```
+
+## 组件属性 {#component-properties}
+
+<Tabs
+  defaultValue="descriptions"
+  values={[
+    { label: '描述', value: 'descriptions', },
+    { label: '参数', value: 'properties', },
+  ]
+}>
+
+<TabItem value="descriptions">
+
+|      名称       |                        类型                         | <center>说明</center>                                                                                            |
+| :-------------: | :-------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------- |
+|      `id`       |             `str \| Mapping[str, Any]`              | 组件ID。若设置为字典，则该ID用于[模式匹配 callback<IconExternalLink/>][dash-pmcallback]。                     |
+|      `url`      |                        `str`                        | <p>用来访问要下载数据的URL。</p><p>每当设置该值时，就会触发一次下载事件。触发事件后，该值会重置为空字符串。</p> |
+| `loading_state` | [`LoadingState`<IconExternalLink/>][link-loadstate] | Dash的加载状态字典。用户不应手动设置该值。                                                                      |
+
+</TabItem>
+
+<TabItem value="properties">
+
+|      名称       |                        类型                         | 可交互 |              可设置               | 必选 |  默认值   |
+| :-------------: | :-------------------------------------------------: | :----: | :-------------------------------: | :--: | :-------: |
+|      `id`       |             `str \| Mapping[str, Any]`              |        |                                   |      | undefined |
+|      `url`      |                        `str`                        |        | <InlineIcon icon={vsiCheckIcon}/> |      |   `""`    |
+| `loading_state` | [`LoadingState`<IconExternalLink/>][link-loadstate] |        | <InlineIcon icon={vsiCheckIcon}/> |      | undefined |
+
+- “可交互”指的是，用户交互可以改变该属性、并触发callback。
+- “可设置”指的是，透过callback的`Output(...)`修改该值会产生实际效果。
+- “必选”指的是，初始化组件时，必须向组件传递值，否则组件无法初始化。
+
+</TabItem>
+
+</Tabs>
+
+## 范例 {#examples}
+
+### <IconObjType type="term"/> 最小范例 {#-minimal-example}
+
+<Tabs
+  defaultValue="codes"
+  values={[
+    { label: 'Codes', value: 'codes', },
+    { label: 'Results', value: 'results', },
+  ]
+}>
+
+<TabItem value="codes">
+
+```python title="minimal_example_plain_downloader.py" showLineNumbers
+from typing import Optional
+import dash
+import flask
+from dash import html, Output, Input
+from dash_file_cache.services.utilities import get_server
+from dash_file_cache.components import PlainDownloader
+
+
+app = dash.Dash("demo")
+server = get_server(app)
+
+app.layout = html.Div(
+    (html.Button(id="btn", children="Download"), PlainDownloader(id="downloader"))
+)
+
+
+@server.route("/file")
+def file():
+    resp = flask.Response("test file content", status=200, mimetype="text/plain")
+    resp.headers["Content-Disposition"] = "attachment; filename=test.txt"
+    return resp
+
+
+@app.callback(Output("downloader", "url"), Input("btn", "n_clicks"))
+def trigger_get_file(n_clicks: Optional[int]):
+    if not n_clicks:
+        return dash.no_update
+    return "/file"
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+</TabItem>
+
+<TabItem value="results">
+
+渲染包含一个下载按钮的应用。
+
+按下按钮时，会下载名为`text.txt`的文件。文件内容为
+
+```
+test file content
+```
+
+</TabItem>
+
+</Tabs>
+
+[link-loadstate]: https://dash.plotly.com/loading-states
+[dash-pmcallback]: https://dash.plotly.com/pattern-matching-callbacks

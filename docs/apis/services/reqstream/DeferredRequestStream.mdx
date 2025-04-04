@@ -1,0 +1,91 @@
+---
+id: DeferredRequestStream
+title: DeferredRequestStream
+sidebar_label: DeferredRequestStream
+slug: /apis/services/reqstream/DeferredRequestStream
+description: Deferred data stream forwarded from the response of a pre-configured request.
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar
+  type="class"
+  isPrivate={true}
+  isContext={true}
+  source="services.reqstream.DeferredRequestStream"
+/>
+
+```python
+stream = DeferredRequestStream(
+    info: CachedFileInfo,
+    data: CachedRequest
+)
+with stream as resp:
+    resp: ProtocolResponse
+```
+
+Deferred data stream forwarded from the response of a pre-configured request.
+
+By entering the context of this class, a connection to the remote resource will
+be established. Within this context, a data stream can be read and forwarded.
+
+## Arguments
+
+| Argument |                             Type                              |             Required              | <center>Description</center>                     |
+| :------: | :-----------------------------------------------------------: | :-------------------------------: | ------------------------------------------------ |
+|  `info`  | [`CachedFileInfo`](../../caches/typehints/CachedFileInfo.mdx) | <InlineIcon icon={vsiCheckIcon}/> | The information loaded from the cache.           |
+|  `data`  |  [`CachedRequest`](../../caches/typehints/CachedRequest.mdx)  | <InlineIcon icon={vsiCheckIcon}/> | The request configuration loaded from the cache. |
+
+## Methods
+
+### <IconObjType type="method"/> `close`
+
+```python
+stream.close()
+```
+
+Close all connections if they exist.
+
+:::note
+
+When exiting from the context, this method will be called automatically.
+
+:::
+
+### <IconObjType type="method"/> `provide`
+
+```python
+data: Iterator[bytes] = stream.provide(chunk_size: int = 1024 * 1024)
+```
+
+Create the data provider of this deferred request stream.
+
+Note that this method is designed for being used outside the context. When
+using this method, it will maintain the context within this stream provider.
+In other words, the context will be exited when this method get finalized.
+
+:::warning
+
+The returned iterator `data` will let the context of `stream` active. If the iterator
+is to be dropped, it is recommended that the `close()` method should be called
+explictly.
+
+:::
+
+#### Requires
+
+|   Argument   | Type  | Required | <center>Description</center>                 |
+| :----------: | :---: | :------: | -------------------------------------------- |
+| `chunk_size` | `int` |          | The chunk size used for forwarding the data. |
+
+#### Returns
+
+| Argument |       Type        | <center>Description</center>     |
+| :------: | :---------------: | :------------------------------- |
+|  `data`  | `Iterator[bytes]` | A stream created by this method. |

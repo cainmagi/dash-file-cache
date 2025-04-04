@@ -6,6 +6,8 @@ slug: /apis/components
 description: Extra components provided by this package.
 ---
 
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
 import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
 
 <APITopBar type="package" source="components" />
@@ -15,12 +17,22 @@ functionalities based on the file cache.
 
 ## Modules
 
-|                                         Member                                          | <center>Description</center>                    |
-| :-------------------------------------------------------------------------------------: | :---------------------------------------------- |
-| [<IconObjType type="module" hasText={true} text="downloader"/>](./downloader/index.mdx) | The downloader component implemented by Python. |
+|                                        Member                                         | <center>Description</center>                                  |
+| :-----------------------------------------------------------------------------------: | :------------------------------------------------------------ |
+| [<IconObjType type="module" hasText={true} text="typehints"/>](./typehints/index.mdx) | Extra typehints used for annotating the component properties. |
+
+## Classes
+
+|                                           Member                                           | <center>Description</center>                                                                     |
+| :----------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------- |
+| [<IconObjType type="class" hasText={true} text="PlainDownloader"/>](./PlainDownloader.mdx) | `PlainDownloader` is a plain and native React component for downloading files.                   |
+|      [<IconObjType type="class" hasText={true} text="Downloader"/>](./Downloader.mdx)      | `Downloader` is a React component based on [`StreamSaver`<IconExternalLink/>][link-streamsaver]. |
 
 ## Aliases
 
-|                            Member                            | <center>Alias of</center>                                             |
-| :----------------------------------------------------------: | :-------------------------------------------------------------------- |
-| <IconObjType type="class" hasText={true} text="Downloader"/> | [`dfc.components.downloader.Downloader`](./downloader/Downloader.mdx) |
+|                               Member                               | <center>Alias of</center>                                                       |
+| :----------------------------------------------------------------: | :------------------------------------------------------------------------------ |
+|  <IconObjType type="class" hasText={true} text="DownloaderURL"/>   | [`dfc.components.typehints.DownloaderURL`](./typehints/DownloaderURL.mdx)       |
+| <IconObjType type="class" hasText={true} text="DownloaderStatus"/> | [`dfc.components.typehints.DownloaderStatus`](./typehints/DownloaderStatus.mdx) |
+
+[link-streamsaver]: https://github.com/jimmywarting/StreamSaver.js

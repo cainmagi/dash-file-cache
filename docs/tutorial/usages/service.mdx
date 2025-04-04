@@ -18,6 +18,13 @@ This section introduces the usage of [`ServiceData`](../../apis/services/data/Se
 service = ServiceData(cache: CacheAbstract, service_name: str = "/cached-data", chunk_size: int = 1)
 ```
 
+:::note
+
+Currently, we have another service named `ServiceDownloader`. It is always used with
+`Downloader`. Therefore, please check the usages of the `Downloader` to find details.
+
+:::
+
 ## Use `service` with `dash`
 
 `service` is mainly designed to work with `dash`. It is used for providing "dynamical assets" that are created

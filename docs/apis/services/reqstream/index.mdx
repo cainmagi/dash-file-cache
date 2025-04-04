@@ -1,0 +1,22 @@
+---
+id: index
+title: reqstream
+sidebar_label: reqstream
+slug: /apis/services/reqstream
+description: Deferred data stream forwarding for the proxy-based data access.
+---
+
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="module" isPrivate={true} source="services.reqstream" />
+
+Deferred data stream forwarding mechanism used for implementing the proxy-based data access.
+
+## Classes
+
+|                                                 Member                                                 | <center>Description</center>                                                  |
+| :----------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------- |
+|      [<IconObjType type="type" hasText={true} text="ProtocolResponse"/>](./ProtocolResponse.mdx)       | The protocol of an HTTP response.                                             |
+| [<IconObjType type="class" hasText={true} text="DeferredRequestStream"/>](./DeferredRequestStream.mdx) | Deferred data stream forwarded from the response of a pre-configured request. |

@@ -1,0 +1,44 @@
+---
+id: DownloaderStatus
+title: DownloaderStatus
+sidebar_label: DownloaderStatus
+slug: /apis/components/typehints/DownloaderStatus
+description: 下载事件结束时设置的状态码。
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="type" source="components.typehints.DownloaderStatus" />
+
+```python
+DownloaderStatus(
+    type: "success" | "error-connect" | "error-config" | "error-io" | "error-unknown",
+    http_code: int
+)
+```
+
+`DownloaderStatus`是`TypedDict`。
+
+`DownloaderStatus`是`Downloader(status=...)`的属性类型。其定义了下载事件结束时设置的状态码。
+
+若同一下载器触发了多次下载事件，后触发的事件将会覆写先触发的事件设置的状态。
+
+## 别名 {#aliases}
+
+该类型可以按以下方式之一获取
+
+```python
+import dash_file_cache as dfc
+
+
+dfc.DownloaderStatus
+dfc.components.DownloaderStatus
+dfc.components.typehints.DownloaderStatus
+```
+
+## 关键字 {#keywords}
+
+|   关键字    |                                       类型                                        | <center>说明</center>                                                   |
+| :---------: | :-------------------------------------------------------------------------------: | :---------------------------------------------------------------------- |
+|   `type`    | `"success" \| "error-connect" \| "error-config" \| "error-io" \| "error-unknown"` | 事件的状态码。若下载事件成功，则下载事件结束时、该值当设为`"success"`。 |
+| `http_code` |                                       `int`                                       | 响应的HTTP状态码。若下载事件成功，则该值应当处于`200-299`的范围内。     |

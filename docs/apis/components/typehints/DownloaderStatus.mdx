@@ -1,0 +1,46 @@
+---
+id: DownloaderStatus
+title: DownloaderStatus
+sidebar_label: DownloaderStatus
+slug: /apis/components/typehints/DownloaderStatus
+description: The status code when a downloading event is finalized.
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="type" source="components.typehints.DownloaderStatus" />
+
+```python
+DownloaderStatus(
+    type: "success" | "error-connect" | "error-config" | "error-io" | "error-unknown",
+    http_code: int
+)
+```
+
+`DownloaderStatus` is a `TypedDict`.
+
+`DownloaderStatus` is the component property `Downloader(status=...)`. It defines the
+status code when a downloading event is finalized.
+
+If multiple downloading events are triggered by the same downloader, the later
+event will overwrite the status from the former events.
+
+## Aliases
+
+This type can be acquired by
+
+```python
+import dash_file_cache as dfc
+
+
+dfc.DownloaderStatus
+dfc.components.DownloaderStatus
+dfc.components.typehints.DownloaderStatus
+```
+
+## Keywords
+
+|   Keyword   |                                       Type                                        | <center>Description</center>                                                                                                        |
+| :---------: | :-------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------- |
+|   `type`    | `"success" \| "error-connect" \| "error-config" \| "error-io" \| "error-unknown"` | The status code of the event. If the event is successful, this value should be `"success"` once the downloading event is finalized. |
+| `http_code` |                                       `int`                                       | The HTTP code from the response. If the event is successful, this value should be in the range of `200-299`.                        |

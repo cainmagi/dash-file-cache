@@ -1,0 +1,150 @@
+---
+id: PlainDownloader
+title: PlainDownloader
+sidebar_label: PlainDownloader
+slug: /apis/components/PlainDownloader
+description: PlainDownloader is a plain and native React component for downloading files.
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+import {biSlashLg} from "@site/src/components/icons/BiSlashLg";
+
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="class" isComponent={true} source="components.PlainDownloader" />
+
+```python
+comp = PlainDownloader(
+    id: str | Mapping[str, Any],
+    url: str,
+    loading_state: LoadingState
+)
+```
+
+`PlainDownloader` is a plain and native React component.
+
+This component is implemented by a temporarily created magic link referring to a given URL.
+
+Since the implementation of this `PlainDownloader` is simply based on the HTML `<a>`
+tag, the request headers and authentication of this downloader is not customizable.
+
+## Aliases
+
+This type can be acquired by
+
+```python
+import dash_file_cache as dfc
+
+
+dfc.PlainDownloader
+dfc.components.PlainDownloader
+```
+
+## Component Properties
+
+<Tabs
+  defaultValue="descriptions"
+  values={[
+    { label: 'Descriptions', value: 'descriptions', },
+    { label: 'Properties', value: 'properties', },
+  ]
+}>
+
+<TabItem value="descriptions">
+
+|      Name       |                        Type                         | <center>Description</center>                                                                                                                                                                                          |
+| :-------------: | :-------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|      `id`       |             `str \| Mapping[str, Any]`              | The ID of the component. A dictionary-id is used for creating a [pattern-matching callback<IconExternalLink/>][dash-pmcallback].                                                                                      |
+|      `url`      |                        `str`                        | <p>The URL used to access the data to be downloaded.</p><p>Each time when this value is set, a download event will be triggered. After triggering the download event, this value will be reset by a blank string.</p> |
+| `loading_state` | [`LoadingState`<IconExternalLink/>][link-loadstate] | The loading state set by Dash. This value should not be used by users.                                                                                                                                                |
+
+</TabItem>
+
+<TabItem value="properties">
+
+|      Name       |                        Type                         | Interactive |              Setable              | Required |  Default  |
+| :-------------: | :-------------------------------------------------: | :---------: | :-------------------------------: | :------: | :-------: |
+|      `id`       |             `str \| Mapping[str, Any]`              |             |                                   |          | undefined |
+|      `url`      |                        `str`                        |             | <InlineIcon icon={vsiCheckIcon}/> |          |   `""`    |
+| `loading_state` | [`LoadingState`<IconExternalLink/>][link-loadstate] |             | <InlineIcon icon={vsiCheckIcon}/> |          | undefined |
+
+- "Interactive" means that the property can be changed by users' interactions, thus firing a callback.
+- "Setable" means that changing it by callback `Output(...)` will take effects.
+- "Required" means that the component cannot be initialized if this value is not explicitly provided.
+
+</TabItem>
+
+</Tabs>
+
+## Examples
+
+### <IconObjType type="term"/> Minimal example
+
+<Tabs
+  defaultValue="codes"
+  values={[
+    { label: 'Codes', value: 'codes', },
+    { label: 'Results', value: 'results', },
+  ]
+}>
+
+<TabItem value="codes">
+
+```python title="minimal_example_plain_downloader.py" showLineNumbers
+from typing import Optional
+import dash
+import flask
+from dash import html, Output, Input
+from dash_file_cache.services.utilities import get_server
+from dash_file_cache.components import PlainDownloader
+
+
+app = dash.Dash("demo")
+server = get_server(app)
+
+app.layout = html.Div(
+    (html.Button(id="btn", children="Download"), PlainDownloader(id="downloader"))
+)
+
+
+@server.route("/file")
+def file():
+    resp = flask.Response("test file content", status=200, mimetype="text/plain")
+    resp.headers["Content-Disposition"] = "attachment; filename=test.txt"
+    return resp
+
+
+@app.callback(Output("downloader", "url"), Input("btn", "n_clicks"))
+def trigger_get_file(n_clicks: Optional[int]):
+    if not n_clicks:
+        return dash.no_update
+    return "/file"
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+</TabItem>
+
+<TabItem value="results">
+
+An application with a downloading button will be rendered.
+
+By clicking the button, a file named `text.txt` will be downloaded, the file content is
+
+```
+test file content
+```
+
+</TabItem>
+
+</Tabs>
+
+[link-loadstate]: https://dash.plotly.com/loading-states
+[dash-pmcallback]: https://dash.plotly.com/pattern-matching-callbacks

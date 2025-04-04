@@ -6,6 +6,8 @@ slug: /apis/components
 description: 本模块包提供的额外组件。
 ---
 
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
 import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
 
 <APITopBar type="package" source="components" />
@@ -14,12 +16,22 @@ import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
 
 ## 模块 {#modules}
 
-|                                          成员                                           | <center>说明</center>   |
-| :-------------------------------------------------------------------------------------: | :---------------------- |
-| [<IconObjType type="module" hasText={true} text="downloader"/>](./downloader/index.mdx) | Python实现的下载组件。 |
+|                                         成员                                          | <center>说明</center>            |
+| :-----------------------------------------------------------------------------------: | :------------------------------- |
+| [<IconObjType type="module" hasText={true} text="typehints"/>](./typehints/index.mdx) | 用来标记组件属性的额外类型标记。 |
+
+## 类 {#classes}
+
+|                                            成员                                            | <center>说明</center>                                                          |
+| :----------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------- |
+| [<IconObjType type="class" hasText={true} text="PlainDownloader"/>](./PlainDownloader.mdx) | `PlainDownloader`是用来下载文件的简单、原生的React组件。                     |
+|      [<IconObjType type="class" hasText={true} text="Downloader"/>](./Downloader.mdx)      | `Downloader`是基于[`StreamSaver`<IconExternalLink/>][link-streamsaver]的组件。 |
 
 ## 别名 {#aliases}
 
-|                             成员                             | <center>别名取自</center>                                             |
-| :----------------------------------------------------------: | :-------------------------------------------------------------------- |
-| <IconObjType type="class" hasText={true} text="Downloader"/> | [`dfc.components.downloader.Downloader`](./downloader/Downloader.mdx) |
+|                                成员                                | <center>别名取自</center>                                                       |
+| :----------------------------------------------------------------: | :------------------------------------------------------------------------------ |
+|  <IconObjType type="class" hasText={true} text="DownloaderURL"/>   | [`dfc.components.typehints.DownloaderURL`](./typehints/DownloaderURL.mdx)       |
+| <IconObjType type="class" hasText={true} text="DownloaderStatus"/> | [`dfc.components.typehints.DownloaderStatus`](./typehints/DownloaderStatus.mdx) |
+
+[link-streamsaver]: https://github.com/jimmywarting/StreamSaver.js

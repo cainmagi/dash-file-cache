@@ -1,0 +1,61 @@
+---
+id: ProtocolResponse
+title: ProtocolResponse
+sidebar_label: ProtocolResponse
+slug: /apis/services/reqstream/ProtocolResponse
+description: The protocol of an HTTP response.
+---
+
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="type" isPrivate={true} source="services.reqstream.ProtocolResponse" />
+
+```python
+resp: ProtocolResponse
+```
+
+The protocol of an HTTP response. This protocol is defined for the compatibility of different [`urllib3`<IconExternalLink/>][link-urllib3] versions.
+
+## Protocol methods
+
+### <IconObjType type="method"/> `close`
+
+```python
+resp.close()
+```
+
+Close the HTTP response.
+
+---
+
+### <IconObjType type="method"/> `release_conn`
+
+```python
+resp.release_conn()
+```
+
+Release the connection of the HTTP response.
+
+---
+
+### <IconObjType type="method"/> `read`
+
+```python
+data: Any = resp.read(amt: int | None = None)
+```
+
+Read any amount of data from the response.
+
+## Protocol properties
+
+### <IconObjType type="param"/> `headers`
+
+```python
+resp.headers: Mapping[Any, Any]
+```
+
+The response headers containing the metadata.
+
+[link-urllib3]: https://urllib3.readthedocs.io/en/stable/

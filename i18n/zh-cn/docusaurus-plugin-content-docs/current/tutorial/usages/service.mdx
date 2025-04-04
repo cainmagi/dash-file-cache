@@ -18,6 +18,12 @@ import IconLink from "@site/src/components/IconLink";
 service = ServiceData(cache: CacheAbstract, service_name: str = "/cached-data", chunk_size: int = 1)
 ```
 
+:::note
+
+目前，还有另一个名叫`ServiceDownloader`的服务。它总是和`Downloader`同用。因此，请查阅`Downloader`的用途来了解详情。
+
+:::
+
 ## 在`dash`中使用`service` {#use-service-with-dash}
 
 `service`主要用来为`dash`提供服务。它实现了一种由callback加载、且由下载链接获取的“动态资源（dynamical assets）”。

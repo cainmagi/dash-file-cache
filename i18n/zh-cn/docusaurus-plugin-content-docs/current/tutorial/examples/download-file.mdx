@@ -51,7 +51,7 @@ python -m pip install dash[diskcache]
 
 ## 定义缓存和下载器 {#define-the-cache-and-the-downloader}
 
-在初始化方法中，提供了`ServiceData(...)`句柄。
+在初始化方法中，提供了[`ServiceData(...)`](../../apis/services/data/ServiceData.mdx)句柄。
 
 ```python showLineNumbers
 class Demo:
@@ -90,9 +90,9 @@ html.Div(
 )
 ```
 
-此处设置了下载器，其为一个Dash组件。属性`mitm`用来维持下载事件的激活状态。其服务对应的路由需要和接下来将要用到的`ServiceDownloader`保持一致。
+此处设置了下载器，其为一个Dash组件。属性`mitm`用来维持下载事件的激活状态。其服务对应的路由需要和接下来将要用到的[`ServiceDownloader`](../../apis/services/downloader/ServiceDownloader.mdx)保持一致。
 
-与其他范例相若，此处只有`id=btn`的按钮能触发callback。Callback的返回值由布局中的`Downloader`组件处理。
+与其他范例相若，此处只有`id=btn`的按钮能触发callback。Callback的返回值由布局中的[`Downloader`](../../apis/components/Downloader.mdx)组件处理。
 
 ## 定义callback {#define-the-callbacks}
 

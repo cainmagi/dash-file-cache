@@ -1,0 +1,39 @@
+---
+id: CachedRequest
+title: CachedRequest
+sidebar_label: CachedRequest
+slug: /apis/caches/typehints/CachedRequest
+description: The URL and request configuration specifying a remote file.
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="type" source="caches.typehints.CachedRequest" />
+
+```python
+CachedRequest(
+    type: "request",
+    url: str,
+    headers: Dict[str, str],
+    file_name_fallback: str | None
+)
+```
+
+`CachedRequest` is a `TypedDict`.
+
+The URL and request configuration specifying a remote file. This configuration
+is mainly used when a cross-domain URL needs to be accessed or an authentication
+protected file is to be read.
+
+In this case, the `CachedRequest` will only store the URL and the request
+configurations. The request stream will be established and forwarded to the
+users when this cached data item is to be streamed.
+
+## Keywords
+
+|       Keyword        |       Type       | <center>Description</center>                                                                                                                                              |
+| :------------------: | :--------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+|        `type`        |   `"request"`    | The type of this cached data.                                                                                                                                             |
+|        `url`         |      `str`       | The URL referring to the remote file.                                                                                                                                     |
+|      `headers`       | `Dict[str, str]` | A collection of headers to be used when accessing the remote file.                                                                                                        |
+| `file_name_fallback` |  `str \| None`   | A fall-back file name. It is used when the response of the request does not provide a file name. If this valus is not specified, will use the URL to guess the file name. |

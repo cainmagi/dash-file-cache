@@ -1,0 +1,46 @@
+---
+id: DownloaderURL
+title: DownloaderURL
+sidebar_label: DownloaderURL
+slug: /apis/components/typehints/DownloaderURL
+description: The URL and request configuration specifying a remote file.
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="type" source="components.typehints.DownloaderURL" />
+
+```python
+DownloaderURL(
+    url: str,
+    file_name_fallback: str | None
+)
+```
+
+`DownloaderURL` is a `TypedDict`.
+
+`DownloaderURL` is the component property `Downloader(url=...)`. It defines the URL
+used to access the data to be downloaded.
+
+Each time when this value is set, a download event will be triggered. After
+triggering the download event, this value will be reset by a blank string.
+
+## Aliases
+
+This type can be acquired by
+
+```python
+import dash_file_cache as dfc
+
+
+dfc.DownloaderURL
+dfc.components.DownloaderURL
+dfc.components.typehints.DownloaderURL
+```
+
+## Keywords
+
+|       Keyword        | Type  | <center>Description</center>                                                                                                                                                                                 |
+| :------------------: | :---: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|        `url`         | `str` | The URL used to access the data to be downloaded.                                                                                                                                                            |
+| `file_name_fallback` | `str` | A maunally configured file name. If this file name is configured, it will be used when the file name cannot be parsed in the headers. This configuration is useful when the URL is from a cross-origin site. |

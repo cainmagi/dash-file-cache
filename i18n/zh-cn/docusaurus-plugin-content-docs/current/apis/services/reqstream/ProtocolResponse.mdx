@@ -1,0 +1,61 @@
+---
+id: ProtocolResponse
+title: ProtocolResponse
+sidebar_label: ProtocolResponse
+slug: /apis/services/reqstream/ProtocolResponse
+description: 用来表示HTTP响应的协议。
+---
+
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="type" source="services.reqstream.ProtocolResponse" />
+
+```python
+resp: ProtocolResponse
+```
+
+用来表示HTTP响应的协议。该协议兼容不同的[`urllib3`<IconExternalLink/>][link-urllib3]版本。
+
+## 协议方法 {#protocol-methods}
+
+### <IconObjType type="method"/> `close`
+
+```python
+resp.close()
+```
+
+关闭该HTTP响应。
+
+---
+
+### <IconObjType type="method"/> `release_conn`
+
+```python
+resp.release_conn()
+```
+
+释放该HTTP响应的连接。
+
+---
+
+### <IconObjType type="method"/> `read`
+
+```python
+data: Any = resp.read(amt: int | None = None)
+```
+
+从响应中读取任意量的数据。
+
+## 协议属性 {#protocol-properties}
+
+### <IconObjType type="param"/> `headers`
+
+```python
+resp.headers: Mapping[Any, Any]
+```
+
+包含元数据的响应头。
+
+[link-urllib3]: https://www.osgeo.cn/urllib3/user-guide.html

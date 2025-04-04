@@ -1,0 +1,185 @@
+---
+id: Downloader
+title: Downloader
+sidebar_label: Downloader
+slug: /apis/components/Downloader
+description: Downloader is a React component based on StreamSaver.
+---
+
+import useBaseUrl from "@docusaurus/useBaseUrl";
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+import vsiTerminalIcon from "@iconify-icons/codicon/terminal";
+import {biSlashLg} from "@site/src/components/icons/BiSlashLg";
+
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+import DarkButton from "@site/src/components/DarkButton";
+
+<APITopBar type="class" isComponent={true} source="components.Downloader" />
+
+```python
+comp = Downloader(
+    id: str | Mapping[str, Any],
+    url: str | DownloaderURL,
+    headers: Mapping[str, str],
+    allow_cross_origin: bool,
+    status: DownloaderStatus,
+    mitm: str | None,
+    loading_state: LoadingState
+)
+```
+
+`Downloader` is a React component based on [`StreamSaver`<IconExternalLink/>][link-streamsaver].
+
+The [`StreamSaver.js`<IconExternalLink/>][link-streamsaver] project provides a customizable way to access
+and download an online stream. This is the recommended downloader for practical uses.
+It has the optimized performance for triggering multiple downloading events.
+
+## Aliases
+
+This type can be acquired by
+
+```python
+import dash_file_cache as dfc
+
+
+dfc.Downloader
+dfc.components.Downloader
+```
+
+## Component Properties
+
+<Tabs
+  defaultValue="descriptions"
+  values={[
+    { label: 'Descriptions', value: 'descriptions', },
+    { label: 'Properties', value: 'properties', },
+  ]
+}>
+
+<TabItem value="descriptions">
+
+|         Name         |                                  Type                                  | <center>Description</center>                                                                                                                                                                                                                                                                                        |
+| :------------------: | :--------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+|         `id`         |                       `str \| Mapping[str, Any]`                       | The ID of the component. A dictionary-id is used for creating a [pattern-matching callback<IconExternalLink/>][dash-pmcallback].                                                                                                                                                                                    |
+|        `url`         | <code>{`str \| `}[DownloaderURL](./typehints/DownloaderURL.mdx)</code> | <p>The URL used to access the data to be downloaded.</p><p>Each time when this value is set, a download event will be triggered. After triggering the download event, this value will be reset by a blank string.</p>                                                                                               |
+|      `headers`       |                          `Mapping[str, str]`                           | <p>The extra headers to be used when submitting the request of the downloading event.</p><p>This property may need to be configured when the downloading event needs to add authentication information.</p>                                                                                                           |
+| `allow_cross_origin` |                                 `bool`                                 | <p>A flag determineing whether the cross-origin downloading link can be used.</p><p>If the data to be downloaded is from a cross-domain site, need to configure this value as `True` while the remote site needs to configure the headers [`Access-Control-Allow-Origin`<IconExternalLink/>][link-crossorigin].</p> |
+|       `status`       |         [`DownloaderStatus`](./typehints/DownloaderStatus.mdx)         | <p>The status code when a downloading event is finalized.</p><p>If multiple downloading events are triggered by the same downloader, the later event will overwrite the status from the former events.</p>                                                                                                          |
+|        `mitm`        |                             `str \| None`                              | The MITM-IFrame used for maintaining the status of the downloader. It prevents the downloader to be closed when the broswer is idle. See details [here<IconExternalLink/>][link-mitm]. If not specified, will use the default MITM service of `StreamSaver.js`, which needs the Internet.                           |
+|   `loading_state`    |          [`LoadingState`<IconExternalLink/>][link-loadstate]           | The loading state set by Dash. This value should not be used by users.                                                                                                                                                                                                                                              |
+
+</TabItem>
+
+<TabItem value="properties">
+
+|         Name         |                                  Type                                  |            Interactive            |              Setable              | Required |  Default  |
+| :------------------: | :--------------------------------------------------------------------: | :-------------------------------: | :-------------------------------: | :------: | :-------: |
+|         `id`         |                       `str \| Mapping[str, Any]`                       |                                   |                                   |          | undefined |
+|        `url`         | <code>{`str \| `}[DownloaderURL](./typehints/DownloaderURL.mdx)</code> |                                   | <InlineIcon icon={vsiCheckIcon}/> |          |   `""`    |
+|      `headers`       |                          `Mapping[str, str]`                           |                                   | <InlineIcon icon={vsiCheckIcon}/> |          | undefined |
+| `allow_cross_origin` |                                 `bool`                                 |                                   | <InlineIcon icon={vsiCheckIcon}/> |          |  `False`  |
+|       `status`       |         [`DownloaderStatus`](./typehints/DownloaderStatus.mdx)         | <InlineIcon icon={vsiCheckIcon}/> |                                   |          | undefined |
+|        `mitm`        |                             `str \| None`                              |                                   | <InlineIcon icon={vsiCheckIcon}/> |          | undefined |
+|   `loading_state`    |          [`LoadingState`<IconExternalLink/>][link-loadstate]           |                                   | <InlineIcon icon={vsiCheckIcon}/> |          | undefined |
+
+- "Interactive" means that the property can be changed by users' interactions, thus firing a callback.
+- "Setable" means that changing it by callback `Output(...)` will take effects.
+- "Required" means that the component cannot be initialized if this value is not explicitly provided.
+
+</TabItem>
+
+</Tabs>
+
+## Examples
+
+### <IconObjType type="term"/> Minimal example
+
+<Tabs
+  defaultValue="codes"
+  values={[
+    { label: 'Codes', value: 'codes', },
+    { label: 'Results', value: 'results', },
+  ]
+}>
+
+<TabItem value="codes">
+
+```python title="minimal_example_downloader.py" showLineNumbers
+from typing import Optional
+import dash
+import flask
+from dash import html, Output, Input
+from dash_file_cache.services.utilities import get_server
+from dash_file_cache.components import Downloader
+from dash_file_cache.services import ServiceDownloader
+
+
+app = dash.Dash("demo")
+ServiceDownloader("/dfc-downloader").serve(app)
+server = get_server(app)
+
+app.layout = html.Div(
+    (
+        html.Button(id="btn", children="Download"),
+        Downloader(id="downloader", mitm="/dfc-downloader"),
+    )
+)
+
+
+@server.route("/file")
+def file():
+    resp = flask.Response("test file content", status=200, mimetype="text/plain")
+    resp.headers["Content-Disposition"] = "attachment; filename=test.txt"
+    return resp
+
+
+@app.callback(Output("downloader", "url"), Input("btn", "n_clicks"))
+def trigger_get_file(n_clicks: Optional[int]):
+    if not n_clicks:
+        return dash.no_update
+    return "/file"
+
+
+if __name__ == "__main__":
+    app.run()
+```
+
+</TabItem>
+
+<TabItem value="results">
+
+An application with a downloading button will be rendered.
+
+By clicking the button, a file named `text.txt` will be downloaded, the file content is
+
+```
+test file content
+```
+
+</TabItem>
+
+</Tabs>
+
+### <IconObjType type="term"/> Download a file with a background callback
+
+See
+
+<p>
+  <DarkButton
+    to={useBaseUrl("/docs/examples/download-file")}
+    icon={vsiTerminalIcon}
+  >
+    {"Download file"}
+  </DarkButton>
+</p>
+
+[link-streamsaver]: https://github.com/jimmywarting/StreamSaver.js
+[link-loadstate]: https://dash.plotly.com/loading-states
+[dash-pmcallback]: https://dash.plotly.com/pattern-matching-callbacks
+[link-crossorigin]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Origin

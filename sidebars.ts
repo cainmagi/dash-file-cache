@@ -121,6 +121,7 @@ const sidebars: SidebarsConfig = {
             "apis/caches/typehints/Deferred",
             "apis/caches/typehints/CachedFileInfo",
             "apis/caches/typehints/CachedPath",
+            "apis/caches/typehints/CachedRequest",
             "apis/caches/typehints/CachedStringIO",
             "apis/caches/typehints/CachedBytesIO",
             "apis/caches/typehints/CachedData",
@@ -149,6 +150,29 @@ const sidebars: SidebarsConfig = {
         },
         {
           type: "category",
+          label: "downloader",
+          collapsed: true,
+          link: {
+            type: "doc",
+            id: "apis/services/downloader/index",
+          },
+          items: ["apis/services/downloader/ServiceDownloader"],
+        },
+        {
+          type: "category",
+          label: "reqstream",
+          collapsed: true,
+          link: {
+            type: "doc",
+            id: "apis/services/reqstream/index",
+          },
+          items: [
+            "apis/services/reqstream/ProtocolResponse",
+            "apis/services/reqstream/DeferredRequestStream",
+          ],
+        },
+        {
+          type: "category",
           label: "utilities",
           collapsed: true,
           link: {
@@ -173,14 +197,19 @@ const sidebars: SidebarsConfig = {
       items: [
         {
           type: "category",
-          label: "downloader",
+          label: "typehints",
           collapsed: true,
           link: {
             type: "doc",
-            id: "apis/components/downloader/index",
+            id: "apis/components/typehints/index",
           },
-          items: ["apis/components/downloader/Downloader"],
+          items: [
+            "apis/components/typehints/DownloaderURL",
+            "apis/components/typehints/DownloaderStatus",
+          ],
         },
+        "apis/components/PlainDownloader",
+        "apis/components/Downloader",
       ],
     },
     {

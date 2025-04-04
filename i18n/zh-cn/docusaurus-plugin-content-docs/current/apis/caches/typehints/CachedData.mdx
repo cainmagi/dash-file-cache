@@ -11,11 +11,9 @@ import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
 <APITopBar type="type" source="caches.typehints.CachedData" />
 
 ```python
-CachedData = CachedPath | CachedStringIO | CachedBytesIO
+CachedData = CachedPath | CachedRequest | CachedStringIO | CachedBytesIO
 ```
 
-`CachedData`是[`CachedPath`](./CachedPath.mdx)，
-[`CachedStringIO`](./CachedStringIO.mdx)和[`CachedBytesIO`](./CachedBytesIO.mdx)
-的`Union`。
+`CachedData`是[`CachedPath`](./CachedPath.mdx)，[`CachedRequest`](./CachedRequest.mdx)，[`CachedStringIO`](./CachedStringIO.mdx)和[`CachedBytesIO`](./CachedBytesIO.mdx)的`Union`。
 
 `CachedData`是缓存数据的类型提示。

@@ -12,7 +12,7 @@ import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
 
 ```python
 CachedFileInfo(
-    type: "path" | "str" | "bytes",
+    type: "path" | "request" | "str" | "bytes",
     data_size: int,
     file_name: str,
     content_type: str,
@@ -27,11 +27,11 @@ CachedFileInfo(
 
 ## 关键字 {#keywords}
 
-|       关键字       |             类型             | <center>说明</center>                                                                                            |
-| :----------------: | :--------------------------: | :--------------------------------------------------------------------------------------------------------------- |
-|       `type`       | `"path" \| "str" \| "bytes"` | 缓存数据的类型。                                                                                                 |
-|    `data_size`     |            `int`             | 缓存数据的长度，可以表示字节的数目或字符的数目。该值透过预加载文件取得。                                         |
-|    `file_name`     |            `str`             | 文件名。当准备推送数据流时，需要指定该值。                                                                       |
-|   `content_type`   |            `str`             | 响应的内容类型。可以在这里指定可选的编码。对于 HTML 文件，该值可以取`"text/html; charset=utf-8"`.                      |
-|    `mime_type`     |            `str`             | 响应的媒体类型。一般地，它只由数据的文件类型决定。对于 HTML 页面，该值可以是`"text/html"`.                       |
-| `one_time_service` |            `bool`            | 二值量。启用时，会透过退出机制、在数据下一次推送完毕后移出该缓存数据。当数据仅用来完成一次下载时，建议启用该值。 |
+|       关键字       |                   类型                    | <center>说明</center>                                                                                            |
+| :----------------: | :---------------------------------------: | :--------------------------------------------------------------------------------------------------------------- |
+|       `type`       | `"path" \| "request" \| "str" \| "bytes"` | 缓存数据的类型。                                                                                                 |
+|    `data_size`     |                   `int`                   | 缓存数据的长度，可以表示字节的数目或字符的数目。该值透过预加载文件取得。                                         |
+|    `file_name`     |                   `str`                   | 文件名。当准备推送数据流时，需要指定该值。                                                                       |
+|   `content_type`   |                   `str`                   | 响应的内容类型。可以在这里指定可选的编码。对于HTML文件，该值可以取`"text/html; charset=utf-8"`.                  |
+|    `mime_type`     |                   `str`                   | 响应的媒体类型。一般地，它只由数据的文件类型决定。对于HTML页面，该值可以是`"text/html"`.                         |
+| `one_time_service` |                  `bool`                   | 二值量。启用时，会透过退出机制、在数据下一次推送完毕后移出该缓存数据。当数据仅用来完成一次下载时，建议启用该值。 |

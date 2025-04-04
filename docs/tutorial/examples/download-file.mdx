@@ -54,7 +54,7 @@ This small demo only provides one <kbd>Start</kbd> button.
 
 ## Define the cache and the downloader
 
-In the initialization method, we provide the `ServiceData(...)` handle.
+In the initialization method, we provide the [`ServiceData(...)`](../../apis/services/data/ServiceData.mdx) handle.
 
 ```python showLineNumbers
 class Demo:
@@ -96,10 +96,10 @@ html.Div(
 
 The downloader is specified here. It is a Dash component. The property `mitm` is a
 monitor preserving the active status of the downloading event. Its service route
-need to be the same as the configuration of `ServiceDownloader` which is used later.
+need to be the same as the configuration of [`ServiceDownloader`](../../apis/services/downloader/ServiceDownloader.mdx) which is used later.
 
 Similar to the other examples, here we only use one button with `id=btn` to start the
-callback. The returned value of the callback will be handled by the `Downloader`
+callback. The returned value of the callback will be handled by the [`Downloader`](../../apis/components/Downloader.mdx)
 component.
 
 ## Define the callbacks

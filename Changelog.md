@@ -11,6 +11,7 @@
 1. Bump the document to the new version `0.2.0`.
 2. Update the tutorials for introducing the newly implemented downloader components.
 3. Update the example script explanation `/examples/download-file`.
+4. Update the API documents to the newest version (`v0.2.0`).
 
 #### :wrench: Fix
 

@@ -1,0 +1,22 @@
+---
+id: index
+title: reqstream
+sidebar_label: reqstream
+slug: /apis/services/reqstream
+description: 用来实现代理数据访问的延迟传递机制。
+---
+
+import IconExternalLink from "@theme/Icon/ExternalLink";
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="module" source="services.reqstream" />
+
+延迟数据流传递机制，其用来实现基于代理的数据访问。
+
+## 类 {#classes}
+
+|                                                  成员                                                  | <center>说明</center>                                |
+| :----------------------------------------------------------------------------------------------------: | :--------------------------------------------------- |
+|      [<IconObjType type="type" hasText={true} text="ProtocolResponse"/>](./ProtocolResponse.mdx)       | 用来表示HTTP响应的协议。                             |
+| [<IconObjType type="class" hasText={true} text="DeferredRequestStream"/>](./DeferredRequestStream.mdx) | 从某个预设请求、所对应的响应、传递而来的延迟数据流。 |

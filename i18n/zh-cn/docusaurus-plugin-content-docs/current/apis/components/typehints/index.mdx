@@ -1,0 +1,20 @@
+---
+id: index
+title: typehints
+sidebar_label: typehints
+slug: /apis/components/typehints
+description: 用来标记组件属性的额外类型标记。
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="module" source="components.typehints" />
+
+用来标记组件属性的额外类型标记。
+
+## 类型标记 {#typehints}
+
+|                                            成员                                             |    类型     | <center>说明</center>                   |
+| :-----------------------------------------------------------------------------------------: | :---------: | :-------------------------------------- |
+|    [<IconObjType type="type" hasText={true} text="DownloaderURL"/>](./DownloaderURL.mdx)    | `TypedDict` | 用来指定一个远程文件的 URL 和请求配置。 |
+| [<IconObjType type="type" hasText={true} text="DownloaderStatus"/>](./DownloaderStatus.mdx) | `TypedDict` | 下载事件结束时设置的状态码。            |

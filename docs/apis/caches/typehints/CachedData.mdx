@@ -11,10 +11,10 @@ import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
 <APITopBar type="type" source="caches.typehints.CachedData" />
 
 ```python
-CachedData = CachedPath | CachedStringIO | CachedBytesIO
+CachedData = CachedPath | CachedRequest | CachedStringIO | CachedBytesIO
 ```
 
-`CachedData` is a `Union` of [`CachedPath`](./CachedPath.mdx),
+`CachedData` is a `Union` of [`CachedPath`](./CachedPath.mdx), [`CachedRequest`](./CachedRequest.mdx),
 [`CachedStringIO`](./CachedStringIO.mdx), and [`CachedBytesIO`](./CachedBytesIO.mdx).
 
 `CachedData` is the typehint of the cached data.

@@ -1,0 +1,35 @@
+---
+id: CachedRequest
+title: CachedRequest
+sidebar_label: CachedRequest
+slug: /apis/caches/typehints/CachedRequest
+description: 用来表示一个远端文件的URL、以及相关的请求设置。
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="type" source="caches.typehints.CachedRequest" />
+
+```python
+CachedRequest(
+    type: "request",
+    url: str,
+    headers: Dict[str, str],
+    file_name_fallback: str | None
+)
+```
+
+`CachedRequest`是`TypedDict`。
+
+用来表示一个远端文件的URL、以及相关的请求设置。此处的设置主要用于访问跨域URL、或用于访问受到验证保护的文件。
+
+此情形下，`CachedRequest`只保存URL和请求设置。直到该缓存的数据实际被访问时，才会建立、并将所请求的流传递到用户。
+
+## 关键字 {#keywords}
+
+|        关键字        |       类型       | <center>说明</center>                                                                         |
+| :------------------: | :--------------: | :-------------------------------------------------------------------------------------------- |
+|        `type`        |   `"request"`    | 缓存数据的类型。                                                                              |
+|        `url`         |      `str`       | 指向远端文件的URL。                                                                           |
+|      `headers`       | `Dict[str, str]` | 用来获取远端文件的一组请求头。                                                                |
+| `file_name_fallback` |  `str \| None`   | 后备文件名。当请求的响应中未提供文件名时、使用该文件名。若该值未设置，则使用 URL 推测文件名。 |

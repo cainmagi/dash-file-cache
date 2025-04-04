@@ -23,6 +23,7 @@ service = ServiceData(
     cache: CacheAbstract[CachedFileInfo, CachedData],
     service_name: str = "/cached-data",
     chunk_size: int = 1,
+    allowed_cross_origin: str | None = None,
 )
 ```
 
@@ -45,13 +46,44 @@ dfc.services.data.ServiceData
 
 ## 参数 {#arguments}
 
-|      参数      |                                                                                                类型                                                                                                 |               必选                | <center>说明</center>                                                                                                                                                                          |
-| :------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|    `cache`     | <code>[CacheAbstract](../../caches/abstract/CacheAbstract.mdx){`[`}[CachedFileInfo](../../caches/typehints/CachedFileInfo.mdx){`, `}[CachedData](../../caches/typehints/CachedData.mdx){`]`}</code> | <InlineIcon icon={vsiCheckIcon}/> | 管理临时数据的缓存实例。该值可以是[`CachePlain`](../../caches/memory/CachePlain.mdx)，[`CacheQueue`](../../caches/memory/CacheQueue.mdx)或[`CacheFile`](../../caches/tempfile/CacheFile.mdx)。 |
-| `service_name` |                                                                                                `str`                                                                                                |                                   | 服务的名称。                                                                                                                                                                                   |
-|  `chunk_size`  |                                                                                                `int`                                                                                                |                                   | 向用户推送数据时使用的块尺寸。单位为`MB`。                                                                                                                                                      |
+|          参数          |                                                                                                类型                                                                                                 |               必选                | <center>说明</center>                                                                                                                                                                          |
+| :--------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|        `cache`         | <code>[CacheAbstract](../../caches/abstract/CacheAbstract.mdx){`[`}[CachedFileInfo](../../caches/typehints/CachedFileInfo.mdx){`, `}[CachedData](../../caches/typehints/CachedData.mdx){`]`}</code> | <InlineIcon icon={vsiCheckIcon}/> | 管理临时数据的缓存实例。该值可以是[`CachePlain`](../../caches/memory/CachePlain.mdx)，[`CacheQueue`](../../caches/memory/CacheQueue.mdx)或[`CacheFile`](../../caches/tempfile/CacheFile.mdx)。 |
+|     `service_name`     |                                                                                                `str`                                                                                                |                                   | 服务的名称。                                                                                                                                                                                   |
+|      `chunk_size`      |                                                                                                `int`                                                                                                |                                   | 向用户推送数据时使用的块尺寸。单位为`MB`。                                                                                                                                                     |
+| `allowed_cross_origin` |                                                                                            `str \| None`                                                                                            |                                   | 提供数据时允许接入的跨域请求域。用法和[`"Access-Control-Allow-Origin"`<IconExternalLink/>][link-crossorigin]相同。若该值为空或`None`，则不设置跨域。                                           |
 
 ## 方法 {#methods}
+
+### <IconObjType type="method"/> `register_request` {#-register_request}
+
+```python
+addr: str = service.register_request(
+    url: str | urllib.parse.ParseResult,
+    headers: Mapping[str, str] | None = None,
+    file_name_fallback: str = "",
+    download: bool = False,
+)
+```
+
+向缓存注册一个新的远端请求。
+
+#### 输入 {#requires}
+
+|         参数         |                                         类型                                          |               必选                | <center>说明</center>                                                      |
+| :------------------: | :-----------------------------------------------------------------------------------: | :-------------------------------: | -------------------------------------------------------------------------- |
+|        `url`         | <code>{`str \| `}[urllib.parse.ParseResult<IconExternalLink/>][link-parsedurl]</code> | <InlineIcon icon={vsiCheckIcon}/> | 指向远端文件的字符串类型、或解析过的 URL。                                 |
+|      `headers`       |                              `Mapping[str, str] \| None`                              |                                   | 该请求定制的请求头。若未设置，则不使用任何请求头。                         |
+| `file_name_fallback` |                                         `str`                                         |                                   | 备用文件名。若设置过该值、且远端服务未提供文件名，则使用该文件名保存文件。 |
+|      `download`      |                                        `bool`                                         |                                   | 二值量。启用时，会将返回的链接标记为专用于下载。                           |
+
+#### 输出 {#returns}
+
+|  参数  | 类型  | <center>说明</center>        |
+| :----: | :---: | :--------------------------- |
+| `addr` | `str` | 用来访问临时缓存文件的URL。 |
+
+---
 
 ### <IconObjType type="method"/> `register` {#-register}
 
@@ -68,7 +100,7 @@ addr: str = service.register(
 
 向缓存注册一个新文件（可以是路径或类文件对象）。
 
-#### 输入 {#requires}
+#### 输入 {#requires-1}
 
 |        参数        |                       类型                        |               必选                | <center>说明</center>                                                                                                                                                         |
 | :----------------: | :-----------------------------------------------: | :-------------------------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -79,7 +111,7 @@ addr: str = service.register(
 | `one_time_service` |                      `bool`                       |                                   | <p>二值量。启用时，会透过退出机制、在数据下一次推送完毕后移出该缓存数据。</p><p>当数据仅用来完成一次下载时，建议启用该值。</p>                                                |
 |     `download`     |                      `bool`                       |                                   | 二值量。启用时，会将返回的链接标记为专用于下载。                                                                                                                             |
 
-#### 输出 {#returns}
+#### 输出 {#returns-1}
 
 |  参数  | 类型  | <center>说明</center>        |
 | :----: | :---: | :--------------------------- |
@@ -101,14 +133,14 @@ resp: flask.Response = service.stream(uid: str, download: bool = False)
 
 :::
 
-#### 输入 {#requires-1}
+#### 输入 {#requires-2}
 
 |    参数    |  类型  |               必选                | <center>说明</center>                                      |
 | :--------: | :----: | :-------------------------------: | ---------------------------------------------------------- |
 |   `uid`    | `str`  | <InlineIcon icon={vsiCheckIcon}/> | 用来访问缓存项的UUID。若未找到，抛出`FileNotFoundError`。 |
 | `download` | `bool` |                                   | 二值量。启用时，将数据流标记成下载专用。                   |
 
-#### 输出 {#returns-1}
+#### 输出 {#returns-2}
 
 |  参数  |       类型       | <center>说明</center>               |
 | :----: | :--------------: | :---------------------------------- |
@@ -124,7 +156,7 @@ service.serve(app: dash.Dash | flask.Flask, endpoint: str | None = None)
 
 向Flask应用添加服务。
 
-#### 输入 {#requires-2}
+#### 输入 {#requires-3}
 
 |    参数    |            类型            |               必选                | <center>说明</center>                             |
 | :--------: | :------------------------: | :-------------------------------: | ------------------------------------------------- |
@@ -146,13 +178,23 @@ cache: CacheAbstract[CachedFileInfo, CachedData] = service.cache
 ### <IconObjType type="param"/> `chunk_size` {#-chunk_size}
 
 ```python
-chunk_size: int = cache.chunk_size
+chunk_size: int = service.chunk_size
 
 new_chunk_size: int
-cache.chunk_size = new_chunk_size
+service.chunk_size = new_chunk_size
 ```
 
 向用户推送数据时使用的块尺寸。单位为`MB`。
+
+---
+
+### <IconObjType type="param"/> `allowed_cross_origin` {#-allowed_cross_origin}
+
+```python
+allowed_cross_origin: str = service.allowed_cross_origin
+```
+
+提供数据时允许接入的跨域请求域。若该值为空或`None`，则不设置跨域。
 
 ## 范例 {#examples}
 
@@ -175,3 +217,6 @@ cache.chunk_size = new_chunk_size
     {"Flask服务"}
   </DarkButton>
 </p>
+
+[link-parsedurl]: https://docs.python.org/zh-cn/3/library/urllib.parse.html#urllib.parse.ParseResult
+[link-crossorigin]: https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Origin

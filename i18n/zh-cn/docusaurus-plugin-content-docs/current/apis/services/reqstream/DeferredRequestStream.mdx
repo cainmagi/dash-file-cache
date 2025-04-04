@@ -1,0 +1,86 @@
+---
+id: DeferredRequestStream
+title: DeferredRequestStream
+sidebar_label: DeferredRequestStream
+slug: /apis/services/reqstream/DeferredRequestStream
+description: 从某个预设请求、所对应的响应、传递而来的延迟数据流。
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+import vsiCheckIcon from "@iconify-icons/codicon/check";
+
+import InlineIcon from "@site/src/components/InlineIcon";
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar
+  type="class"
+  isPrivate={true}
+  isContext={true}
+  source="services.reqstream.DeferredRequestStream"
+/>
+
+```python
+stream = DeferredRequestStream(
+    info: CachedFileInfo,
+    data: CachedRequest
+)
+with stream as resp:
+    resp: ProtocolResponse
+```
+
+从某个预设请求、所对应的响应、传递而来的延迟数据流。
+
+进入该类上下文时，会向远端资源建立连接。在上下文的范围内，可以读取或传递从远端来的数据流。
+
+## 参数 {#arguments}
+
+|  参数  |                             类型                              |               必选                | <center>说明</center>    |
+| :----: | :-----------------------------------------------------------: | :-------------------------------: | ------------------------ |
+| `info` | [`CachedFileInfo`](../../caches/typehints/CachedFileInfo.mdx) | <InlineIcon icon={vsiCheckIcon}/> | 从缓存中获取的数据信息。 |
+| `data` |  [`CachedRequest`](../../caches/typehints/CachedRequest.mdx)  | <InlineIcon icon={vsiCheckIcon}/> | 从缓存中加载的请求配置。 |
+
+## 方法 {#methods}
+
+### <IconObjType type="method"/> `close`
+
+```python
+stream.close()
+```
+
+关闭所有仍存在的连接。
+
+:::note
+
+退出上下文时，会自动调用该方法。
+
+:::
+
+### <IconObjType type="method"/> `close`
+
+```python
+data: Iterator[bytes] = stream.provide(chunk_size: int = 1024 * 1024)
+```
+
+从该延迟请求流之中、生成数据供应器。
+
+须知该方法设计成、在上下文范围之外使用。使用该方法时，该方法会在流提供器的范围内维护上下文。换言之，在用尽该方法返回的数据后，上下文会自动关闭。
+
+:::warning
+
+所返回的`data`会令`stream`上下文进入“打开”状态。需要弃置数据迭代器时，建议显式调用`close()`方法。
+
+:::
+
+#### 输入 {#requires}
+
+|     参数     | 类型  | 必选 | <center>说明</center>  |
+| :----------: | :---: | :--: | ---------------------- |
+| `chunk_size` | `int` |      | 用来传递数据的块尺寸。 |
+
+#### 输出 {#returns}
+
+|  参数  |       类型        | <center>说明</center> |
+| :----: | :---------------: | :-------------------- |
+| `data` | `Iterator[bytes]` | 该方法生成的数据流。  |

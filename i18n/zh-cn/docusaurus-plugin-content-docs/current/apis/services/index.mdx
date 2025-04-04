@@ -14,13 +14,16 @@ Flask服务。将这些服务绑定到Dash/Flask应用上，以提供额外功�
 
 ## 模块 {#modules}
 
-|                                         成员                                          | <center>说明</center>     |
-| :-----------------------------------------------------------------------------------: | :------------------------ |
-|      [<IconObjType type="module" hasText={true} text="data"/>](./data/index.mdx)      | 与数据交换有关的服务。    |
-| [<IconObjType type="module" hasText={true} text="utilities"/>](./utilities/index.mdx) | 与Flask服务有关的工具。 |
+|                                          成员                                           | <center>说明</center>                |
+| :-------------------------------------------------------------------------------------: | :----------------------------------- |
+|       [<IconObjType type="module" hasText={true} text="data"/>](./data/index.mdx)       | 与数据交换有关的服务。               |
+|  [<IconObjType type="module" hasText={true} text="reqstream"/>](./reqstream/index.mdx)  | 用来实现代理数据访问的延迟传递机制。 |
+| [<IconObjType type="module" hasText={true} text="downloader"/>](./downloader/index.mdx) | 与下载器有关的服务。                 |
+|  [<IconObjType type="module" hasText={true} text="utilities"/>](./utilities/index.mdx)  | 与Flask服务有关的工具。              |
 
 ## 别名 {#aliases}
 
-|                             成员                              | <center>别名取自</center>                                 |
-| :-----------------------------------------------------------: | :-------------------------------------------------------- |
-| <IconObjType type="class" hasText={true} text="ServiceData"/> | [`dfc.services.data.ServiceData`](./data/ServiceData.mdx) |
+|                                成员                                 | <center>别名取自</center>                                                         |
+| :-----------------------------------------------------------------: | :-------------------------------------------------------------------------------- |
+|    <IconObjType type="class" hasText={true} text="ServiceData"/>    | [`dfc.services.data.ServiceData`](./data/ServiceData.mdx)                         |
+| <IconObjType type="class" hasText={true} text="ServiceDownloader"/> | [`dfc.services.downloader.ServiceDownloader`](./downloader/ServiceDownloader.mdx) |

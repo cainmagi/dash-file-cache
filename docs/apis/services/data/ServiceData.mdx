@@ -23,6 +23,7 @@ service = ServiceData(
     cache: CacheAbstract[CachedFileInfo, CachedData],
     service_name: str = "/cached-data",
     chunk_size: int = 1,
+    allowed_cross_origin: str | None = None,
 )
 ```
 
@@ -46,13 +47,44 @@ dfc.services.data.ServiceData
 
 ## Arguments
 
-|    Argument    |                                                                                                Type                                                                                                 |             Required              | <center>Description</center>                                                                                                                                                                                                    |
-| :------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|    `cache`     | <code>[CacheAbstract](../../caches/abstract/CacheAbstract.mdx){`[`}[CachedFileInfo](../../caches/typehints/CachedFileInfo.mdx){`, `}[CachedData](../../caches/typehints/CachedData.mdx){`]`}</code> | <InlineIcon icon={vsiCheckIcon}/> | The cache instance hosting the temporary data. This value can be [`CachePlain`](../../caches/memory/CachePlain.mdx), [`CacheQueue`](../../caches/memory/CacheQueue.mdx), or [`CacheFile`](../../caches/tempfile/CacheFile.mdx). |
-| `service_name` |                                                                                                `str`                                                                                                |                                   | The name of this service.                                                                                                                                                                                                       |
-|  `chunk_size`  |                                                                                                `int`                                                                                                |                                   | The chunk size when streaming the cached file to users. The unit is `MB`.                                                                                                                                                       |
+|        Argument        |                                                                                                Type                                                                                                 |             Required              | <center>Description</center>                                                                                                                                                                                                    |
+| :--------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|        `cache`         | <code>[CacheAbstract](../../caches/abstract/CacheAbstract.mdx){`[`}[CachedFileInfo](../../caches/typehints/CachedFileInfo.mdx){`, `}[CachedData](../../caches/typehints/CachedData.mdx){`]`}</code> | <InlineIcon icon={vsiCheckIcon}/> | The cache instance hosting the temporary data. This value can be [`CachePlain`](../../caches/memory/CachePlain.mdx), [`CacheQueue`](../../caches/memory/CacheQueue.mdx), or [`CacheFile`](../../caches/tempfile/CacheFile.mdx). |
+|     `service_name`     |                                                                                                `str`                                                                                                |                                   | The name of this service.                                                                                                                                                                                                       |
+|      `chunk_size`      |                                                                                                `int`                                                                                                |                                   | The chunk size when streaming the cached file to users. The unit is `MB`.                                                                                                                                                       |
+| `allowed_cross_origin` |                                                                                            `str \| None`                                                                                            |                                   | The allowed cross origin when serving the data. The usage should be the same as [`"Access-Control-Allow-Origin"`<IconExternalLink/>][link-crossorigin]. If this value is empty or `None`, the cross-origin will not be configured.                 |
 
 ## Methods
+
+### <IconObjType type="method"/> `register_request`
+
+```python
+addr: str = service.register_request(
+    url: str | urllib.parse.ParseResult,
+    headers: Mapping[str, str] | None = None,
+    file_name_fallback: str = "",
+    download: bool = False,
+)
+```
+
+Register the a remote request to the cache.
+
+#### Requires
+
+|       Argument       |                                         Type                                          |             Required              | <center>Description</center>                                                                                                          |
+| :------------------: | :-----------------------------------------------------------------------------------: | :-------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------- |
+|        `url`         | <code>{`str \| `}[urllib.parse.ParseResult<IconExternalLink/>][link-parsedurl]</code> | <InlineIcon icon={vsiCheckIcon}/> | The string-form or parsed URL of the remote file.                                                                                     |
+|      `headers`       |                              `Mapping[str, str] \| None`                              |                                   | The customized headers for this request. If not specified, will not use any headers.                                                  |
+| `file_name_fallback` |                                         `str`                                         |                                   | The fall-back file name. If specified, it will be used as the saved file name when the remote service does not provide the file name. |
+|      `download`      |                                        `bool`                                         |                                   | If specified, will mark the returned address as a downloadable link.                                                                  |
+
+#### Returns
+
+| Argument | Type  | <center>Description</center>                                           |
+| :------: | :---: | :--------------------------------------------------------------------- |
+|  `addr`  | `str` | The URL that would be used for accessing this temporarily cached file. |
+
+---
 
 ### <IconObjType type="method"/> `register`
 
@@ -148,13 +180,23 @@ The cache of this service.
 ### <IconObjType type="param"/> `chunk_size`
 
 ```python
-chunk_size: int = cache.chunk_size
+chunk_size: int = service.chunk_size
 
 new_chunk_size: int
-cache.chunk_size = new_chunk_size
+service.chunk_size = new_chunk_size
 ```
 
 The chunk size when streaming the cached file to users. The unit is `MB`.
+
+---
+
+### <IconObjType type="param"/> `allowed_cross_origin`
+
+```python
+allowed_cross_origin: str = service.allowed_cross_origin
+```
+
+The allowed cross origin. If this value is an empty string, the cross-origin data delivery will not be used.
 
 ## Examples
 
@@ -177,3 +219,6 @@ See
     {"Flask services"}
   </DarkButton>
 </p>
+
+[link-parsedurl]: https://docs.python.org/3/library/urllib.parse.html#urllib.parse.ParseResult
+[link-crossorigin]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Origin

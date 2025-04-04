@@ -1,0 +1,44 @@
+---
+id: DownloaderURL
+title: DownloaderURL
+sidebar_label: DownloaderURL
+slug: /apis/components/typehints/DownloaderURL
+description: 用来指定一个远程文件的URL和请求配置。
+---
+
+import APITopBar, {IconObjType} from "@site/src/components/APITopBar";
+
+<APITopBar type="type" source="components.typehints.DownloaderURL" />
+
+```python
+DownloaderURL(
+    url: str,
+    file_name_fallback: str | None
+)
+```
+
+`DownloaderURL`是`TypedDict`。
+
+`DownloaderURL`是`Downloader(url=...)`的属性类型。其定义了用来访问要下载的数据的URL。
+
+每当设置该值时，就会触发一次下载事件。触发下载事件后，该值会重置为空字符串。
+
+## 别名 {#aliases}
+
+该类型可以按以下方式之一获取
+
+```python
+import dash_file_cache as dfc
+
+
+dfc.DownloaderURL
+dfc.components.DownloaderURL
+dfc.components.typehints.DownloaderURL
+```
+
+## 关键字 {#keywords}
+
+|        关键字        | 类型  | <center>说明</center>                                                                                             |
+| :------------------: | :---: | :---------------------------------------------------------------------------------------------------------------- |
+|        `url`         | `str` | 用来访问要下载数据的URL。                                                                                         |
+| `file_name_fallback` | `str` | 一个人为设置的文件名。该文件名设置时，若响应头无法解析出文件名，则会使用该值。该配置较适用于访问跨域URL的情形。   |
