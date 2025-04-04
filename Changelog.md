@@ -28,6 +28,7 @@
 5. Clean up the workspace and formatter configurations.
 6. Bump the website source codes to the newest status.
 7. Update the overview diagrams of the whole pacakge.
+8. Update the links of the source codes to the newest version (`v0.2.0`).
 
 ### 0.1.2 @ 10/30/2024
 
