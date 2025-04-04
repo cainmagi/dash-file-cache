@@ -4,7 +4,7 @@
 
 ## CHANGELOG
 
-### 0.2.0 @ 04/02/2025
+### 0.2.0 @ 04/03/2025
 
 #### :mega: New
 
@@ -18,6 +18,7 @@
 1. Fix: Add the missing version tags for the old version documents.
 2. Fix: Correct a bad import in `zh-cn/docs/usages/downloader`.
 3. Fix: Correct typos in the legacy version `v0.1.x`, `/apis/services/data/ServiceData`.
+4. Fix: Correct typos in the source file links.
 
 #### :floppy_disk: Change
 
