@@ -10,6 +10,11 @@
 
 1. Fix: Correct typos in the document.
 
+#### :floppy_disk: Change
+
+1. Bump the `yarn` version from `4.8.1` to `4.9.1`.
+2. Bump the `typescript` version from `5.8.2` to `5.8.3`.
+
 ### 0.2.0 @ 04/03/2025
 
 #### :mega: New
