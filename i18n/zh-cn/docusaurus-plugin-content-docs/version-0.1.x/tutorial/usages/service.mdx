@@ -67,8 +67,7 @@ if __name__ == "__main__":
 2. 在callback中，调用`service.register(...)`，将数据动态地置入缓存中。
 3. `service.register(...)`的返回值是指向缓存数据的地址。该地址可以用作`<img>`的`src`属性或`<object>`的`data`属性。
 
-不同于应用的静态资源（assets），`service.register(...)`所返回的地址`address`，具有严格限定
-在dashboard运行期间的生命周期。能取得返回值`address`，即可确保数据已俟访问。
+不同于应用的静态资源（assets），`service.register(...)`所返回的地址`address`，具有严格限定在dashboard运行期间的生命周期。能取得返回值`address`，即可确保数据已俟访问。
 
 `service.register(...)`有如下参数：
 

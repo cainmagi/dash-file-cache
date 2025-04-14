@@ -27,7 +27,7 @@ with StreamFinalizer(
     fobj: IO[Any]@StreamFinalizer,
     truncate: bool = False,
     close: bool = False,
-    callback_on_exit: Callable[[_IO], None] | None = None
+    callback_on_exit: Callable[[IO[Any]@StreamFinalizer], None] | None = None
 ) as _fobj:
     _fobj: IO[Any]@StreamFinalizer
 ```
@@ -39,12 +39,12 @@ serving the file stream.
 
 ## Arguments
 
-|      Argument      |              Type               |             Required              | <center>Description</center>                                                                                                                |
-| :----------------: | :-----------------------------: | :-------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------- |
-|       `fobj`       |            `IO[Any]`            | <InlineIcon icon={vsiCheckIcon}/> | The file-like object to be managed when exiting the finalizer environment.                                                                  |
-|     `truncate`     |             `bool`              |                                   | A flag. If set, will trucate the file when exiting the context. This flag should not be used when the IO is read-only.                      |
-|      `close`       |             `bool`              |                                   | A flag. If set, will close the file handle when exiting the context.                                                                        |
-| `callback_on_exit` | `Callable[[_IO], None] \| None` |                                   | The callback function that will be called when exiting from the context. This method will be called before the file is truncated or closed. |
+|      Argument      |                Type                 |             Required              | <center>Description</center>                                                                                                                |
+| :----------------: | :---------------------------------: | :-------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------- |
+|       `fobj`       |              `IO[Any]`              | <InlineIcon icon={vsiCheckIcon}/> | The file-like object to be managed when exiting the finalizer environment.                                                                  |
+|     `truncate`     |               `bool`                |                                   | A flag. If set, will trucate the file when exiting the context. This flag should not be used when the IO is read-only.                      |
+|      `close`       |               `bool`                |                                   | A flag. If set, will close the file handle when exiting the context.                                                                        |
+| `callback_on_exit` | `Callable[[IO[Any]], None] \| None` |                                   | The callback function that will be called when exiting from the context. This method will be called before the file is truncated or closed. |
 
 ## Examples
 

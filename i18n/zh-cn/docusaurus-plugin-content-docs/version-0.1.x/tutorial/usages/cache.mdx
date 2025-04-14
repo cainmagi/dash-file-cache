@@ -102,7 +102,7 @@ service = dfc.ServiceData(dfc.CacheFile(cache_dir: str | None = None, chunk_size
 
 :::warning
 
-或许，读者不应使用以下部分介绍的内部功能呢。最合适地使用`CacheAbstract`的方式仍然是和`ServiceData`共用。
+或许，读者不应使用以下部分介绍的内部功能。最合适地使用`CacheAbstract`的方式仍然是和`ServiceData`共用。
 
 :::
 
@@ -110,7 +110,7 @@ service = dfc.ServiceData(dfc.CacheFile(cache_dir: str | None = None, chunk_size
 
 |      方法      | <center>说明</center>                                                           |
 | :------------: | :------------------------------------------------------------------------------ |
-|     `dump`     | 向缓存添加一个值。由于某些缓存支持 LRU 调度，添加该值可能会导致某旧值移出缓存。 |
+|     `dump`     | 向缓存添加一个值。由于某些缓存支持LRU调度，添加该值可能会导致某旧值移出缓存。 |
 |     `load`     | 从缓存中获取一个值。运行该方法不会导致所得值移出缓存。                          |
 |    `remove`    | 从缓存中显式地移出一个值。移出的值以后将无法被访问到。                          |
 | `__contains__` | 检查缓存中是否存在某一关键字。                                                  |

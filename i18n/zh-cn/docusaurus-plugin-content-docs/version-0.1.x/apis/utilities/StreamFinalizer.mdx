@@ -27,7 +27,7 @@ with StreamFinalizer(
     fobj: IO[Any]@StreamFinalizer,
     truncate: bool = False,
     close: bool = False,
-    callback_on_exit: Callable[[_IO], None] | None = None
+    callback_on_exit: Callable[[IO[Any]@StreamFinalizer], None] | None = None
 ) as _fobj:
     _fobj: IO[Any]@StreamFinalizer
 ```
@@ -38,12 +38,12 @@ with StreamFinalizer(
 
 ## 参数 {#arguments}
 
-|        参数        |              类型               |               必选                | <center>说明</center>                                                             |
-| :----------------: | :-----------------------------: | :-------------------------------: | --------------------------------------------------------------------------------- |
-|       `fobj`       |            `IO[Any]`            | <InlineIcon icon={vsiCheckIcon}/> | 退出终结器环境时，要管理的类文件对象。                                            |
-|     `truncate`     |             `bool`              |                                   | 二值量。启用时，会在离开上下文的时候将文件截断为空。IO流为只读时，不应启用该值。 |
-|      `close`       |             `bool`              |                                   | 二值量。启用时，会在离开上下文时关闭文件。                                        |
-| `callback_on_exit` | `Callable[[_IO], None] \| None` |                                   | 离开上下文时调用的回调函数。该函数会在文件被截断或关闭之前调用。                  |
+|        参数        |                类型                 |               必选                | <center>说明</center>                                                             |
+| :----------------: | :---------------------------------: | :-------------------------------: | --------------------------------------------------------------------------------- |
+|       `fobj`       |              `IO[Any]`              | <InlineIcon icon={vsiCheckIcon}/> | 退出终结器环境时，要管理的类文件对象。                                            |
+|     `truncate`     |               `bool`                |                                   | 二值量。启用时，会在离开上下文的时候将文件截断为空。IO流为只读时，不应启用该值。 |
+|      `close`       |               `bool`                |                                   | 二值量。启用时，会在离开上下文时关闭文件。                                        |
+| `callback_on_exit` | `Callable[[IO[Any]], None] \| None` |                                   | 离开上下文时调用的回调函数。该函数会在文件被截断或关闭之前调用。                  |
 
 ## 范例 {#examples}
 
